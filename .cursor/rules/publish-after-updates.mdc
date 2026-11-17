@@ -1,0 +1,13 @@
+---
+description: Publish finished IELTS page updates to the existing GitHub Pages site
+alwaysApply: true
+---
+
+After finishing a requested change to this site, publish it to the existing GitHub repository lvkai/ielts. Do not wait for a separate upload request.
+
+- Repository: lvkai/ielts
+- URL: https://lvkai.github.io/ielts/
+- Push to the existing repository. Do not create another repository.
+- Do not create or modify a Netlify site. Do not modify golden-choux-cc4b2a.
+- The published site is index.html, ielts-speaking.html, ielts-listening-numbers.html, robots.txt, and sitemap.xml. Leave part3-questions.txt out of the repository. Do not publish the removed speaking pages.
+- After the GitHub Pages deploy is ready, check the live pages that the change affects.
