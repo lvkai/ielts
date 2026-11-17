@@ -2316,7 +2316,7 @@ function renderTopicCoverageDialog(){
  for(const name of (speakingPart===1?['Topics']:['People','Place','Object','Event'])){
   const rows=groups[name]||[];
   const done=rows.filter(row=>row.practiced).length;
-  const showPart3=speakingPart===2;
+  const showPart3=speakingPart!==1;
   const body=document.createElement('tbody');
   const title=document.createElement('tr');
   title.className='category-row';
