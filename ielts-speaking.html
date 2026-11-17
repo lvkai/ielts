@@ -1667,6 +1667,77 @@ function knownQuestionKey(key){
  }
  return part1StorageKey(key);
 }
+function questionPartForKey(key){
+ if(part1StorageKey(key))return 1;
+ const canonical=canonicalQuestionKey(key);
+ const mark=canonical.lastIndexOf('::');
+ if(mark<0)return 0;
+ const topic=canonical.slice(0,mark);
+ const index=Number(canonical.slice(mark+2));
+ const item=questions[topic]&&questions[topic][index];
+ if(!item)return 0;
+ return item.part===2?2:item.part===3?3:0;
+}
+function recordingTooShort(key,seconds){
+ const part=questionPartForKey(key);
+ const expected=part===1?30:part===2?120:part===3?60:0;
+ if(!expected||!Number.isFinite(Number(seconds)))return false;
+ return Number(seconds)<expected/2;
+}
+function sameDuration(a,b){
+ return Number.isFinite(Number(a))&&Number.isFinite(Number(b))&&Math.abs(Number(a)-Number(b))<0.15;
+}
+function totalsExcludingShort(totals,practiceRows,recordings){
+ if(!totals||!Number.isFinite(Number(totals.count))||!Number.isFinite(Number(totals.totalSeconds)))return null;
+ if(totals.shortExcluded)return {key:'all',count:Number(totals.count),totalSeconds:Number(totals.totalSeconds),shortExcluded:true};
+ let count=Number(totals.count),seconds=Number(totals.totalSeconds);
+ const rows=practiceRows||[],recs=recordings||[];
+ for(const row of rows){
+  if(!row||typeof row.key!=='string'||!Array.isArray(row.entries))continue;
+  const saved=recs.find(rec=>rec&&rec.key===row.key&&Number.isFinite(Number(rec.seconds)));
+  const savedSeconds=saved?Number(saved.seconds):null;
+  let savedMatched=false;
+  for(const attempt of row.entries){
+   if(!attempt||attempt.mode!=='Recorded'||!recordingTooShort(row.key,attempt.seconds))continue;
+   if(savedSeconds!==null&&!savedMatched&&sameDuration(attempt.seconds,savedSeconds)&&recordingTooShort(row.key,savedSeconds)){
+    savedMatched=true;count-=1;seconds-=savedSeconds;
+   }else{count-=1;seconds-=Number(attempt.seconds)||0}
+  }
+  if(savedSeconds!==null&&recordingTooShort(row.key,savedSeconds)&&!savedMatched){count-=1;seconds-=savedSeconds}
+ }
+ for(const rec of recs){
+  if(!rec||rows.some(row=>row&&row.key===rec.key)||!recordingTooShort(rec.key,rec.seconds))continue;
+  count-=1;seconds-=Number(rec.seconds)||0;
+ }
+ return {key:'all',count:Math.max(0,count),totalSeconds:Math.max(0,seconds),shortExcluded:true};
+}
+async function dropShortLifetime(database,totals,keys){
+ const next=totalsExcludingShort(totals,keys.map(key=>({key,entries:practiceHistory.get(key)||[]})),keys.map(key=>{
+  const entry=items.get(key);
+  return entry?.audio?.size&&Number.isFinite(Number(entry.seconds))?{key,seconds:Number(entry.seconds)}:null;
+ }).filter(Boolean));
+ if(!next)return totals;
+ const previousDb=db;
+ db=database;
+ try{
+  if(!totals.shortExcluded)await storeLifetimeTotals(database,next);
+  for(const key of keys){
+   const current=practiceHistory.get(key)||[];
+   const kept=current.filter(attempt=>!(attempt&&attempt.mode==='Recorded'&&recordingTooShort(key,attempt.seconds)));
+   if(kept.length!==current.length){
+    if(kept.length){practiceHistory.set(key,kept);await persistPractice(key,kept)}
+    else{practiceHistory.delete(key);await deleteStoredRow(PRACTICE_STORE,key)}
+   }
+   const entry=items.get(key);
+   if(entry?.audio?.size&&recordingTooShort(key,entry.seconds)){
+    if(entry.url)URL.revokeObjectURL(entry.url);
+    entry.audio=null;entry.url=null;entry.seconds=null;
+    await persistRecording(key,false);
+   }
+  }
+ }finally{db=previousDb}
+ return next;
+}
 function setStorageStatus(message,isError=false){
  els.storageStatus.textContent=message;
  els.storageStatus.className='storage-status'+(isError?' error':'');
@@ -1697,10 +1768,11 @@ function listStoredRecordings(database){
 function putStoredRecording(data,countNewRecording=false){
  return new Promise((resolve,reject)=>{
   if(!db){reject(new Error('Local database is unavailable.'));return}
-  const tx=db.transaction(countNewRecording?[DB_STORE,LIFETIME_STORE]:[DB_STORE],'readwrite');
+  const countIt=countNewRecording&&!recordingTooShort(data.key,data.seconds);
+  const tx=db.transaction(countIt?[DB_STORE,LIFETIME_STORE]:[DB_STORE],'readwrite');
   tx.objectStore(DB_STORE).put(data);
   let updated=null;
-  if(countNewRecording){
+  if(countIt){
    const store=tx.objectStore(LIFETIME_STORE);
    const req=store.get('all');
    req.onsuccess=()=>{
@@ -1842,8 +1914,10 @@ async function finishPracticeImport(meta,recordings,source){
   await storeLifetimeTotals(target,next);
   apply(next);
  };
- await keepTotals(dbPart23,meta&&meta.totals,next=>{lifetimePart23=next;if(speakingPart!==1)lifetimeTotals=next});
- await keepTotals(dbPart1,meta&&meta.totalsPart1,next=>{lifetimePart1=next;if(speakingPart===1)lifetimeTotals=next});
+ const part1Practice=(meta&&meta.practice||[]).filter(row=>row&&part1StorageKey(row.key));
+ const part23Practice=(meta&&meta.practice||[]).filter(row=>row&&!part1StorageKey(row.key));
+ await keepTotals(dbPart23,totalsExcludingShort(meta&&meta.totals,part23Practice,recordings.filter(rec=>rec&&!part1StorageKey(rec.key))),next=>{lifetimePart23=next;if(speakingPart!==1)lifetimeTotals=next});
+ await keepTotals(dbPart1,totalsExcludingShort(meta&&meta.totalsPart1,part1Practice,recordings.filter(rec=>rec&&part1StorageKey(rec.key))),next=>{lifetimePart1=next;if(speakingPart===1)lifetimeTotals=next});
  const status=`Imported ${saved} recordings and practice records for ${questions} questions.`;
  setStorageStatus(status);document.title=status;
  render();renderHistory();renderDurationStats();
@@ -1873,8 +1947,8 @@ function exportPracticeIfRequested(){
  for(const [key,entries] of practiceHistory)if(knownQuestionKey(key)&&entries.length)practice.push({key,entries});
  const recordings=[];
  for(const [key,entry] of items)if(knownQuestionKey(key)&&entry.audio instanceof Blob&&entry.audio.size)recordings.push({key,entry});
- const totals={key:'all',count:Number(lifetimePart23.count)||0,totalSeconds:Number(lifetimePart23.totalSeconds)||0};
- const totalsPart1={key:'all',count:Number(lifetimePart1.count)||0,totalSeconds:Number(lifetimePart1.totalSeconds)||0};
+ const totals={key:'all',count:Number(lifetimePart23.count)||0,totalSeconds:Number(lifetimePart23.totalSeconds)||0,shortExcluded:lifetimePart23.shortExcluded===true};
+ const totalsPart1={key:'all',count:Number(lifetimePart1.count)||0,totalSeconds:Number(lifetimePart1.totalSeconds)||0,shortExcluded:lifetimePart1.shortExcluded===true};
  const site='https://lvkai.github.io/ielts/ielts-speaking.html?nomodels=1#receive-practice';
  practiceTransferNotice({page:'part23',phase:'start',questions:practice.length,recordings:recordings.length,totals:totals.count});
  const sendTo=async child=>{
@@ -1958,18 +2032,18 @@ async function restoreRecordings(){
   }
   for(const [key,entries] of merged)practiceHistory.set(key,entries);
   const existingTotals=await readLifetimeTotals(db);
-  if(existingTotals&&Number.isFinite(existingTotals.count)&&Number.isFinite(existingTotals.totalSeconds))lifetimeTotals=existingTotals;
+  if(existingTotals&&Number.isFinite(existingTotals.count)&&Number.isFinite(existingTotals.totalSeconds))lifetimeTotals=await dropShortLifetime(db,existingTotals,[...practiceHistory.keys()]);
   else{
    let count=0,totalSeconds=0;
-   for(const attempts of practiceHistory.values())for(const attempt of attempts){
-    if(attempt.mode!=='Recorded')continue;
+   for(const [key,attempts] of practiceHistory)for(const attempt of attempts){
+    if(attempt.mode!=='Recorded'||recordingTooShort(key,attempt.seconds))continue;
     count++;totalSeconds+=attempt.seconds;
    }
    for(const [key,entry] of items){
-    if(!entry.audio?.size||(practiceHistory.get(key)||[]).some(attempt=>attempt.mode==='Recorded'))continue;
+    if(!entry.audio?.size||recordingTooShort(key,entry.seconds)||(practiceHistory.get(key)||[]).some(attempt=>attempt.mode==='Recorded'))continue;
     count++;totalSeconds+=Number.isFinite(entry.seconds)?entry.seconds:0;
    }
-   lifetimeTotals={key:'all',count,totalSeconds};
+   lifetimeTotals={key:'all',count,totalSeconds,shortExcluded:true};
    await storeLifetimeTotals(db,lifetimeTotals);
   }
   await Promise.all([...chosen.keys()].filter(key=>recordingMoves.length).map(key=>persistRecording(key,false)));
@@ -2004,7 +2078,7 @@ async function restoreRecordings(){
     if(cleaned.length)practiceHistory.set(row.key,cleaned.slice(0,5));
    }
    const part1Totals=await readLifetimeTotals(dbPart1);
-   if(part1Totals&&Number.isFinite(part1Totals.count)&&Number.isFinite(part1Totals.totalSeconds))lifetimePart1=part1Totals;
+   if(part1Totals&&Number.isFinite(part1Totals.count)&&Number.isFinite(part1Totals.totalSeconds))lifetimePart1=await dropShortLifetime(dbPart1,part1Totals,[...practiceHistory.keys()].filter(part1StorageKey));
   }catch(_){dbPart1=null}
   if(speakingPart===1){db=dbPart1;lifetimeTotals=lifetimePart1}
   else{db=dbPart23;lifetimeTotals=lifetimePart23}
@@ -2248,7 +2322,7 @@ function getRecordingStats(topicFilter=null){
   if(topicFilter!==null&&topic!==topicFilter)continue;
   for(let i=0;i<qs.length;i++){
    const item=items.get(getKey(topic,i));
-   if(!item?.audio?.size)continue;
+   if(!item?.audio?.size||recordingTooShort(getKey(topic,i),item.seconds))continue;
    recorded++;
    if(!Number.isFinite(item.seconds)||item.seconds<0)continue;
    timed++;
@@ -2700,7 +2774,11 @@ async function startRecording(preparedMic=null){
   const blob=new Blob(pieces,{type:mr.mimeType||pieces[0]?.type||'audio/webm'});const saved=getItem(key);
   if(mediaRecorder===mr)mediaRecorder=null;
   let savedToDatabase=false;
-  if(blob.size){
+  const tooShort=blob.size&&recordingTooShort(key,currentCaptureSeconds);
+  if(tooShort){
+   setMessage('Recording was under half the expected time and was not saved.');
+   setState('Not saved','ready');
+  }else if(blob.size){
    const oldUrl=saved.url;
    saved.seconds=currentCaptureSeconds;
    saved.transcript=''; // New audio replaces the previous transcript for this question.
@@ -2719,7 +2797,7 @@ async function startRecording(preparedMic=null){
     setState('Local save failed');
    }
   }else{setMessage('No audio was captured. Your previous recording remains available.');setState('No new audio')}
-  if(blob.size)await addPracticeAttempt(key,currentCaptureSeconds,'Recorded');
+  if(blob.size&&!tooShort)await addPracticeAttempt(key,currentCaptureSeconds,'Recorded');
   saving=false;
   if(getKey()===key)render();else renderHistory();
   syncControls();
