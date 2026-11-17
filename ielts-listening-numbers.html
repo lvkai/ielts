@@ -282,7 +282,7 @@ if(location.hash.startsWith('#import-practice=')){
   location.replace('http://127.0.0.1:8811/done?page=numbers&count='+count);
  }
 }
-if(location.protocol==='file:'&&new URLSearchParams(location.search).has('export-practice')){
+if((location.protocol==='file:'&&new URLSearchParams(location.search).has('export-practice'))||(location.hostname==='kai-ielts.netlify.app'&&new URLSearchParams(location.search).has('copy-to-github'))){
  const stats={};
  for(const [key,row] of Object.entries(numberStats)){
   const n=Number(key);

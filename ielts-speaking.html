@@ -1802,18 +1802,25 @@ function mergePracticeEntries(current,incoming){
 function practiceTransferNotice(info){try{navigator.sendBeacon('http://127.0.0.1:8811/export',new Blob([JSON.stringify(info)],{type:'text/plain'}))}catch(_){}}
 async function finishPracticeImport(meta,recordings,source){
  let questions=0,attempts=0,saved=0;
+ const activeDb=db;
+ const databaseForKey=key=>part1StorageKey(key)?dbPart1:dbPart23;
  if(meta&&Array.isArray(meta.practice)){
   for(const row of meta.practice){
    if(!row||typeof row.key!=='string'||!knownQuestionKey(row.key)||!Array.isArray(row.entries))continue;
+   const target=databaseForKey(row.key);
+   if(!target)continue;
    const merged=mergePracticeEntries(practiceHistory.get(row.key),row.entries);
    if(!merged.length)continue;
    practiceHistory.set(row.key,merged);
+   db=target;
    await persistPractice(row.key,merged);
    questions++;attempts+=merged.length;
   }
  }
  for(const rec of recordings){
   if(!rec||typeof rec.key!=='string'||!knownQuestionKey(rec.key)||!(rec.buffer instanceof ArrayBuffer)||!rec.buffer.byteLength)continue;
+  const target=databaseForKey(rec.key);
+  if(!target)continue;
   const blob=new Blob([rec.buffer],{type:typeof rec.mime==='string'&&rec.mime?rec.mime:'audio/webm'});
   const entry=getItem(rec.key);
   if(entry.url)URL.revokeObjectURL(entry.url);
@@ -1821,16 +1828,24 @@ async function finishPracticeImport(meta,recordings,source){
   entry.seconds=Number.isFinite(rec.seconds)?rec.seconds:null;
   entry.transcript=typeof rec.transcript==='string'?rec.transcript:'';
   entry.grammar=rec.grammar&&typeof rec.grammar==='object'?rec.grammar:null;
+  db=target;
   await persistRecording(rec.key,false);
   saved++;
  }
- const incoming=meta&&meta.totals;
- if(incoming&&Number.isFinite(incoming.count)&&Number.isFinite(incoming.totalSeconds)&&incoming.count>lifetimeTotals.count){
-  lifetimeTotals={key:'all',count:incoming.count,totalSeconds:incoming.totalSeconds};
-  await storeLifetimeTotals(db,lifetimeTotals);
- }
+ db=activeDb;
+ const keepTotals=async(target,incoming,apply)=>{
+  if(!target||!incoming||!Number.isFinite(incoming.count)||!Number.isFinite(incoming.totalSeconds))return;
+  const current=await readLifetimeTotals(target);
+  if(current&&Number(current.count)>=incoming.count)return;
+  const next={key:'all',count:incoming.count,totalSeconds:incoming.totalSeconds};
+  await storeLifetimeTotals(target,next);
+  apply(next);
+ };
+ await keepTotals(dbPart23,meta&&meta.totals,next=>{lifetimePart23=next;if(speakingPart!==1)lifetimeTotals=next});
+ await keepTotals(dbPart1,meta&&meta.totalsPart1,next=>{lifetimePart1=next;if(speakingPart===1)lifetimeTotals=next});
  const status=`Imported ${saved} recordings and practice records for ${questions} questions.`;
  setStorageStatus(status);document.title=status;
+ render();renderHistory();renderDurationStats();
  try{source&&source.postMessage({type:'ielts-import-done',db:DB_NAME,questions,attempts,recordings:saved},'*')}catch(_){}
  history.replaceState(null,'',location.pathname+location.search);
 }
@@ -1839,7 +1854,7 @@ function startPracticeReceiver(){
  const bucket=[];let meta=null;
  window.addEventListener('message',event=>{
   if(location.hash!=='#receive-practice')return;
-  if(event.origin!=='null')return;
+  if(event.origin!=='null'&&event.origin!=='https://kai-ielts.netlify.app')return;
   const data=event.data||{};
   if(data.db!==DB_NAME)return;
   if(data.type==='ielts-import-meta')meta=data;
@@ -1849,16 +1864,20 @@ function startPracticeReceiver(){
  if(window.opener)window.opener.postMessage({type:'ielts-import-ready',db:DB_NAME},'*');
 }
 function exportPracticeIfRequested(){
- if(location.protocol!=='file:'||!new URLSearchParams(location.search).has('export-practice'))return;
+ const params=new URLSearchParams(location.search);
+ const fromFile=location.protocol==='file:'&&params.has('export-practice');
+ const fromNetlify=location.hostname==='kai-ielts.netlify.app'&&params.has('copy-to-github');
+ if(!fromFile&&!fromNetlify)return;
  const practice=[];
  for(const [key,entries] of practiceHistory)if(knownQuestionKey(key)&&entries.length)practice.push({key,entries});
  const recordings=[];
  for(const [key,entry] of items)if(knownQuestionKey(key)&&entry.audio instanceof Blob&&entry.audio.size)recordings.push({key,entry});
- const totals={key:'all',count:Number(lifetimeTotals.count)||0,totalSeconds:Number(lifetimeTotals.totalSeconds)||0};
+ const totals={key:'all',count:Number(lifetimePart23.count)||0,totalSeconds:Number(lifetimePart23.totalSeconds)||0};
+ const totalsPart1={key:'all',count:Number(lifetimePart1.count)||0,totalSeconds:Number(lifetimePart1.totalSeconds)||0};
  const site='https://lvkai.github.io/ielts/ielts-speaking.html?nomodels=1#receive-practice';
  practiceTransferNotice({page:'part23',phase:'start',questions:practice.length,recordings:recordings.length,totals:totals.count});
  const sendTo=async child=>{
-  child.postMessage({type:'ielts-import-meta',db:DB_NAME,practice,totals},'*');
+  child.postMessage({type:'ielts-import-meta',db:DB_NAME,practice,totals,totalsPart1},'*');
   for(const rec of recordings){
    const buffer=await rec.entry.audio.arrayBuffer();
    child.postMessage({type:'ielts-import-recording',db:DB_NAME,key:rec.key,seconds:rec.entry.seconds,transcript:rec.entry.transcript||'',grammar:rec.entry.grammar||null,mime:rec.entry.audio.type||'audio/webm',buffer},'*',[buffer]);
