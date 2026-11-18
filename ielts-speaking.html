@@ -1558,8 +1558,8 @@ function syncPartChrome(){
  document.body.classList.toggle('part-mode-1',speakingPart===1);
  const topicField=document.getElementById('topicField');
  if(topicField)topicField.hidden=false;
- els.nextTopic.hidden=speakingPart===3;
- els.randomTopic.hidden=speakingPart===3;
+ els.nextTopic.hidden=false;
+ els.randomTopic.hidden=false;
  const part3Topic=document.getElementById('part3Topic');
  if(part3Topic){
   part3Topic.hidden=true;
