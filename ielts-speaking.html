@@ -234,7 +234,7 @@
  .timer-controls .timer small{font-size:13px}
 }
 .home-nav{margin:0 0 10px}.home-nav a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.home-nav a:hover{text-decoration:underline}
-.part-tabs{display:flex;gap:8px;margin:0 0 16px}.part-tabs button{border:1px solid #d4deea;background:#fff;border-radius:999px;padding:8px 16px;font-weight:750;color:#254469;min-height:40px}.part-tabs button[aria-selected="true"]{background:#234b81;color:#fff;border-color:#234b81}#beginPart2[hidden],#beginPart3[hidden],#next[hidden],#bankSwitch[hidden]{display:none}.begin-test-row:not(:has(> :not([hidden]))){display:none}.bank-switch{display:flex;gap:16px;margin:0 0 12px;font-size:14px;font-weight:750}
+.part-tabs{display:flex;gap:8px;margin:0 0 16px}.part-tabs button{border:1px solid #d4deea;background:#fff;border-radius:999px;padding:8px 16px;font-weight:750;color:#254469;min-height:40px}.part-tabs button[aria-selected="true"]{background:#234b81;color:#fff;border-color:#234b81}#beginPart1[hidden],#beginPart2[hidden],#beginPart3[hidden],#next[hidden],#bankSwitch[hidden]{display:none}.begin-test-row:not(:has(> :not([hidden]))){display:none}.bank-switch{display:flex;gap:16px;margin:0 0 12px;font-size:14px;font-weight:750}
 .bank-switch a{color:#234b81;text-decoration:underline;text-underline-offset:3px}
 .bank-switch a.is-on{color:#16365d;text-decoration:none}
 .bank-switch a[aria-disabled="true"]{opacity:.43;pointer-events:none}
@@ -261,7 +261,7 @@ body.part-mode-1 .topic-inline #topic{field-sizing:content;flex:0 0 auto;width:a
   <div class="field voice-field"><label for="voice">Voice</label><select id="voice" aria-describedby="voiceInfo"><option value="-1">Loading available English voices…</option></select><p class="voice-info sr-only" id="voiceInfo" role="status"></p></div>
   <div class="field"><label for="rate">Speed</label><select id="rate"><option value="0.8">0.8×</option><option value="0.9" selected>0.9×</option><option value="1">1.0×</option><option value="1.1">1.1×</option></select></div>
 </div>
-<div class="begin-test-row"><button type="button" id="beginPart2" class="btn begin-test" title="Practice the Part 2 long turn" hidden>Begin Part 2</button><button type="button" id="beginPart3" class="btn begin-test" title="Practice the Part 3 questions" hidden>Begin Part 3</button></div>
+<div class="begin-test-row"><button type="button" id="beginPart1" class="btn begin-test" title="Practice the Part 1 questions">Begin Part 1</button><button type="button" id="beginPart2" class="btn begin-test" title="Practice the Part 2 long turn" hidden>Begin Part 2</button><button type="button" id="beginPart3" class="btn begin-test" title="Practice the Part 3 questions" hidden>Begin Part 3</button></div>
 </section>
 <section class="question-block"><div class="qhead"><div class="tag" id="currentTopic">PART 2 · LONG TURN</div><div class="count" id="qCount">01 / 05</div></div><div class="progress"><div id="progressFill"></div></div><h2 id="question"></h2><div id="cueCard" class="cue-card" hidden><div class="cue-intro">You should say:</div><ul id="cuePoints"></ul></div></section>
 <div class="timer-controls"><div class="actions"><button type="button" id="part3Think" class="btn" title="Read the question, then 60 seconds to answer. Nothing is saved." hidden>Read</button><button type="button" id="read" class="btn"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>Read &amp; Record</button><button type="button" id="stopRecord" class="btn danger">Stop recording</button><button type="button" id="next" class="btn">Next</button></div>
@@ -1080,7 +1080,7 @@ const questions={
   ]
 };
 const $=id=>document.getElementById(id);
-const els={bankBasic:$('bankBasic'),bankExtended:$('bankExtended'),bankMark:$('bankMark'),topic:$('topic'),nextTopic:$('nextTopic'),randomTopic:$('randomTopic'),beginPart2:$('beginPart2'),beginPart3:$('beginPart3'),queueRows:$('queueRows'),queueCount:$('queueCount'),prep:$('prep'),part3Think:$('part3Think'),cueCard:$('cueCard'),cuePoints:$('cuePoints'),rate:$('rate'),voice:$('voice'),voiceInfo:$('voiceInfo'),currentTopic:$('currentTopic'),qCount:$('qCount'),progress:$('progressFill'),question:$('question'),time:$('time'),recordTimer:$('recordTimer'),prepCountdown:$('prepCountdown'),state:$('state'),stateText:$('stateText'),timeHelp:$('timeHelp'),read:$('read'),stop:$('stopRecord'),next:$('next'),micMessage:$('micMessage'),playback:$('playback'),audioEmpty:$('audioEmpty'),playbackNote:$('playbackNote'),history:$('history'),practiceCoverage:$('practiceCoverage'),questionCoverage:$('questionCoverage'),topicCoverageDialog:$('topicCoverageDialog'),topicCoverageBody:$('topicCoverageBody'),closeTopicCoverage:$('closeTopicCoverage'),topicRecorded:$('topicRecorded'),topicTotal:$('topicTotal'),topicAverage:$('topicAverage'),allRecorded:$('allRecorded'),allTotal:$('allTotal'),allAverage:$('allAverage'),lifetimeCount:$('lifetimeCount'),lifetimeTotal:$('lifetimeTotal'),storageStatus:$('storageStatus'),asrModel:$('asrModel'),transcribeCurrent:$('transcribeCurrent'),grammarModel:$('grammarModel'),checkGrammar:$('checkGrammar'),autoLoad:$('autoLoad'),asrStatus:$('asrStatus'),asrTranscript:$('asrTranscript'),transcriptCombined:$('transcriptCombined'),transcriptQuestion:$('transcriptQuestion'),transcriptTitle:$('transcriptTitle'),transcriptCue:$('transcriptCue'),gpuAdapter:$('gpuAdapter'),gpuDetails:$('gpuDetails'),grammarStatus:$('grammarStatus'),retryGrammar:$('retryGrammar'),inlineGrammar:$('inlineGrammar'),toggleTranscript:$('toggleTranscript'),copyTranscript:$('copyTranscript'),rejectedGrammar:$('rejectedGrammar'),rejectedGrammarSummary:$('rejectedGrammarSummary'),rejectedGrammarList:$('rejectedGrammarList')};
+const els={bankBasic:$('bankBasic'),bankExtended:$('bankExtended'),bankMark:$('bankMark'),topic:$('topic'),nextTopic:$('nextTopic'),randomTopic:$('randomTopic'),beginPart1:$('beginPart1'),beginPart2:$('beginPart2'),beginPart3:$('beginPart3'),queueRows:$('queueRows'),queueCount:$('queueCount'),prep:$('prep'),part3Think:$('part3Think'),cueCard:$('cueCard'),cuePoints:$('cuePoints'),rate:$('rate'),voice:$('voice'),voiceInfo:$('voiceInfo'),currentTopic:$('currentTopic'),qCount:$('qCount'),progress:$('progressFill'),question:$('question'),time:$('time'),recordTimer:$('recordTimer'),prepCountdown:$('prepCountdown'),state:$('state'),stateText:$('stateText'),timeHelp:$('timeHelp'),read:$('read'),stop:$('stopRecord'),next:$('next'),micMessage:$('micMessage'),playback:$('playback'),audioEmpty:$('audioEmpty'),playbackNote:$('playbackNote'),history:$('history'),practiceCoverage:$('practiceCoverage'),questionCoverage:$('questionCoverage'),topicCoverageDialog:$('topicCoverageDialog'),topicCoverageBody:$('topicCoverageBody'),closeTopicCoverage:$('closeTopicCoverage'),topicRecorded:$('topicRecorded'),topicTotal:$('topicTotal'),topicAverage:$('topicAverage'),allRecorded:$('allRecorded'),allTotal:$('allTotal'),allAverage:$('allAverage'),lifetimeCount:$('lifetimeCount'),lifetimeTotal:$('lifetimeTotal'),storageStatus:$('storageStatus'),asrModel:$('asrModel'),transcribeCurrent:$('transcribeCurrent'),grammarModel:$('grammarModel'),checkGrammar:$('checkGrammar'),autoLoad:$('autoLoad'),asrStatus:$('asrStatus'),asrTranscript:$('asrTranscript'),transcriptCombined:$('transcriptCombined'),transcriptQuestion:$('transcriptQuestion'),transcriptTitle:$('transcriptTitle'),transcriptCue:$('transcriptCue'),gpuAdapter:$('gpuAdapter'),gpuDetails:$('gpuDetails'),grammarStatus:$('grammarStatus'),retryGrammar:$('retryGrammar'),inlineGrammar:$('inlineGrammar'),toggleTranscript:$('toggleTranscript'),copyTranscript:$('copyTranscript'),rejectedGrammar:$('rejectedGrammar'),rejectedGrammarSummary:$('rejectedGrammarSummary'),rejectedGrammarList:$('rejectedGrammarList')};
 const items=new Map();
 let idx=0,mediaRecorder=null,stream=null,tick=null,clockStart=0,currentCaptureSeconds=0,activeKey=null,recording=false,pending=false,saving=false,storageLoading=true,reader=null,readToken=0,showAnswerClock=false;
 
@@ -1335,73 +1335,178 @@ const part1Questions={
     {q:"What do you enjoy about visiting old buildings?",f:"Present simple · Details"},
     {q:"Do you think old buildings should be protected?",f:"Should · Giving reasons"}
   ],
-  "Weather":[
-    {q:"What kind of weather do you like most?",f:"Preferences · Giving reasons"},
-    {q:"Does the weather affect your mood?",f:"Present simple · Examples"},
-    {q:"What was the weather like yesterday?",f:"Past simple · Describing the past"},
-    {q:"Do you prefer hot weather or cold weather?",f:"Comparisons · Reasons"}
-  ],
   "Reading":[
     {q:"Do you enjoy reading books?",f:"Present simple · Preferences"},
     {q:"What kinds of things do you usually read?",f:"Plural nouns · Examples"},
     {q:"Did you read much when you were a child?",f:"Past simple · Past habits"},
     {q:"Do you prefer reading printed books or e-books?",f:"Comparisons · Giving reasons"}
   ],
-  "Cooking":[
-    {q:"Do you often cook at home?",f:"Present simple · Frequency"},
-    {q:"What dish do you enjoy making?",f:"Present simple · Giving details"},
-    {q:"Who taught you how to cook?",f:"Past simple · Describing the past"},
-    {q:"Would you like to learn to cook a new dish?",f:"Would · Future plans"}
+  "The area you live in":[
+    {q:"What is the area where you live like?",f:"Present simple · Describing a place"},
+    {q:"How long have you lived there?",f:"Present perfect · For / since"},
+    {q:"What do you like most about your neighbourhood?",f:"Giving a reason"},
+    {q:"What facilities are there near where you live?",f:"There are · Plural nouns"},
+    {q:"What would you improve about your area if you could?",f:"Would · Suggestions"},
+    {q:"How has your area changed over the last few years?",f:"Present perfect · Past vs present"}
   ],
-  "Public transport":[
-    {q:"How often do you use public transport?",f:"Frequency · Present simple"},
-    {q:"What type of public transport do you use most?",f:"Preferences · Details"},
-    {q:"Did you take public transport to school as a child?",f:"Past simple · Past habits"},
-    {q:"What could make public transport better in your city?",f:"Could · Suggestions"}
+  "Days off":[
+    {q:"What do you usually do on your days off?",f:"Present simple · Habits"},
+    {q:"Do you prefer spending a day off alone or with friends?",f:"Comparisons · Reasons"},
+    {q:"When did you last have a day off?",f:"Past simple"},
+    {q:"What would you like to do if you had a whole day free?",f:"Would · Future plans"}
   ],
-  "Photography":[
-    {q:"Do you like taking photographs?",f:"Present simple · Preferences"},
-    {q:"What do you usually take photos of?",f:"Present simple · Examples"},
-    {q:"When did you last take a photograph?",f:"Past simple · Time expressions"},
-    {q:"Do you prefer taking photos with a phone or a camera?",f:"Comparisons · Reasons"}
+  Dreams:[
+    {q:"Can you remember the dreams you had?",f:"Present simple · Details"},
+    {q:"Do you share your dreams with others?",f:"Present simple · Habits"},
+    {q:"Do you think dreams have special meanings?",f:"Giving reasons"},
+    {q:"Have you ever had the same dream more than once?",f:"Present perfect"}
   ],
-  "Birthdays":[
-    {q:"How do you usually celebrate your birthday?",f:"Present simple · Habits"},
-    {q:"What did you do on your last birthday?",f:"Past simple · Sequencing"},
-    {q:"Did you enjoy birthday parties when you were a child?",f:"Past simple · Past memories"},
-    {q:"Do you think birthdays become less important as people get older?",f:"Present simple · Giving reasons"}
+  "Flowers and plants":[
+    {q:"Do you keep any plants at home?",f:"Present simple"},
+    {q:"Did you learn how to grow plants when you were a child?",f:"Past simple"},
+    {q:"Have you ever given someone flowers?",f:"Present perfect"},
+    {q:"Would you like to have a garden in the future?",f:"Would · Future plans"}
   ],
-  "Pets":[
-    {q:"Do you have any pets?",f:"Present simple · Singular and plural"},
-    {q:"What animals are popular as pets where you live?",f:"Plural nouns · Examples"},
-    {q:"Did you have a pet when you were a child?",f:"Past simple · Describing the past"},
-    {q:"Would you like to own a pet in the future?",f:"Would · Future plans"}
+  Punctuality:[
+    {q:"Are you a punctual person?",f:"Giving a reason"},
+    {q:"Do you think being on time is important?",f:"Giving reasons"},
+    {q:"How do you feel when others are late?",f:"Present simple · Feelings"},
+    {q:"How do you remind yourself to be on time?",f:"Present simple · Habits"}
   ],
-  "Sports and exercise":[
-    {q:"Do you do any exercise regularly?",f:"Present simple · Frequency"},
-    {q:"What sport do you enjoy watching or playing?",f:"Preferences · Details"},
-    {q:"Did you play sports when you were at school?",f:"Past simple · Past habits"},
-    {q:"Do you prefer exercising alone or with other people?",f:"Comparisons · Reasons"}
+  "The city you live in":[
+    {q:"Which city do you live in now?",f:"Present simple"},
+    {q:"What do you like most about living in this city?",f:"Giving a reason"},
+    {q:"What is the best way to get around your city?",f:"Comparisons · Transport"},
+    {q:"Where would you take a friend who was visiting your city?",f:"Would · Suggestions"},
+    {q:"How has your city changed over the past ten years?",f:"Present perfect · Past vs present"},
+    {q:"Where would you like to live in the future, in this city or somewhere else?",f:"Would · Future plans"}
   ],
-  "Mobile phones":[
-    {q:"How often do you use your mobile phone?",f:"Frequency · Present simple"},
-    {q:"What do you mainly use your phone for?",f:"Present simple · Examples"},
-    {q:"When did you get your first mobile phone?",f:"Past simple · Time expressions"},
-    {q:"Could you live without your mobile phone for a week?",f:"Could · Hypothetical situations"}
+  Tidiness:[
+    {q:"Are you a tidy person?",f:"Giving a reason"},
+    {q:"How often do you tidy your room?",f:"Frequency"},
+    {q:"Who kept your room tidy when you were a child?",f:"Past simple"},
+    {q:"How do you feel when your desk is messy?",f:"Present simple · Feelings"},
+    {q:"How have your tidying habits changed as you've got older?",f:"Present perfect · Past vs present"}
   ],
-  "Gifts":[
-    {q:"Do you enjoy giving gifts to other people?",f:"Present simple · Giving reasons"},
-    {q:"What kind of gifts do you usually give?",f:"Plural nouns · Examples"},
-    {q:"What was the last gift you received?",f:"Past simple · Details"},
-    {q:"Do you prefer giving useful gifts or surprising gifts?",f:"Comparisons · Reasons"}
+  Websites:[
+    {q:"Which websites do you visit most often?",f:"Plural nouns · Habits"},
+    {q:"What makes a website easy to use?",f:"Giving reasons"},
+    {q:"Which website did you use a lot when you were younger?",f:"Past simple"},
+    {q:"Have you ever made your own website?",f:"Present perfect"},
+    {q:"How have websites changed compared with ten years ago?",f:"Present perfect · Comparisons"}
   ],
-  "Weekends":[
-    {q:"What do you usually do at the weekend?",f:"Present simple · Habits"},
-    {q:"Do you prefer busy weekends or relaxing weekends?",f:"Comparisons · Reasons"},
-    {q:"What did you do last weekend?",f:"Past simple · Sequencing"},
-    {q:"How were your weekends different when you were a child?",f:"Past simple · Comparisons"}
+  Cars:[
+    {q:"Do you have a car?",f:"Present simple"},
+    {q:"How do you usually get around your city?",f:"Present simple · Transport"},
+    {q:"What kind of car would you like to own?",f:"Would · Preferences"},
+    {q:"What do you remember about car journeys as a child?",f:"Past simple · Memories"},
+    {q:"How do you think cars will change in the future?",f:"Future · Predictions"}
+  ],
+  Science:[
+    {q:"Did you like science at school?",f:"Past simple"},
+    {q:"Which area of science interests you the most?",f:"Preferences · Details"},
+    {q:"How does science affect your daily life?",f:"Present simple · Examples"},
+    {q:"What science programmes or videos do you enjoy?",f:"Present simple · Preferences"},
+    {q:"What scientific discovery would you like to see in the future?",f:"Would · Future plans"}
+  ],
+  Mirrors:[
+    {q:"How often do you look in the mirror each day?",f:"Frequency"},
+    {q:"Do you like having lots of mirrors at home?",f:"Giving a reason"},
+    {q:"Why do some shops and restaurants have so many mirrors?",f:"Giving reasons"},
+    {q:"How did you feel about looking in the mirror as a teenager?",f:"Past simple · Feelings"},
+    {q:"How have phone cameras changed the way people use mirrors?",f:"Present perfect · Comparisons"}
+  ],
+  "Outer space and stars":[
+    {q:"Do you like looking at the stars?",f:"Present simple · Preferences"},
+    {q:"How often can you see stars where you live?",f:"Frequency · Describing a place"},
+    {q:"What did you learn about space when you were a child?",f:"Past simple"},
+    {q:"What would you most like to know about outer space?",f:"Would · Details"},
+    {q:"How do you think space travel will change in the future?",f:"Future · Predictions"}
+  ],
+  Singing:[
+    {q:"Do you like singing?",f:"Present simple · Preferences"},
+    {q:"When do you usually sing?",f:"Time expressions · Habits"},
+    {q:"What songs did you sing when you were a child?",f:"Past simple"},
+    {q:"Where do people in your country usually sing for fun?",f:"Plural nouns · Examples"},
+    {q:"How popular is karaoke now compared with the past?",f:"Comparisons · Past vs present"}
+  ],
+  "Jokes and comedy":[
+    {q:"Do you like telling jokes?",f:"Present simple · Preferences"},
+    {q:"What kind of comedy do you enjoy?",f:"Preferences · Examples"},
+    {q:"Who is the funniest person you know?",f:"Present simple · Details"},
+    {q:"What made you laugh when you were a child?",f:"Past simple"},
+    {q:"Why do you think comedy shows are so popular these days?",f:"Giving reasons"}
+  ],
+  Headphones:[
+    {q:"How often do you use headphones?",f:"Frequency"},
+    {q:"What do you usually listen to with your headphones?",f:"Present simple · Examples"},
+    {q:"Which do you prefer, big headphones or small earbuds?",f:"Comparisons"},
+    {q:"When did you get your first pair of headphones?",f:"Past simple"},
+    {q:"How have headphones changed over the years?",f:"Present perfect · Past vs present"}
+  ],
+  Art:[
+    {q:"Do you like art?",f:"Present simple · Preferences"},
+    {q:"Do you like visiting art galleries?",f:"Giving a reason"},
+    {q:"Do you want to be an artist?",f:"Would · Future plans"},
+    {q:"Do you like modern art or traditional art?",f:"Comparisons"}
+  ],
+  "Dreams and ambitions":[
+    {q:"What was your childhood dream?",f:"Past simple · Memories"},
+    {q:"Are you the kind of person who sticks to dreams?",f:"Giving a reason"},
+    {q:"What is your dream job?",f:"Present simple · Preferences"},
+    {q:"Do you think you are an ambitious person?",f:"Giving reasons"}
+  ],
+  "Evening time":[
+    {q:"What do you hate doing in the evening?",f:"Present simple · Preferences"},
+    {q:"Do you like the morning or evening?",f:"Comparisons"},
+    {q:"What do you usually do in the evening?",f:"Present simple · Habits"},
+    {q:"What did you do in the evening when you were little?",f:"Past simple"}
+  ],
+  "Films and cinemas":[
+    {q:"How often do you watch films?",f:"Frequency"},
+    {q:"Do you prefer to watch films at home or in the cinema?",f:"Comparisons"},
+    {q:"What films do you like?",f:"Preferences · Examples"},
+    {q:"Did you often watch films when you were a child?",f:"Past simple"}
+  ],
+  Food:[
+    {q:"What is your favourite food?",f:"Present simple · Preferences"},
+    {q:"What kind of food did you like when you were young?",f:"Past simple"},
+    {q:"Do you eat different foods at different times of the year?",f:"Present simple · Examples"},
+    {q:"Has your favourite food changed since you were a child?",f:"Present perfect · Past vs present"}
+  ],
+  History:[
+    {q:"Did you like history when you were young?",f:"Past simple"},
+    {q:"When was the last time you read about history?",f:"Past simple · Time expressions"},
+    {q:"Do you like history?",f:"Giving a reason"},
+    {q:"Have you ever been to historical museums?",f:"Present perfect"}
+  ],
+  Hobbies:[
+    {q:"Do you have any hobbies?",f:"Present simple · Details"},
+    {q:"Did you have any hobbies when you were a child?",f:"Past simple"},
+    {q:"Do you have a hobby that you've had since childhood?",f:"Present perfect · Past vs present"},
+    {q:"Do you have the same hobbies as your family members?",f:"Comparisons · Plural nouns"}
+  ],
+  "Sports programmes":[
+    {q:"Do you like watching sports programs on TV?",f:"Present simple · Preferences"},
+    {q:"Do you like to watch live sports games?",f:"Giving a reason"},
+    {q:"Who do you like to watch sports games with?",f:"Present simple · Details"},
+    {q:"What kinds of games do you expect to watch in the future?",f:"Future · Preferences"}
+  ],
+  "Team sports":[
+    {q:"Have you ever been part of a sports team?",f:"Present perfect"},
+    {q:"Are team sports popular in your culture?",f:"Plural nouns · Reasons"},
+    {q:"Do you like watching team games?",f:"Giving a reason"},
+    {q:"What are the differences between team sports and individual sports?",f:"Comparisons"}
+  ],
+  Typing:[
+    {q:"Do you prefer typing or handwriting?",f:"Comparisons"},
+    {q:"Do you type on a desktop or laptop keyboard every day?",f:"Present simple · Habits"},
+    {q:"When did you learn how to type on a keyboard?",f:"Past simple"},
+    {q:"How do you improve your typing?",f:"Present simple · Examples"}
   ]
 };
+const part1BasicNames=["Work","Hometown","Accommodation","The area you live in","Travelling","Rubbish and recycling","Tiredness","Shoes","Politeness","Fruit and vegetables","Paper","Secondary school","Names","Opportunities","Feeling bored","Collecting things","Computers and tablets","Days off","Dreams","Friends","Lost and found","Flowers and plants","Punctuality","Street markets","Advertising"];
+const part1ExtendedNames=["The city you live in","Music","Teachers","Social media","Tidiness","Websites","Watches","Shopping","Cars","Parks and gardens","Science","Mirrors","Outer space and stars","Singing","Clothing","Jokes and comedy","Headphones","Art","Dreams and ambitions","Evening time","Films and cinemas","Food","History","Hobbies","Morning routines","Old buildings","Reading","Sports programmes","Team sports","Typing"];
 let speakingPart=1;
 try{const savedTab=localStorage.getItem('ielts-speaking-tab');if(savedTab==='1'||savedTab==='2'||savedTab==='3')speakingPart=Number(savedTab)}catch(_){}
 let dbPart1=null,dbPart23=null;
@@ -1439,7 +1544,7 @@ function updatePartTabs(){
   button.tabIndex=on?0:-1;
  }
  const bankSwitch=document.getElementById('bankSwitch');
- if(bankSwitch)bankSwitch.hidden=speakingPart===1;
+ if(bankSwitch)bankSwitch.hidden=false;
 }
 function syncPartChrome(){
  document.body.classList.toggle('part-mode-1',speakingPart===1);
@@ -1479,7 +1584,7 @@ function switchSpeakingPart(part){
  updatePartTabs();
  render();syncControls();setMessage('');
 }
-function activeTopicNames(){if(speakingPart===1)return Object.keys(part1Questions);return bankMode==='extended'?extendedTopicNames:basicTopicNames}
+function activeTopicNames(){if(speakingPart===1)return bankMode==='extended'?part1ExtendedNames:part1BasicNames;return bankMode==='extended'?extendedTopicNames:basicTopicNames}
 function updateBankLinks(){
  const extended=bankMode==='extended';
  els.bankBasic.classList.toggle('is-on',!extended);
@@ -2351,7 +2456,7 @@ function practiceCoverage(){
 function topicPracticeGroups(){
  if(speakingPart===1){
   const rows=[];
-  for(const topic of Object.keys(part1Questions)){
+  for(const topic of activeTopicNames()){
    let practiced=false;
    for(let i=0;i<part1Questions[topic].length;i++){
     if(items.get(getKey(topic,i))?.audio?.size){practiced=true;break}
@@ -2530,7 +2635,7 @@ function render(){
  const arr=currentQuestions()[els.topic.value]||[];
  const q=arr[idx]||{q:'',part:0,cue:[]},saved=getItem(),partTwo=speakingPart===2||q.part===2;
  const progress=visibleProgress();
- const testStep=testPart===3?progress.step:1,testTotal=testPart===3?progress.total:1;
+ const testStep=testPart===2?1:progress.step,testTotal=testPart===2?1:progress.total;
  els.currentTopic.textContent=speakingPart===1?'PART 1 · INTRODUCTION':partTwo?'PART 2 · LONG TURN':'PART 3 · DISCUSSION';
  els.qCount.hidden=speakingPart===2;
  els.qCount.textContent=testActive?('Test '+testStep+' / '+testTotal):(String(progress.step).padStart(2,'0')+' / '+String(progress.total).padStart(2,'0'));
@@ -2554,20 +2659,23 @@ function syncControls(){
  els.topic.disabled=busy||testActive||prepActive||thinkActive;els.nextTopic.disabled=busy||testActive||prepActive||thinkActive;els.randomTopic.disabled=busy||testActive||prepActive||thinkActive;els.rate.disabled=busy||testActive||prepActive||thinkActive;els.voice.disabled=busy||testActive||prepActive||thinkActive||!englishVoices.length;
  els.next.disabled=busy||testActive||prepActive||thinkActive;els.read.disabled=busy||testActive||prepActive||thinkActive;
  els.prep.hidden=true;els.prep.disabled=true;
- els.part3Think.hidden=speakingPart!==3||(recording&&!thinkActive);els.part3Think.disabled=!thinkActive&&(busy||testActive||prepActive);els.part3Think.textContent=thinkActive?'Stop':'Read';els.beginPart2.hidden=speakingPart!==2;els.beginPart3.hidden=speakingPart!==3;els.next.hidden=speakingPart===2;updatePartTabs();for(const id of ['tabPart1','tabPart2','tabPart3']){const button=document.getElementById(id);if(button)button.disabled=busy||testActive||prepActive||thinkActive}
+ els.part3Think.hidden=speakingPart!==3||(recording&&!thinkActive);els.part3Think.disabled=!thinkActive&&(busy||testActive||prepActive);els.part3Think.textContent=thinkActive?'Stop':'Read';els.beginPart1.hidden=speakingPart!==1;els.beginPart2.hidden=speakingPart!==2;els.beginPart3.hidden=speakingPart!==3;els.next.hidden=speakingPart===2;updatePartTabs();for(const id of ['tabPart1','tabPart2','tabPart3']){const button=document.getElementById(id);if(button)button.disabled=busy||testActive||prepActive||thinkActive}
  els.stop.style.display=recording?'inline-flex':'none';
  els.read.style.display=recording?'none':'';
  syncPartChrome();
  els.recordTimer.hidden=speakingPart===1?!(recording||showAnswerClock):(prepActive||thinkActive);
  els.prepCountdown.hidden=!(prepActive||thinkActive);
- const runningPart2=testActive&&testPart===2,runningPart3=testActive&&testPart===3;
+ const runningPart1=testActive&&testPart===1,runningPart2=testActive&&testPart===2,runningPart3=testActive&&testPart===3;
  const bankLocked=busy||testActive||prepActive||thinkActive;
  els.bankBasic.setAttribute('aria-disabled',bankLocked?'true':'false');
  els.bankExtended.setAttribute('aria-disabled',bankLocked?'true':'false');
+ els.beginPart1.disabled=storageLoading||saving||thinkActive||(testActive&&!runningPart1)||(!testActive&&busy);
  els.beginPart2.disabled=storageLoading||saving||thinkActive||(testActive&&!runningPart2)||(!testActive&&busy);
  els.beginPart3.disabled=storageLoading||saving||thinkActive||(testActive&&!runningPart3)||(!testActive&&busy);
+ els.beginPart1.textContent=runningPart1?'Stop':'Begin Part 1';
  els.beginPart2.textContent=runningPart2?'Stop':'Begin Part 2';
  els.beginPart3.textContent=runningPart3?'Stop':'Begin Part 3';
+ els.beginPart1.classList.toggle('in-progress',runningPart1);
  els.beginPart2.classList.toggle('in-progress',runningPart2);
  els.beginPart3.classList.toggle('in-progress',runningPart3);
 }
@@ -2814,7 +2922,7 @@ async function startRecording(preparedMic=null){
  }
  recording=true;pending=false;clockStart=performance.now();currentCaptureSeconds=0;setState('Recording your answer','recording');
  els.timeHelp.textContent=speakingPart===1
-  ? 'Part 1 · 30s maximum; 2s silence after 10s ends recording.'
+  ? (testActive?'Part 1 · next question after 2s continuous silence (after 10s) or at 30s.':'Part 1 · 30s maximum; 2s silence after 10s ends recording.')
   : isPart2()
   ? 'Part 2 · up to 120 seconds; 3s silence after 100s ends recording.'
   : (testActive?'Part 3 · next question after 3s continuous silence (after 30s) or at 60s.':'Part 3 · 3s continuous silence after 30s ends recording, without changing question.');
@@ -3712,13 +3820,19 @@ function finishTest(completed=false,message=''){
  if(completed)idx=finishedPart===3?1:0;
  if(!recording&&!pending)stopReading();
  syncControls();render();
- if(completed){setState('Test completed','ready');els.timeHelp.textContent=(finishedPart===3?'Part 3':'Part 2')+' finished.'}
+ if(completed){setState('Test completed','ready');els.timeHelp.textContent=(finishedPart===1?'Part 1':finishedPart===3?'Part 3':'Part 2')+' finished.'}
  else{setState('Test stopped');els.timeHelp.textContent='Test stopped.'}
  if(message)setMessage(message);
  resumeGrammarQueue();
 }
 function advanceTestAfterSave(){
  if(!testActive)return;
+ if(testPart===1){
+  const next=idx+1,arr=part1Questions[els.topic.value]||[];
+  if(next<arr.length){idx=next;render();syncControls();void readQuestion();return}
+  finishTest(true,'Part 1 finished.');
+  return;
+ }
  if(testPart===3){
   const next=idx+1,arr=questions[els.topic.value];
   if(next<arr.length&&arr[next].part===3){idx=next;render();syncControls();void readQuestion();return}
@@ -3735,7 +3849,7 @@ async function beginOrStopTest(part){
   syncControls();return;
  }
  if(recording||pending||saving||storageLoading||prepActive||thinkActive)return;
- if(part!==2&&part!==3)return;
+ if(part!==1&&part!==2&&part!==3)return;
  if(!('speechSynthesis' in window)){setMessage('Question reading is unavailable in this browser.');return}
  stopSilentTimer();stopReading();testActive=true;testPart=part;idx=part===3?1:0;
  render();syncControls();setMessage('');
@@ -3866,6 +3980,7 @@ els.randomTopic.addEventListener('click',randomTopic);
 els.practiceCoverage.addEventListener('click',openTopicCoverage);
 els.closeTopicCoverage.addEventListener('click',()=>els.topicCoverageDialog.close());
 els.topicCoverageDialog.addEventListener('click',event=>{if(event.target===els.topicCoverageDialog)els.topicCoverageDialog.close()});
+els.beginPart1.addEventListener('click',()=>beginOrStopTest(1));
 els.beginPart2.addEventListener('click',()=>beginOrStopTest(2));
 els.beginPart3.addEventListener('click',()=>beginOrStopTest(3));
 els.prep.addEventListener('click',()=>{if(prepActive){const next=stopPreparation(true);if(next)next()}else startPreparation()});
