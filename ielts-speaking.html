@@ -238,8 +238,16 @@
 .bank-switch a{color:#234b81;text-decoration:underline;text-underline-offset:3px}
 .bank-switch a.is-on{color:#16365d;text-decoration:none}
 .bank-switch a[aria-disabled="true"]{opacity:.43;pointer-events:none}
+.topic-inline{flex-wrap:nowrap}
 body.part-mode-1 #topicField,body.part-mode-1 .topic-inline{width:max-content;max-width:100%}
-body.part-mode-1 .topic-inline #topic{field-sizing:content;flex:0 0 auto;width:auto;min-width:0;max-width:100%}
+body.part-mode-1 .topic-inline #topic{field-sizing:fixed;flex:0 0 230px;width:230px;min-width:230px;max-width:230px}
+body:not(.part-mode-1) #topicField,body:not(.part-mode-1) .topic-inline{width:max-content;max-width:100%}
+body:not(.part-mode-1) .topic-inline #topic{field-sizing:fixed;flex:0 1 340px;width:340px;min-width:0;max-width:340px;text-overflow:ellipsis}
+@media(max-width:540px){
+ .topic-inline{flex-wrap:wrap}
+ body.part-mode-1 .topic-inline,body:not(.part-mode-1) .topic-inline{width:100%;max-width:100%}
+ body.part-mode-1 .topic-inline #topic,body:not(.part-mode-1) .topic-inline #topic{flex:1 1 100%;width:100%;min-width:0;max-width:100%}
+}
 #topicField[hidden],#part3Topic[hidden],#nextTopic[hidden],#randomTopic[hidden],#timerLimit[hidden],#qCount[hidden]{display:none}
 .part3-topic{margin:0;color:#4e6685;font-size:14px;font-weight:700}
 .timer-limit{margin-left:2px;color:#7b8796;font-size:15px;font-weight:650;letter-spacing:0}
