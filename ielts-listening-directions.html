@@ -90,7 +90,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="footnote" id="summary">The answer stays hidden until you click or the time runs out.</div>
   </aside>
  </main>
- <p class="bottom">Uses your device’s English text-to-speech engine. Works offline in Chrome, Edge, or Safari. Missed directions and answer times stay in this browser.</p>
+ <p class="bottom">Directions are recorded in the page, so they play in WeChat as well as in a browser. Missed directions and answer times stay in this browser.</p>
 </div>
 <dialog id="missDialog" class="stats-dialog" aria-labelledby="missTitle">
  <div class="dialog-head"><h3 id="missTitle">Missed</h3><button type="button" id="closeMiss" class="dialog-close" aria-label="Close">×</button></div>
@@ -117,6 +117,17 @@ const directions=[
 ];
 const byId=new Map(directions.map(d=>[d.id,d]));
 const allIds=directions.map(d=>d.id);
+const clips=new Map(directions.map(d=>{
+ const audio=document.createElement('audio');
+ audio.preload='auto';
+ audio.src=new URL('direction-audio/'+d.id+'.mp3',document.baseURI).href;
+ audio.setAttribute('playsinline','');
+ audio.setAttribute('webkit-playsinline','');
+ if('preservesPitch' in audio)audio.preservesPitch=true;
+ audio.style.cssText='position:absolute;width:1px;height:1px;opacity:0;pointer-events:none';
+ document.body.append(audio);
+ return [d.id,audio];
+}));
 const ROUND_SIZE=10;
 function randomIndex(n){
  if(n<=1)return 0;
@@ -143,7 +154,6 @@ const sectors=new Map([...grid.querySelectorAll('.cell[data-id]')].map(button=>[
 function setCompassEnabled(on){for(const button of sectors.values())button.disabled=!on}
 function clearMarks(){for(const button of sectors.values())button.classList.remove('good','bad','reveal')}
 function paint(id,kind){const button=sectors.get(id);if(button)button.classList.add(kind)}
-const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
 const SoundContext=window.AudioContext||window.webkitAudioContext;
 let completionAudio=null;
 function prepareDing(){
@@ -189,7 +199,7 @@ function playCompletionSound(perfect){
  if(completionAudio.state==='running')play();
  else completionAudio.resume().then(()=>{if(completionAudio.state==='running'&&phase==='complete'&&answers.every(x=>x.ok)===perfect)play()}).catch(()=>{});
 }
-let queue=[],answers=[],position=0,phase='idle',speechGeneration=0,tick=null,nextTimer=null,expiresAt=0,duration=5000,answerStartedAt=null,reviewMisses=[];
+let queue=[],answers=[],position=0,phase='idle',speechGeneration=0,speechEndTimer=null,activeClip=null,tick=null,nextTimer=null,expiresAt=0,duration=5000,answerStartedAt=null,reviewMisses=[];
 const STATS_KEY='ielts-direction-dictation-stats';
 function loadStats(){try{const raw=JSON.parse(localStorage.getItem(STATS_KEY)||'{}');return raw&&typeof raw==='object'?raw:{}}catch(_){return{}}}
 let directionStats=loadStats();
@@ -239,7 +249,16 @@ function practiceGroup(rows){
 }
 const clearTick=()=>{if(tick!==null){clearInterval(tick);tick=null}};
 const clearNext=()=>{if(nextTimer!==null){clearTimeout(nextTimer);nextTimer=null}};
-const cancelSpeech=()=>{speechGeneration++;if(speechOK){try{window.speechSynthesis.cancel()}catch(_){}}el('play').classList.remove('playing')};
+function cancelSpeech(){
+ speechGeneration++;
+ if(speechEndTimer!==null){clearTimeout(speechEndTimer);speechEndTimer=null}
+ if(activeClip){
+  activeClip.onended=null;activeClip.onerror=null;activeClip.pause();
+  try{activeClip.currentTime=0}catch(_){}
+  activeClip=null;
+ }
+ el('play').classList.remove('playing');
+}
 function nameOf(id){return byId.get(id)?byId.get(id).name:'—'}
 function refreshRows(){
  const host=el('rows');host.replaceChildren();
@@ -268,15 +287,59 @@ function refreshStats(){
 }
 function displayTime(ms){const remain=Math.max(0,ms);el('timer').textContent=(remain/1000).toFixed(1);el('timer').classList.toggle('urgent',remain<=2000);el('timerTrack').classList.toggle('urgent',remain<=2000);el('timerFill').style.width=(duration?Math.min(100,remain/duration*100):0)+'%'}
 function beginCountdown(){if(phase!=='speaking')return;phase='answering';duration=Number(el('limit').value)*1000;answerStartedAt=performance.now();expiresAt=answerStartedAt+duration;displayTime(duration);el('activityText').textContent='Click the direction before time runs out';refreshStats();clearTick();tick=setInterval(()=>{const remain=expiresAt-performance.now();displayTime(remain);if(remain<=0)finish(null)},40)}
-function chooseVoice(){const voices=window.speechSynthesis.getVoices().filter(v=>/^en([-_]|$)/i.test(v.lang));return voices.find(v=>/^en-GB$/i.test(v.lang))||voices.find(v=>/^en-/i.test(v.lang))||null}
-function talk(){if(!queue.length||!(phase==='speaking'||phase==='answering'))return;
- if(!speechOK){el('activityText').textContent='Speech is not supported in this browser. Try Chrome, Edge, or Safari.';return}
- cancelSpeech();const token=speechGeneration;const utterance=new SpeechSynthesisUtterance(byId.get(queue[position]).say);
- const voice=chooseVoice();if(voice)utterance.voice=voice;utterance.lang=voice?voice.lang:'en-GB';utterance.rate=Number(el('speed').value);utterance.volume=1;
- utterance.onstart=()=>{if(token!==speechGeneration)return;el('play').classList.add('playing');el('activityText').textContent=phase==='answering'?'Replaying · Timer continues':'Playing…'};
- utterance.onend=()=>{if(token!==speechGeneration)return;el('play').classList.remove('playing');if(phase==='speaking')beginCountdown();else if(phase==='answering')el('activityText').textContent='Click the direction before time runs out'};
- utterance.onerror=()=>{if(token!==speechGeneration)return;el('play').classList.remove('playing');el('activityText').textContent='Playback failed. Tap the speaker to retry.'};
- try{window.speechSynthesis.speak(utterance)}catch(_){el('activityText').textContent='Cannot play speech. Check your browser audio settings.'}
+function playThroughWeChat(run){
+ const bridge=window.WeixinJSBridge;
+ if(/MicroMessenger/i.test(navigator.userAgent)&&bridge&&typeof bridge.invoke==='function'){
+  bridge.invoke('getNetworkType',{},run);
+  return;
+ }
+ run();
+}
+function talk(){
+ if(!queue.length||!(phase==='speaking'||phase==='answering'))return;
+ const audio=clips.get(queue[position]);
+ if(!audio){el('activityText').textContent='Playback failed. Tap the speaker to retry.';return}
+ cancelSpeech();
+ const token=speechGeneration;
+ activeClip=audio;
+ audio.playbackRate=Number(el('speed').value)||1;
+ audio.volume=1;
+ let settled=false;
+ const markFinished=()=>{
+  if(settled||token!==speechGeneration)return;
+  settled=true;
+  if(speechEndTimer!==null){clearTimeout(speechEndTimer);speechEndTimer=null}
+  el('play').classList.remove('playing');
+  if(phase==='speaking')beginCountdown();
+  else if(phase==='answering')el('activityText').textContent='Click the direction before time runs out';
+ };
+ const armBackup=()=>{
+  if(settled||token!==speechGeneration||speechEndTimer!==null)return;
+  const seconds=Number.isFinite(audio.duration)&&audio.duration>0?audio.duration/Math.max(0.5,audio.playbackRate):2.2;
+  speechEndTimer=setTimeout(markFinished,(seconds+0.45)*1000);
+ };
+ audio.onended=markFinished;
+ audio.onerror=()=>{
+  if(settled||token!==speechGeneration)return;
+  settled=true;
+  el('play').classList.remove('playing');
+  el('activityText').textContent='Playback failed. Tap the speaker to retry.';
+ };
+ const go=()=>{
+  if(token!==speechGeneration)return;
+  try{audio.currentTime=0}catch(_){}
+  let pending;
+  try{pending=audio.play()}catch(_){pending=Promise.reject()}
+  const started=()=>{
+   if(token!==speechGeneration)return;
+   el('play').classList.add('playing');
+   el('activityText').textContent=phase==='answering'?'Replaying · Timer continues':'Playing…';
+   armBackup();
+  };
+  if(pending&&pending.then)pending.then(started).catch(()=>{if(token!==speechGeneration)return;el('activityText').textContent='Tap the speaker to play the direction.'});
+  else started();
+ };
+ playThroughWeChat(go);
 }
 function setUpQuestion(){
  phase='speaking';answerStartedAt=null;clearMarks();setCompassEnabled(true);el('play').disabled=false;
@@ -351,8 +414,11 @@ el('missDialog').addEventListener('click',event=>{if(event.target===el('missDial
 el('slowDialog').addEventListener('click',event=>{if(event.target===el('slowDialog'))el('slowDialog').close()});
 el('play').addEventListener('click',talk);
 refreshStats();
-if(!speechOK)el('activityText').textContent='Speech is not supported in this browser. Try Chrome, Edge, or Safari.';
-if(speechOK)window.speechSynthesis.addEventListener('voiceschanged',()=>{});
+document.addEventListener('WeixinJSBridgeReady',()=>{
+ const bridge=window.WeixinJSBridge;
+ if(!bridge||typeof bridge.invoke!=='function'||!activeClip||activeClip.paused===false)return;
+ if(phase==='speaking'||phase==='answering')talk();
+});
 })();
 </script>
 </body>
