@@ -131,7 +131,12 @@ function randomIndex(n){
 function drawRound(pool){
  const ids=pool.filter(id=>byId.has(id));
  if(!ids.length)return [];
- return Array.from({length:ROUND_SIZE},()=>ids[randomIndex(ids.length)]);
+ const out=[];
+ while(out.length<ROUND_SIZE){
+  const choices=ids.length>1&&out.length?ids.filter(id=>id!==out[out.length-1]):ids;
+  out.push(choices[randomIndex(choices.length)]);
+ }
+ return out;
 }
 const grid=el('grid');
 const sectors=new Map([...grid.querySelectorAll('.cell[data-id]')].map(button=>[button.dataset.id,button]));
