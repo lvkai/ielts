@@ -26,6 +26,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 .results{padding:23px 23px 20px;min-height:548px}.result-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 14px;margin-bottom:10px}.result-top h2{font-size:17px;margin:0;letter-spacing:-.02em}.result-metrics{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.score{font-size:12px;color:var(--muted)}.score b{font-size:17px;color:var(--text);font-variant-numeric:tabular-nums}.cols,.res-row{display:grid;grid-template-columns:28px minmax(0,1fr) minmax(0,1fr) 78px 43px;align-items:center;gap:6px}.cols{font-size:11px;color:var(--muted);padding:15px 8px 11px;border-bottom:1px solid var(--line)}.res-row{min-height:42px;border-bottom:1px solid #f0f3f7;padding:9px 8px;font-size:13px;font-variant-numeric:tabular-nums}.res-row:last-child{border-bottom:0}.res-row.active{border-radius:9px;background:#f2f5ff;border-color:transparent}.num{font-size:12px;color:#a0acc0}.hidden-val{color:#c7ceda}.truth{font-weight:760}.status{font-size:11px;font-weight:800;white-space:nowrap}.status.good{color:var(--green)}.status.bad{color:var(--red)}.status.timeout{color:#ad7419}.status.icon{font-size:19px;line-height:1}.status.mute{color:#9aa7ba}.status.current{color:var(--blue)}.time-used{font-size:12px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.footnote{margin-top:15px;padding-top:15px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.6}.footnote strong{color:var(--text)}.bottom{margin-top:22px;text-align:center;font-size:12px;line-height:1.7;color:var(--muted)}
 @media(max-width:800px){.wrap{padding:27px 16px 34px}header{align-items:start;flex-direction:column}.settings{width:100%}.setting{flex:1}.setting select{width:100%}.layout{grid-template-columns:1fr}.practice{min-height:518px}.results{min-height:0}.activity{min-height:246px}.bottom{margin-top:16px}}
 @media(max-width:460px){.wrap{padding:22px 12px 25px}.heading{font-size:27px}.practice{padding:20px 17px 21px;min-height:500px}.results{padding:19px 15px}.sound{height:78px;width:78px;border-radius:23px}.activity-title{font-size:18px}.answer-row input{height:58px}.primary{min-height:58px;padding:0 20px}.cols,.res-row{grid-template-columns:25px minmax(0,1fr) minmax(0,1fr) 72px 40px;gap:4px}}
+.setting.voice select{width:200px}@media(max-width:800px){.setting.voice select{width:100%}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
 .home-nav{margin:0 0 10px}.home-nav a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.home-nav a:hover{text-decoration:underline}.home-nav a:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}
 .history-links{display:flex;gap:12px;margin-top:6px}.text-link{border:0;padding:0;background:none;color:var(--blue);font-size:13px;font-weight:750;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.text-link:hover{color:#2148c4}
@@ -41,6 +42,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
   <div class="settings" aria-label="Test settings">
    <label class="setting"><span>Time limit</span><select id="limit" aria-label="Time limit per question"><option value="2">2 sec</option><option value="3">3 sec</option><option value="5" selected>5 sec</option><option value="10">10 sec</option></select></label>
    <label class="setting"><span>Playback speed</span><select id="speed" aria-label="Playback speed"><option value="0.8">0.8×</option><option value="1" selected>1.0×</option><option value="1.2">1.2×</option></select></label>
+   <label class="setting voice"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
   </div>
  </header>
  <main class="layout">
@@ -70,7 +72,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="footnote" id="summary">Answers and response times appear after each question. Timing starts after speech ends.</div>
   </aside>
  </main>
- <p class="bottom">Uses your device’s English text-to-speech engine. Works offline in Chrome, Edge, or Safari. Missed numbers and answer times stay in this browser.</p>
+ <p class="bottom">British female and British male are recorded in the page, so they play in WeChat. Other voices use this device’s speech. Missed numbers and answer times stay in this browser.</p>
 </div>
 <dialog id="missDialog" class="stats-dialog" aria-labelledby="missTitle">
  <div class="dialog-head"><h3 id="missTitle">Missed</h3><button type="button" id="closeMiss" class="dialog-close" aria-label="Close">×</button></div>
@@ -102,7 +104,17 @@ function drawRound(pool){
  }
  return output;
 }
-const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
+const recordedVoices=[{id:'f',name:'British female'},{id:'m',name:'British male'}];
+const VOICE_KEY='ielts-dictation-voice';
+const inWeChat=/MicroMessenger/i.test(navigator.userAgent);
+const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window)&&!inWeChat;
+const clip=document.createElement('audio');
+clip.preload='auto';
+clip.setAttribute('playsinline','');
+clip.setAttribute('webkit-playsinline','');
+if('preservesPitch' in clip)clip.preservesPitch=true;
+clip.style.cssText='position:absolute;width:1px;height:1px;opacity:0;pointer-events:none';
+document.body.append(clip);
 // Prepare audio on the user's Start/Retry click so browsers allow the completion sound.
 const SoundContext=window.AudioContext||window.webkitAudioContext;
 let completionAudio=null;
@@ -152,7 +164,7 @@ function playCompletionSound(perfect){
  if(completionAudio.state==='running')play();
  else completionAudio.resume().then(()=>{if(completionAudio.state==='running'&&phase==='complete'&&answers.every(x=>x.ok)===perfect)play()}).catch(()=>{});
 }
-let numbers=[],answers=[],position=0,phase='idle',speechGeneration=0,tick=null,nextTimer=null,expiresAt=0,duration=5000,answerStartedAt=null,reviewMisses=[];
+let numbers=[],answers=[],position=0,phase='idle',speechGeneration=0,speechEndTimer=null,activeClip=null,tick=null,nextTimer=null,expiresAt=0,duration=5000,answerStartedAt=null,reviewMisses=[];
 const STATS_KEY='ielts-number-dictation-stats';
 function loadStats(){try{const raw=JSON.parse(localStorage.getItem(STATS_KEY)||'{}');return raw&&typeof raw==='object'?raw:{}}catch(_){return{}}}
 let numberStats=loadStats();
@@ -202,7 +214,40 @@ function practiceGroup(rows){
 }
 const clearTick=()=>{if(tick!==null){clearInterval(tick);tick=null}};
 const clearNext=()=>{if(nextTimer!==null){clearTimeout(nextTimer);nextTimer=null}};
-const cancelSpeech=()=>{speechGeneration++;if(speechOK){try{window.speechSynthesis.cancel()}catch(_){}}el('play').classList.remove('playing')};
+function cancelSpeech(){
+ speechGeneration++;
+ if(speechEndTimer!==null){clearTimeout(speechEndTimer);speechEndTimer=null}
+ if(speechOK){try{window.speechSynthesis.cancel()}catch(_){}}
+ clip.onended=null;clip.onerror=null;clip.pause();
+ try{clip.currentTime=0}catch(_){}
+ activeClip=null;
+ el('play').classList.remove('playing');
+}
+function systemVoices(){
+ if(!speechOK)return [];
+ return window.speechSynthesis.getVoices().filter(v=>/^en([-_]|$)/i.test(v.lang)).sort((a,b)=>(/^en-GB/i.test(a.lang)?0:1)-( /^en-GB/i.test(b.lang)?0:1)||a.name.localeCompare(b.name));
+}
+function fillVoices(){
+ const select=el('voice');
+ const previous=select.value||localStorage.getItem(VOICE_KEY)||'f';
+ select.replaceChildren();
+ for(const voice of recordedVoices){
+  const option=document.createElement('option');
+  option.value=voice.id;option.textContent=voice.name;select.append(option);
+ }
+ for(const voice of systemVoices()){
+  const option=document.createElement('option');
+  option.value='system:'+voice.voiceURI;option.textContent=voice.name;select.append(option);
+ }
+ select.value=[...select.options].some(option=>option.value===previous)?previous:'f';
+}
+function rememberVoice(){try{localStorage.setItem(VOICE_KEY,el('voice').value)}catch(_){}}
+function recordingFolder(){return el('voice').value==='m'?'m':'f'}
+function playThroughWeChat(run){
+ const bridge=window.WeixinJSBridge;
+ if(inWeChat&&bridge&&typeof bridge.invoke==='function'){bridge.invoke('getNetworkType',{},run);return}
+ run();
+}
 function refreshRows(){const host=el('rows');host.replaceChildren();for(let i=0;i<(numbers.length||10);i++){
  const result=answers[i],active=position===i&&(phase==='speaking'||phase==='answering');
  const row=document.createElement('div');row.className='res-row'+(active?' active':'');
@@ -220,15 +265,82 @@ function refreshStats(){el('qIndex').textContent=phase==='idle'?'0':phase==='com
  el('qTotal').textContent=String(numbers.length||10);el('progress').style.width=(numbers.length?(answers.length/numbers.length*100):0)+'%';el('score').textContent=String(answers.filter(a=>a.ok).length);el('completed').textContent=String(answers.length);el('avgTime').textContent=answers.length?(answers.reduce((total,item)=>total+item.elapsed,0)/answers.length).toFixed(1)+'s':'—';refreshRows();}
 function displayTime(ms){const remain=Math.max(0,ms);el('timer').textContent=(remain/1000).toFixed(1);el('timer').classList.toggle('urgent',remain<=2000);el('timerTrack').classList.toggle('urgent',remain<=2000);el('timerFill').style.width=(duration?Math.min(100,remain/duration*100):0)+'%';}
 function beginCountdown(){if(phase!=='speaking')return;phase='answering';duration=Number(el('limit').value)*1000;answerStartedAt=performance.now();expiresAt=answerStartedAt+duration;displayTime(duration);el('activityText').textContent='Submit before time runs out';refreshStats();clearTick();tick=setInterval(()=>{const remain=expiresAt-performance.now();displayTime(remain);if(remain<=0)finish('timeout')},40);}
-function chooseVoice(){const voices=window.speechSynthesis.getVoices().filter(v=>/^en([-_]|$)/i.test(v.lang));return voices.find(v=>/^en-GB$/i.test(v.lang))||voices.find(v=>/^en-/i.test(v.lang))||null;}
-function talk(){if(!numbers.length||!(phase==='speaking'||phase==='answering'))return;
- if(!speechOK){el('activityText').textContent='Speech is not supported in this browser. Try Chrome, Edge, or Safari.';return;}
- cancelSpeech();const token=speechGeneration;const utterance=new SpeechSynthesisUtterance(english(numbers[position]));
- const voice=chooseVoice();if(voice)utterance.voice=voice;utterance.lang=voice?voice.lang:'en-GB';utterance.rate=Number(el('speed').value);utterance.volume=1;
- utterance.onstart=()=>{if(token!==speechGeneration)return;el('play').classList.add('playing');el('activityText').textContent=phase==='answering'?'Replaying · Timer continues':'Playing…'};
- utterance.onend=()=>{if(token!==speechGeneration)return;el('play').classList.remove('playing');if(phase==='speaking')beginCountdown();else if(phase==='answering')el('activityText').textContent='Submit before time runs out'};
- utterance.onerror=e=>{if(token!==speechGeneration)return;el('play').classList.remove('playing');el('activityText').textContent='Playback failed. Tap the speaker to retry.';};
- try{window.speechSynthesis.speak(utterance)}catch(_){el('activityText').textContent='Cannot play speech. Check your browser audio settings.'}
+function afterSpeech(token){
+ if(token!==speechGeneration)return false;
+ if(speechEndTimer!==null){clearTimeout(speechEndTimer);speechEndTimer=null}
+ el('play').classList.remove('playing');
+ if(phase==='speaking')beginCountdown();
+ else if(phase==='answering')el('activityText').textContent='Submit before time runs out';
+ return true;
+}
+function playFile(fileId){
+ cancelSpeech();
+ const token=speechGeneration;
+ const audio=clip;
+ activeClip=audio;
+ const url=new URL('number-audio/'+recordingFolder()+'/'+fileId+'.mp3',document.baseURI).href;
+ audio.playbackRate=Number(el('speed').value)||1;
+ audio.volume=1;
+ let settled=false;
+ const markFinished=()=>{if(settled)return;settled=true;afterSpeech(token)};
+ const armBackup=()=>{
+  if(settled||token!==speechGeneration||speechEndTimer!==null)return;
+  const seconds=Number.isFinite(audio.duration)&&audio.duration>0?audio.duration/Math.max(0.5,audio.playbackRate):2.2;
+  speechEndTimer=setTimeout(markFinished,(seconds+0.45)*1000);
+ };
+ audio.onended=markFinished;
+ audio.onerror=()=>{
+  if(settled||token!==speechGeneration)return;
+  settled=true;
+  el('play').classList.remove('playing');
+  el('activityText').textContent='Playback failed. Tap the speaker to retry.';
+ };
+ const go=()=>{
+  if(token!==speechGeneration)return;
+  if(audio.src!==url)audio.src=url;
+  try{audio.currentTime=0}catch(_){}
+  let pending;
+  try{pending=audio.play()}catch(_){pending=Promise.reject()}
+  const started=()=>{
+   if(token!==speechGeneration)return;
+   el('play').classList.add('playing');
+   el('activityText').textContent=phase==='answering'?'Replaying · Timer continues':'Playing…';
+   armBackup();
+  };
+  if(pending&&pending.then)pending.then(started).catch(()=>{if(token!==speechGeneration)return;el('activityText').textContent='Tap the speaker to play the number.'});
+  else started();
+ };
+ playThroughWeChat(go);
+}
+function speakSystem(text,fileId){
+ const uri=el('voice').value.slice(7);
+ const voice=systemVoices().find(item=>item.voiceURI===uri);
+ if(!voice){playFile(fileId);return}
+ cancelSpeech();
+ const token=speechGeneration;
+ const utterance=new SpeechSynthesisUtterance(text);
+ utterance.voice=voice;utterance.lang=voice.lang||'en-GB';utterance.rate=Number(el('speed').value)||1;utterance.volume=1;
+ let settled=false;
+ const markFinished=()=>{if(settled)return;settled=true;afterSpeech(token)};
+ utterance.onstart=()=>{
+  if(token!==speechGeneration)return;
+  el('play').classList.add('playing');
+  el('activityText').textContent=phase==='answering'?'Replaying · Timer continues':'Playing…';
+  const seconds=Math.max(4,(text.length*0.14)/Math.max(0.5,utterance.rate)+1.6);
+  if(speechEndTimer===null)speechEndTimer=setTimeout(markFinished,seconds*1000);
+ };
+ utterance.onend=markFinished;
+ utterance.onerror=()=>{if(settled||token!==speechGeneration)return;settled=true;playFile(fileId)};
+ setTimeout(()=>{
+  if(token!==speechGeneration)return;
+  try{window.speechSynthesis.resume();window.speechSynthesis.speak(utterance)}catch(_){if(!settled){settled=true;playFile(fileId)}}
+ },40);
+}
+function talk(){
+ if(!numbers.length||!(phase==='speaking'||phase==='answering'))return;
+ const fileId=numbers[position];
+ if(el('voice').value.startsWith('system:'))speakSystem(english(fileId),fileId);
+ else playFile(fileId);
 }
 function setUpQuestion(){phase='speaking';answerStartedAt=null;el('answer').value='';el('answer').disabled=false;el('submit').disabled=false;el('play').disabled=false;el('activityTitle').textContent='Listen and type the number';el('activityText').textContent='Preparing audio…';el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerFill').style.width='0%';el('timerTrack').classList.remove('urgent');refreshStats();el('answer').focus({preventScroll:true});talk()}
 function showRoundControls(running){el('start').classList.toggle('hide',running);el('stop').classList.toggle('hide',!running);if(running)el('retry').classList.add('hide')}
@@ -258,7 +370,15 @@ el('missDialog').addEventListener('click',event=>{if(event.target===el('missDial
 el('slowDialog').addEventListener('click',event=>{if(event.target===el('slowDialog'))el('slowDialog').close()});
 el('play').addEventListener('click',talk);el('submit').addEventListener('click',()=>finish('submit'));
 el('answer').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish('submit')}});
-refreshStats();if(!speechOK)el('activityText').textContent='Speech is not supported in this browser. Try Chrome, Edge, or Safari.';
+fillVoices();
+el('voice').addEventListener('change',rememberVoice);
+if(speechOK)window.speechSynthesis.addEventListener('voiceschanged',fillVoices);
+refreshStats();
+document.addEventListener('WeixinJSBridgeReady',()=>{
+ const bridge=window.WeixinJSBridge;
+ if(!bridge||typeof bridge.invoke!=='function'||!activeClip||activeClip.paused===false)return;
+ if(phase==='speaking'||phase==='answering')talk();
+});
 if(location.hash.startsWith('#import-practice=')){
  let payload=null;
  try{payload=JSON.parse(decodeURIComponent(location.hash.slice('#import-practice='.length)))}catch(_){}
