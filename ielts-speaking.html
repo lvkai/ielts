@@ -32,7 +32,8 @@
 #topicCoverageDialog{border:0;border-radius:14px;padding:0;width:min(460px,calc(100vw - 28px));max-height:min(72vh,560px);color:#1c2b3a;box-shadow:0 18px 50px rgba(20,40,70,.22)}
 #practiceHistoryDialog{border:0;border-radius:14px;padding:0;width:min(560px,calc(100vw - 28px));max-height:min(78vh,680px);color:#1c2b3a;box-shadow:0 18px 50px rgba(20,40,70,.22)}
 #practiceHistoryDialog::backdrop{background:rgba(20,32,48,.38)}
-.history-log-row{display:grid;grid-template-columns:minmax(132px,168px) minmax(0,1fr);gap:12px;width:100%;padding:10px 16px;border:0;border-bottom:1px solid #eef2f6;background:#fff;text-align:left;color:inherit;cursor:pointer}
+.history-log-day{margin:0;padding:8px 16px;background:#f4f7fb;color:#315782;font-size:12px;font-weight:750;letter-spacing:.02em}
+.history-log-row{display:grid;grid-template-columns:minmax(108px,132px) minmax(0,1fr);gap:12px;width:100%;padding:10px 16px;border:0;border-bottom:1px solid #eef2f6;background:#fff;text-align:left;color:inherit;cursor:pointer}
 .history-log-row:hover{background:#f8fbff}
 .history-log-time{font-size:12px;font-weight:750;color:#315782;line-height:1.35}
 .history-log-topic{display:block;font-size:11px;font-weight:750;color:#617081;margin-bottom:2px}
@@ -2594,7 +2595,7 @@ function practiceAttemptRows(){
  const rows=[];
  for(const [key,entries] of practiceHistory){
   const detail=questionDetailForKey(key);
-  if(!detail)continue;
+  if(!detail||detail.part!==speakingPart)continue;
   for(const attempt of entries||[]){
    if(!attempt||!Number.isFinite(attempt.at))continue;
    rows.push({key,at:attempt.at,seconds:attempt.seconds,mode:attempt.mode,topic:detail.topic,index:detail.index,part:detail.part,question:detail.question});
@@ -2603,8 +2604,15 @@ function practiceAttemptRows(){
  rows.sort((a,b)=>b.at-a.at);
  return rows;
 }
-function formatPracticeTime(at){
- return new Date(at).toLocaleString('en-CA',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+function practiceDayKey(at){
+ const date=new Date(at);
+ return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');
+}
+function formatPracticeDay(at){
+ return new Date(at).toLocaleDateString('en-CA',{year:'numeric',month:'short',day:'numeric'});
+}
+function formatPracticeClock(at){
+ return new Date(at).toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
 }
 function topicBank(part,topic){
  const basic=part===1?part1BasicNames:basicTopicNames;
@@ -2617,28 +2625,39 @@ function topicBank(part,topic){
  return '';
 }
 function renderPracticeHistoryDialog(){
+ const title=document.getElementById('practiceHistoryTitle');
+ if(title)title.textContent='Part '+speakingPart+' history';
  const rows=practiceAttemptRows();
  if(!rows.length){
   const empty=document.createElement('p');
   empty.className='history-log-empty';
-  empty.textContent='No practice recorded yet.';
+  empty.textContent='No Part '+speakingPart+' practice recorded yet.';
   els.practiceHistoryBody.replaceChildren(empty);
   return;
  }
  const list=document.createElement('div');
  list.className='history-log';
+ let day='';
  for(const row of rows){
+  const key=practiceDayKey(row.at);
+  if(key!==day){
+   day=key;
+   const heading=document.createElement('h4');
+   heading.className='history-log-day';
+   heading.textContent=formatPracticeDay(row.at);
+   list.append(heading);
+  }
   const button=document.createElement('button');
   button.type='button';
   button.className='history-log-row';
   const time=document.createElement('span');
   time.className='history-log-time';
   const seconds=Number.isFinite(row.seconds)?' · '+row.seconds.toFixed(1)+'s':'';
-  time.textContent=formatPracticeTime(row.at)+seconds;
+  time.textContent=formatPracticeClock(row.at)+seconds;
   const body=document.createElement('span');
   const topic=document.createElement('span');
   topic.className='history-log-topic';
-  topic.textContent=(row.part?'Part '+row.part+' · ':'')+row.topic;
+  topic.textContent=row.topic;
   const question=document.createElement('span');
   question.className='history-log-q';
   question.textContent=row.question;
