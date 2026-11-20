@@ -2688,6 +2688,7 @@ function syncControls(){
  els.beginPart2.disabled=storageLoading||saving||thinkActive||(testActive&&!runningPart2)||(!testActive&&busy);
  els.beginPart3.disabled=storageLoading||saving||thinkActive||(testActive&&!runningPart3)||(!testActive&&busy);
  els.beginPart1.textContent=runningPart1?'Stop':'Begin Part 1';
+ els.beginPart1.title=bankMode==='extended'?'Three topics chosen at random':'One topic from the first four, plus two other topics';
  els.beginPart2.textContent=runningPart2?'Stop':'Begin Part 2';
  els.beginPart3.textContent=runningPart3?'Stop':'Begin Part 3';
  els.beginPart1.classList.toggle('in-progress',runningPart1);
@@ -3879,6 +3880,7 @@ function takeRandom(list,count){
 }
 function drawPart1Topics(){
  const names=activeTopicNames().filter(name=>(part1Questions[name]||[]).length);
+ if(bankMode==='extended')return takeRandom(names,3);
  return takeRandom(names.slice(0,4),1).concat(takeRandom(names.slice(4),2));
 }
 function advanceTestAfterSave(){
