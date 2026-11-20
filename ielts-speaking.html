@@ -1793,9 +1793,12 @@ function questionPartForKey(key){
 }
 function recordingTooShort(key,seconds){
  const part=questionPartForKey(key);
- const expected=part===1?30:part===2?120:part===3?60:0;
- if(!expected||!Number.isFinite(Number(seconds)))return false;
- return Number(seconds)<expected/2;
+ // Part 1 stops a real answer after 10s plus 2s of silence, then trims that
+ // silence, so the saved length is often about 10s. Half of the 30s maximum
+ // would discard those answers and stop the test.
+ const minimum=part===1?5:part===2?60:part===3?30:0;
+ if(!minimum||!Number.isFinite(Number(seconds)))return false;
+ return Number(seconds)<minimum;
 }
 function sameDuration(a,b){
  return Number.isFinite(Number(a))&&Number.isFinite(Number(b))&&Math.abs(Number(a)-Number(b))<0.15;
@@ -2918,10 +2921,10 @@ async function startRecording(preparedMic=null){
   saving=true;syncControls();setState('Saving locally…');
   const blob=new Blob(pieces,{type:mr.mimeType||pieces[0]?.type||'audio/webm'});const saved=getItem(key);
   if(mediaRecorder===mr)mediaRecorder=null;
-  let savedToDatabase=false;
+  let savedToDatabase=false,saveError='';
   const tooShort=blob.size&&recordingTooShort(key,currentCaptureSeconds);
   if(tooShort){
-   setMessage('Recording was under half the expected time and was not saved.');
+   setMessage('Recording was too short and was not saved.');
    setState('Not saved','ready');
   }else if(blob.size){
    const oldUrl=saved.url;
@@ -2937,8 +2940,9 @@ async function startRecording(preparedMic=null){
     setStorageStatus('');
     setState('Saved','ready');
    }catch(error){
-    setMessage('Recording is playable now, but could NOT be saved to the database: '+error.message+'.');
-    setStorageStatus('Save failed: '+error.message+'.',true);
+    saveError=error.message||'unknown error';
+    setMessage('Recording is playable now, but could NOT be saved to the database: '+saveError+'.');
+    setStorageStatus('Save failed: '+saveError+'.',true);
     setState('Local save failed');
    }
   }else{setMessage('No audio was captured. Your previous recording remains available.');setState('No new audio')}
@@ -2949,8 +2953,11 @@ async function startRecording(preparedMic=null){
   const shouldAdvance=testActive&&autoAdvanceKey===key;
   autoAdvanceKey=null;
   if(shouldAdvance){
-   if(savedToDatabase&&getKey()===key)advanceTestAfterSave();
-   else finishTest(false,'Test paused because the recording could not be saved.');
+   if(getKey()===key&&(savedToDatabase||tooShort))advanceTestAfterSave();
+   else{
+    const reason=saveError||(!blob.size?'No audio was captured.':'The recording could not be saved.');
+    finishTest(false,'Test paused. '+reason);
+   }
   }
   if(blob.size&&savedToDatabase&&(autoLoadOn()||whisperPipe||whisperLoading))setTimeout(()=>enqueueLocalTranscription(key,blob),shouldAdvance?600:0);
  };
