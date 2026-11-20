@@ -1092,7 +1092,7 @@ const els={bankBasic:$('bankBasic'),bankExtended:$('bankExtended'),bankMark:$('b
 const items=new Map();
 let idx=0,mediaRecorder=null,stream=null,tick=null,clockStart=0,currentCaptureSeconds=0,activeKey=null,recording=false,pending=false,saving=false,storageLoading=true,reader=null,readToken=0,showAnswerClock=false;
 
-let testActive=false,testPart=0,part1Plan=[],part1PlanIndex=0,part1Announce=false;
+let testActive=false,testPart=0,part1Plan=[],part1PlanIndex=0,part1AskIndex=0,part1Announce=false;
 const topicCategory={
  "An Older Person You Admire":"People","A Childhood Friend":"People","A Good Language Learner":"People","Improving Health and Fitness":"People",
  "A Holiday You Would Recommend":"Place","A Natural Place in Your City":"Place","A Public Building":"Place","A Crowded Place":"Place","A City You Would Visit Again":"Place",
@@ -2647,9 +2647,9 @@ function render(){
  let testStep=testPart===2?1:progress.step,testTotal=testPart===2?1:progress.total;
  if(testActive&&testPart===1&&part1Plan.length){
   let before=0;
-  for(let i=0;i<part1PlanIndex;i++)before+=(part1Questions[part1Plan[i]]||[]).length;
-  testTotal=part1Plan.reduce((count,name)=>count+(part1Questions[name]||[]).length,0)||1;
-  testStep=Math.min(testTotal,before+idx+1);
+  for(let i=0;i<part1PlanIndex;i++)before+=part1Plan[i].indices.length;
+  testTotal=part1Plan.reduce((count,group)=>count+group.indices.length,0)||1;
+  testStep=Math.min(testTotal,before+part1AskIndex+1);
  }
  els.currentTopic.textContent=speakingPart===1?'PART 1 · INTRODUCTION':partTwo?'PART 2 · LONG TURN':'PART 3 · DISCUSSION';
  els.qCount.hidden=speakingPart===2;
@@ -3853,7 +3853,7 @@ async function runAsrQueue(){
 
 function finishTest(completed=false,message=''){
  const finishedPart=testPart;
- part1Plan=[];part1PlanIndex=0;part1Announce=false;
+ part1Plan=[];part1PlanIndex=0;part1AskIndex=0;part1Announce=false;
  stopPreparation();testActive=false;testPart=0;autoAdvanceKey=null;showAnswerClock=false;
  if(completed)idx=finishedPart===3?1:0;
  if(!recording&&!pending)stopReading();
@@ -3878,21 +3878,30 @@ function takeRandom(list,count){
  while(out.length<count&&pool.length)out.push(pool.splice(randomBelow(pool.length),1)[0]);
  return out;
 }
+function part1Group(name){
+ const count=(part1Questions[name]||[]).length;
+ const all=Array.from({length:count},(_,i)=>i);
+ const indices=count>4?takeRandom(all,4).sort((a,b)=>a-b):all;
+ return {name,indices};
+}
 function drawPart1Topics(){
  const names=activeTopicNames().filter(name=>(part1Questions[name]||[]).length);
- if(bankMode==='extended')return takeRandom(names,3);
- return takeRandom(names.slice(0,4),1).concat(takeRandom(names.slice(4),2));
+ const picked=bankMode==='extended'?takeRandom(names,3):takeRandom(names.slice(0,4),1).concat(takeRandom(names.slice(4),2));
+ return picked.map(part1Group);
 }
 function advanceTestAfterSave(){
  if(!testActive)return;
  if(testPart===1){
-  const next=idx+1,arr=part1Questions[els.topic.value]||[];
-  if(next<arr.length){idx=next;render();syncControls();void readQuestion();return}
+  const group=part1Plan[part1PlanIndex];
+  const indices=group&&group.indices||[];
+  const nextAsk=part1AskIndex+1;
+  if(nextAsk<indices.length){part1AskIndex=nextAsk;idx=indices[nextAsk];render();syncControls();void readQuestion();return}
   if(part1PlanIndex+1<part1Plan.length){
-   part1PlanIndex++;
-   els.topic.value=part1Plan[part1PlanIndex];
+   part1PlanIndex++;part1AskIndex=0;
+   const next=part1Plan[part1PlanIndex];
+   els.topic.value=next.name;
    rememberTopic();
-   idx=0;part1Announce=true;
+   idx=next.indices[0];part1Announce=true;
    render();syncControls();void readQuestion();return;
   }
   finishTest(true,'Part 1 finished.');
@@ -3908,7 +3917,7 @@ function advanceTestAfterSave(){
 }
 async function beginOrStopTest(part){
  if(testActive){
-  testActive=false;testPart=0;autoAdvanceKey=null;part1Plan=[];part1PlanIndex=0;part1Announce=false;stopPreparation();stopReading();
+  testActive=false;testPart=0;autoAdvanceKey=null;part1Plan=[];part1PlanIndex=0;part1AskIndex=0;part1Announce=false;stopPreparation();stopReading();
   if(recording)endRecording('manual');
   else{pending=false;finishTest(false,'Test stopped. Recordings are kept.')}
   syncControls();return;
@@ -3918,10 +3927,10 @@ async function beginOrStopTest(part){
  if(!('speechSynthesis' in window)){setMessage('Question reading is unavailable in this browser.');return}
  stopSilentTimer();stopReading();testActive=true;testPart=part;
  if(part===1){
-  part1Plan=drawPart1Topics();part1PlanIndex=0;part1Announce=true;
+  part1Plan=drawPart1Topics();part1PlanIndex=0;part1AskIndex=0;part1Announce=true;
   if(!part1Plan.length){testActive=false;testPart=0;part1Announce=false;syncControls();setMessage('No Part 1 topics are available.');return}
-  els.topic.value=part1Plan[0];rememberTopic();idx=0;
- }else{part1Plan=[];part1PlanIndex=0;part1Announce=false;idx=part===3?1:0}
+  els.topic.value=part1Plan[0].name;rememberTopic();idx=part1Plan[0].indices[0];
+ }else{part1Plan=[];part1PlanIndex=0;part1AskIndex=0;part1Announce=false;idx=part===3?1:0}
  render();syncControls();setMessage('');
  void readQuestion();
 }
