@@ -269,7 +269,7 @@ body:not(.part-mode-1) .topic-inline #topic{field-sizing:fixed;flex:0 1 340px;wi
   <div class="field voice-field"><label for="voice">Voice</label><select id="voice" aria-describedby="voiceInfo"><option value="-1">Loading available English voices…</option></select><p class="voice-info sr-only" id="voiceInfo" role="status"></p></div>
   <div class="field"><label for="rate">Speed</label><select id="rate"><option value="0.8">0.8×</option><option value="0.9" selected>0.9×</option><option value="1">1.0×</option><option value="1.1">1.1×</option></select></div>
 </div>
-<div class="begin-test-row"><button type="button" id="beginPart1" class="btn begin-test" title="Practice the Part 1 questions">Begin Part 1</button><button type="button" id="beginPart2" class="btn begin-test" title="Practice the Part 2 long turn" hidden>Begin Part 2</button><button type="button" id="beginPart3" class="btn begin-test" title="Practice the Part 3 questions" hidden>Begin Part 3</button></div>
+<div class="begin-test-row"><button type="button" id="beginPart1" class="btn begin-test" title="One topic from the first four, plus two other topics">Begin Part 1</button><button type="button" id="beginPart2" class="btn begin-test" title="Practice the Part 2 long turn" hidden>Begin Part 2</button><button type="button" id="beginPart3" class="btn begin-test" title="Practice the Part 3 questions" hidden>Begin Part 3</button></div>
 </section>
 <section class="question-block"><div class="qhead"><div class="tag" id="currentTopic">PART 2 · LONG TURN</div><div class="count" id="qCount">01 / 05</div></div><div class="progress"><div id="progressFill"></div></div><h2 id="question"></h2><div id="cueCard" class="cue-card" hidden><div class="cue-intro">You should say:</div><ul id="cuePoints"></ul></div></section>
 <div class="timer-controls"><div class="actions"><button type="button" id="part3Think" class="btn" title="Read the question, then 60 seconds to answer. Nothing is saved." hidden>Read</button><button type="button" id="read" class="btn"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>Read &amp; Record</button><button type="button" id="stopRecord" class="btn danger">Stop recording</button><button type="button" id="next" class="btn">Next</button></div>
@@ -1092,7 +1092,7 @@ const els={bankBasic:$('bankBasic'),bankExtended:$('bankExtended'),bankMark:$('b
 const items=new Map();
 let idx=0,mediaRecorder=null,stream=null,tick=null,clockStart=0,currentCaptureSeconds=0,activeKey=null,recording=false,pending=false,saving=false,storageLoading=true,reader=null,readToken=0,showAnswerClock=false;
 
-let testActive=false,testPart=0;
+let testActive=false,testPart=0,part1Plan=[],part1PlanIndex=0,part1Announce=false;
 const topicCategory={
  "An Older Person You Admire":"People","A Childhood Friend":"People","A Good Language Learner":"People","Improving Health and Fitness":"People",
  "A Holiday You Would Recommend":"Place","A Natural Place in Your City":"Place","A Public Building":"Place","A Crowded Place":"Place","A City You Would Visit Again":"Place",
@@ -1650,7 +1650,7 @@ const answerSeconds=()=>speakingPart===1?30:(isPart2()?120:60);
 const isPart2=()=>speakingPart!==1&&!!currentQuestions()[els.topic.value]&&currentQuestions()[els.topic.value][idx]&&currentQuestions()[els.topic.value][idx].part===2;
 let prepActive=false,prepTick=null,prepStart=0,prepFollowUp=null,micHold=null,speechWakeAt=0;
 let thinkActive=false,thinkTick=null,thinkStart=0;
-let part3TransitionTimer=null;
+let part3TransitionTimer=null,part1PauseTimer=null;
 
 // The voice activity meter reads the existing authorized microphone stream; no additional permission.
 const AUTO_ADVANCE_MIN_SECONDS=30;
@@ -2210,6 +2210,7 @@ function setMessage(message){els.micMessage.textContent=message}
 function stopReading(){
  ++readToken;
  if(part3TransitionTimer!==null){clearTimeout(part3TransitionTimer);part3TransitionTimer=null}
+ if(part1PauseTimer!==null){clearTimeout(part1PauseTimer);part1PauseTimer=null}
  const synth=window.speechSynthesis;
  if(!synth)return;
  try{if(synth.paused)synth.resume()}catch(_){}
@@ -2643,7 +2644,13 @@ function render(){
  const arr=currentQuestions()[els.topic.value]||[];
  const q=arr[idx]||{q:'',part:0,cue:[]},saved=getItem(),partTwo=speakingPart===2||q.part===2;
  const progress=visibleProgress();
- const testStep=testPart===2?1:progress.step,testTotal=testPart===2?1:progress.total;
+ let testStep=testPart===2?1:progress.step,testTotal=testPart===2?1:progress.total;
+ if(testActive&&testPart===1&&part1Plan.length){
+  let before=0;
+  for(let i=0;i<part1PlanIndex;i++)before+=(part1Questions[part1Plan[i]]||[]).length;
+  testTotal=part1Plan.reduce((count,name)=>count+(part1Questions[name]||[]).length,0)||1;
+  testStep=Math.min(testTotal,before+idx+1);
+ }
  els.currentTopic.textContent=speakingPart===1?'PART 1 · INTRODUCTION':partTwo?'PART 2 · LONG TURN':'PART 3 · DISCUSSION';
  els.qCount.hidden=speakingPart===2;
  els.qCount.textContent=testActive?('Test '+testStep+' / '+testTotal):(String(progress.step).padStart(2,'0')+' / '+String(progress.total).padStart(2,'0'));
@@ -2786,11 +2793,32 @@ async function readQuestion(){
  setState('Reading question…');setMessage('');
  showAnswerClock=true;setTime(0);syncControls();
  const questionKey=getKey(),inTest=testActive;
- speakPart2Instruction(currentQuestions()[els.topic.value][idx].q,()=>{
-  pending=false;
-  if(getKey()!==questionKey||(inTest&&!testActive))return;
-  void startRecording(mic);
- },()=>{setState('Reading question');els.timeHelp.textContent='Recording starts after the question.'});
+ const questionText=currentQuestions()[els.topic.value][idx].q;
+ const speakQuestion=()=>{
+  if(inTest&&!testActive){pending=false;syncControls();return}
+  speakPart2Instruction(questionText,()=>{
+   pending=false;
+   if(getKey()!==questionKey||(inTest&&!testActive))return;
+   void startRecording(mic);
+  },()=>{setState('Reading question');els.timeHelp.textContent='Recording starts after the question.'});
+ };
+ if(inTest&&testPart===1&&part1Announce){
+  part1Announce=false;
+  const topicName=els.topic.value;
+  setState('Introducing topic');
+  els.timeHelp.textContent='The questions start after a short pause.';
+  setMessage("Let's talk about "+topicName+'.');
+  speakPart2Instruction("Let's talk about "+topicName+'.',()=>{
+   if(!testActive){pending=false;syncControls();return}
+   part1PauseTimer=setTimeout(()=>{
+    part1PauseTimer=null;
+    if(!testActive){pending=false;syncControls();return}
+    speakQuestion();
+   },1000);
+  });
+  return;
+ }
+ speakQuestion();
 }
 function stopTimer(){if(tick!==null){clearInterval(tick);tick=null}}
 function stopSilenceMonitor(){
@@ -3824,6 +3852,7 @@ async function runAsrQueue(){
 
 function finishTest(completed=false,message=''){
  const finishedPart=testPart;
+ part1Plan=[];part1PlanIndex=0;part1Announce=false;
  stopPreparation();testActive=false;testPart=0;autoAdvanceKey=null;showAnswerClock=false;
  if(completed)idx=finishedPart===3?1:0;
  if(!recording&&!pending)stopReading();
@@ -3833,11 +3862,37 @@ function finishTest(completed=false,message=''){
  if(message)setMessage(message);
  resumeGrammarQueue();
 }
+function randomBelow(n){
+ if(n<=1)return 0;
+ if(globalThis.crypto?.getRandomValues){
+  const bits=new Uint32Array(1),range=0x100000000,limit=Math.floor(range/n)*n;
+  let value;
+  do{crypto.getRandomValues(bits);value=bits[0]}while(value>=limit);
+  return value%n;
+ }
+ return Math.floor(Math.random()*n);
+}
+function takeRandom(list,count){
+ const pool=list.slice(),out=[];
+ while(out.length<count&&pool.length)out.push(pool.splice(randomBelow(pool.length),1)[0]);
+ return out;
+}
+function drawPart1Topics(){
+ const names=activeTopicNames().filter(name=>(part1Questions[name]||[]).length);
+ return takeRandom(names.slice(0,4),1).concat(takeRandom(names.slice(4),2));
+}
 function advanceTestAfterSave(){
  if(!testActive)return;
  if(testPart===1){
   const next=idx+1,arr=part1Questions[els.topic.value]||[];
   if(next<arr.length){idx=next;render();syncControls();void readQuestion();return}
+  if(part1PlanIndex+1<part1Plan.length){
+   part1PlanIndex++;
+   els.topic.value=part1Plan[part1PlanIndex];
+   rememberTopic();
+   idx=0;part1Announce=true;
+   render();syncControls();void readQuestion();return;
+  }
   finishTest(true,'Part 1 finished.');
   return;
  }
@@ -3851,7 +3906,7 @@ function advanceTestAfterSave(){
 }
 async function beginOrStopTest(part){
  if(testActive){
-  testActive=false;testPart=0;autoAdvanceKey=null;stopPreparation();stopReading();
+  testActive=false;testPart=0;autoAdvanceKey=null;part1Plan=[];part1PlanIndex=0;part1Announce=false;stopPreparation();stopReading();
   if(recording)endRecording('manual');
   else{pending=false;finishTest(false,'Test stopped. Recordings are kept.')}
   syncControls();return;
@@ -3859,7 +3914,12 @@ async function beginOrStopTest(part){
  if(recording||pending||saving||storageLoading||prepActive||thinkActive)return;
  if(part!==1&&part!==2&&part!==3)return;
  if(!('speechSynthesis' in window)){setMessage('Question reading is unavailable in this browser.');return}
- stopSilentTimer();stopReading();testActive=true;testPart=part;idx=part===3?1:0;
+ stopSilentTimer();stopReading();testActive=true;testPart=part;
+ if(part===1){
+  part1Plan=drawPart1Topics();part1PlanIndex=0;part1Announce=true;
+  if(!part1Plan.length){testActive=false;testPart=0;part1Announce=false;syncControls();setMessage('No Part 1 topics are available.');return}
+  els.topic.value=part1Plan[0];rememberTopic();idx=0;
+ }else{part1Plan=[];part1PlanIndex=0;part1Announce=false;idx=part===3?1:0}
  render();syncControls();setMessage('');
  void readQuestion();
 }
