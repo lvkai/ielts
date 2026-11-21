@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f7fa">
+<meta name="description" content="Public feedback for the IELTS practice pages. Read posts and comments, or add your own with a GitHub account.">
+<link rel="canonical" href="https://lvkai.github.io/ielts/feedback.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Feedback | IELTS Practice</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
+<style>
+:root{color-scheme:light;--ink:#15202f;--muted:#617081;--line:#dfe5ec;--blue:#234b81;--blue2:#eaf1fa;--surface:#fff;--bg:#f5f7fa;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-size:15px}button{font:inherit;cursor:pointer}a:focus-visible,button:focus-visible{outline:3px solid #93b9ed;outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding:48px 22px 64px}
+.home-nav{margin:0 0 10px}.home-nav a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.home-nav a:hover{text-decoration:underline}
+.eyebrow{color:#4e6685;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+h1{margin:8px 0 6px;font-size:32px;letter-spacing:-.03em;font-weight:750}
+.subtitle{margin:0;color:var(--muted);line-height:1.5;font-size:15px;max-width:42em}
+.actions{display:flex;align-items:center;gap:12px;margin-top:22px}
+.post{display:inline-flex;align-items:center;min-height:42px;padding:0 16px;border-radius:10px;background:var(--blue);color:#fff;font-weight:750;text-decoration:none}
+.post:hover{background:#1b3d6b}
+.note{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.board{display:grid;gap:12px;margin-top:28px}
+.status{margin:0;padding:22px 18px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--muted);line-height:1.5}
+.post-card{border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:0 3px 15px rgba(18,41,72,.035);padding:18px 18px 14px}
+.post-top{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+.avatar{width:28px;height:28px;border-radius:50%;background:#e5edf7;object-fit:cover;flex:none}
+.author{color:#315782;font-weight:750}
+.badge{margin-left:auto;border-radius:999px;padding:3px 8px;background:#e7f6ef;color:#166c59;font-size:11px;font-weight:800;letter-spacing:.03em}
+.badge.closed{background:#eef2f6;color:#617081}
+.post-card h2{margin:12px 0 8px;font-size:20px;letter-spacing:-.02em;font-weight:750;line-height:1.3}
+.post-card h2 a{color:inherit;text-decoration:none}.post-card h2 a:hover{color:var(--blue)}
+.body{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;font-size:14px}
+.post-actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid #eef2f6}
+.text-btn,.reply{border:0;padding:0;background:none;color:var(--blue);font-weight:750;font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.text-btn:hover,.reply:hover{color:#16365d}
+.comments{display:grid;gap:10px;margin-top:12px}
+.comment{padding:12px;border-radius:12px;background:#f8fafc}
+.comment p{margin:8px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:14px}
+.comment-status{margin:0;color:var(--muted);font-size:13px}
+@media(max-width:800px){.wrap{padding:28px 16px 40px}h1{font-size:26px}.actions{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <nav class="home-nav" aria-label="Site"><a href="index.html">← Home</a></nav>
+ <div class="eyebrow">IELTS Practice</div>
+ <h1>Feedback</h1>
+ <p class="subtitle">Posts and comments about the practice pages. Posting and replying use a GitHub account, and everything here is public.</p>
+ <div class="actions">
+  <a class="post" href="https://github.com/lvkai/ielts/issues/new?template=feedback.yml" target="_blank" rel="noopener noreferrer">Post feedback</a>
+  <p class="note">The new post opens on GitHub and then shows up here.</p>
+ </div>
+ <div class="board" id="board" aria-live="polite"><p class="status">Loading posts…</p></div>
+</div>
+<script>
+const REPO='lvkai/ielts';
+const board=document.getElementById('board');
+function el(tag,cls,text){const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node}
+function issueUrl(value){
+ try{const url=new URL(value);if(url.protocol==='https:'&&url.hostname==='github.com'&&url.pathname.startsWith('/'+REPO+'/issues/'))return url.href}catch(_){}
+ return '';
+}
+function avatarUrl(value){
+ try{const url=new URL(value);if(url.protocol==='https:'&&url.hostname==='avatars.githubusercontent.com')return url.href}catch(_){}
+ return '';
+}
+function formatWhen(value){
+ const date=new Date(value);
+ if(Number.isNaN(date.getTime()))return '';
+ return date.toLocaleDateString('en-CA',{year:'numeric',month:'short',day:'numeric'});
+}
+function message(text){board.replaceChildren(el('p','status',text))}
+function person(user){
+ const row=el('div','post-top');
+ const src=avatarUrl(user&&user.avatar_url);
+ if(src){const img=el('img','avatar');img.alt='';img.addEventListener('error',()=>img.remove());img.src=src;row.append(img)}
+ row.append(el('span','author',user&&user.login||'GitHub user'));
+ return row;
+}
+function commentNode(comment){
+ const item=el('article','comment');
+ const top=person(comment.user);
+ top.append(el('span','',formatWhen(comment.created_at)));
+ item.append(top,el('p','',comment.body||''));
+ return item;
+}
+async function github(path){
+ const response=await fetch('https://api.github.com'+path,{headers:{Accept:'application/vnd.github+json'}});
+ if(!response.ok){
+  const error=new Error('GitHub returned '+response.status);
+  error.status=response.status;
+  throw error;
+ }
+ return response.json();
+}
+function addComments(post,issue){
+ const count=Number(issue.comments)||0;
+ const actions=el('div','post-actions');
+ const toggle=el('button','text-btn',count===1?'1 comment':count+' comments');
+ toggle.type='button';
+ const replyHref=issueUrl(issue.html_url);
+ const reply=el('a','reply','Reply on GitHub');
+ if(replyHref){reply.href=replyHref;reply.target='_blank';reply.rel='noopener noreferrer'}
+ else reply.hidden=true;
+ actions.append(toggle,reply);
+ const list=el('div','comments');
+ list.hidden=true;
+ let loaded=false,loading=false;
+ toggle.addEventListener('click',async()=>{
+  if(loaded){list.hidden=!list.hidden;return}
+  if(loading)return;
+  loading=true;
+  list.hidden=false;
+  list.replaceChildren(el('p','comment-status','Loading comments…'));
+  try{
+   const comments=count?await github('/repos/'+REPO+'/issues/'+issue.number+'/comments?per_page=100'):[];
+   list.replaceChildren();
+   if(!comments.length)list.append(el('p','comment-status','No comments yet.'));
+   else for(const comment of comments)list.append(commentNode(comment));
+   loaded=true;
+  }catch(_){
+   list.replaceChildren(el('p','comment-status','Comments could not be loaded.'));
+  }
+  loading=false;
+ });
+ post.append(actions,list);
+}
+function postNode(issue){
+ const post=el('article','post-card');
+ const top=person(issue.user);
+ top.append(el('span','',formatWhen(issue.created_at)));
+ const badge=el('span','badge'+(issue.state==='closed'?' closed':''),issue.state==='closed'?'Closed':'Open');
+ top.append(badge);
+ const title=el('h2');
+ const href=issueUrl(issue.html_url);
+ if(href){const link=el('a','',issue.title||'Feedback');link.href=href;link.target='_blank';link.rel='noopener noreferrer';title.append(link)}
+ else title.textContent=issue.title||'Feedback';
+ post.append(top,title,el('p','body',issue.body||''));
+ addComments(post,issue);
+ return post;
+}
+async function loadPosts(){
+ try{
+  const issues=await github('/repos/'+REPO+'/issues?labels=feedback&state=all&sort=updated&direction=desc&per_page=30');
+  const posts=issues.filter(issue=>issue&&!issue.pull_request);
+  if(!posts.length){message('No posts yet. Be the first to leave feedback.');return}
+  board.replaceChildren();
+  for(const issue of posts)board.append(postNode(issue));
+ }catch(error){
+  message(error.status===403?'GitHub is limiting requests right now. Try again in a little while.':'Posts could not be loaded.');
+ }
+}
+loadPosts();
+</script>
+</body>
+</html>

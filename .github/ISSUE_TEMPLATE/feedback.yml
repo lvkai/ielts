@@ -1,0 +1,16 @@
+name: Feedback
+description: Share feedback about the practice pages
+title: "Feedback: "
+labels: ["feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: This post is public and appears on the practice site feedback page.
+  - type: textarea
+    id: message
+    attributes:
+      label: Your feedback
+      description: Include the page and what you were doing.
+      placeholder: On the speaking page, the timer stops early when...
+    validations:
+      required: true
