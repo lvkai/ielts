@@ -2493,7 +2493,7 @@ function formatRecordedTime(seconds){
  return secs+'s';
 }
 function formatTimeLimit(seconds){
- return Math.max(0,Math.round(Number(seconds)||0))+'s';
+ return formatRecordedTime(seconds).replace(/ 00s$/,'');
 }
 function getRecordingStats(topicFilter=null){
  let recorded=0,timed=0,total=0;
