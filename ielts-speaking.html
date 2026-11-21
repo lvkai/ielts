@@ -1832,12 +1832,8 @@ function questionPartForKey(key){
 }
 function recordingTooShort(key,seconds){
  const part=questionPartForKey(key);
- // Part 1 stops a real answer after 10s plus 2s of silence, then trims that
- // silence, so the saved length is often about 10s. Half of the 30s maximum
- // would discard those answers and stop the test.
- const minimum=part===1?5:part===2?60:part===3?30:0;
- if(!minimum||!Number.isFinite(Number(seconds)))return false;
- return Number(seconds)<minimum;
+ if(!part||!Number.isFinite(Number(seconds)))return false;
+ return Number(seconds)<10;
 }
 function sameDuration(a,b){
  return Number.isFinite(Number(a))&&Number.isFinite(Number(b))&&Math.abs(Number(a)-Number(b))<0.15;
@@ -2466,12 +2462,12 @@ function refreshVoices(){
  else if(selectedIndex>=0)els.voiceInfo.textContent='Google voice unavailable; using '+englishVoices[selectedIndex].name+'.';
  else els.voiceInfo.textContent='Using the browser default voice.';
 }
-function minimumKeptSeconds(){return speakingPart===1?5:speakingPart===2?60:speakingPart===3?30:0}
+function minimumAnswerSeconds(){return speakingPart===1?10:(speakingPart===2?PART2_SILENCE_AFTER_SECONDS:(speakingPart===3?AUTO_ADVANCE_MIN_SECONDS:0))}
 function setTime(value){
  const shown=Math.max(0,value).toFixed(1);
  if(prepActive||thinkActive){els.prepCountdown.textContent=shown+'s';return}
  els.time.textContent=shown;
- els.recordTimer.classList.toggle('enough',!!recording&&Number(value)>=minimumKeptSeconds());
+ els.recordTimer.classList.toggle('enough',!!recording&&Number(value)>=minimumAnswerSeconds());
 }
 function create(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el}
 function formatRecordedTime(seconds){
