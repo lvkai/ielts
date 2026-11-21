@@ -295,9 +295,9 @@ body:not(.part-mode-1) .topic-inline #topic{field-sizing:fixed;flex:0 1 340px;wi
 </section>
 <section class="question-block"><div class="qhead"><div class="tag" id="currentTopic">PART 2 · LONG TURN</div><div class="count" id="qCount">01 / 05</div></div><div class="progress"><div id="progressFill"></div></div><h2 id="question"></h2><div id="cueCard" class="cue-card" hidden><div class="cue-intro">You should say:</div><ul id="cuePoints"></ul></div></section>
 <div class="timer-controls"><div class="actions"><button type="button" id="part3Think" class="btn" title="Read the question, then 60 seconds to answer. Nothing is saved." hidden>Read</button><button type="button" id="read" class="btn"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>Read &amp; Record</button><button type="button" id="stopRecord" class="btn danger">Stop recording</button><button type="button" id="next" class="btn">Next</button></div>
-  <div id="recordTimer" class="timer" aria-label="Recording time" hidden><span id="time">0s</span><small hidden>s</small><span id="timerLimit" class="timer-limit" hidden></span></div>
+  <div id="recordTimer" class="timer" aria-label="Recording time" hidden><span id="time">0.0s</span><small hidden>s</small><span id="timerLimit" class="timer-limit" hidden></span></div>
 </div>
-<div class="part2-tools"><button type="button" id="prep" class="btn" title="Standalone 60-second preparation timer, without recording">Prepare 60s</button><span id="prepCountdown" class="prep-countdown" aria-label="Time remaining" hidden>1m 00s</span></div>
+<div class="part2-tools"><button type="button" id="prep" class="btn" title="Standalone 60-second preparation timer, without recording">Prepare 60s</button><span id="prepCountdown" class="prep-countdown" aria-label="Time remaining" hidden>1m 00.0s</span></div>
 <div class="timer-caption" aria-hidden="true"><div id="state" class="status"><span class="dot"></span><span id="stateText">Ready</span></div><div id="timeHelp"></div></div>
 <div class="mic-controls"><div id="micMessage" class="info" role="status" aria-live="polite"></div></div>
 <div id="audioArea" class="audio-area"><div id="audioEmpty" class="audio-empty">No recording yet.</div><audio id="playback" controls preload="metadata" style="display:none"></audio><div id="playbackNote" class="playback-note" role="status" aria-live="polite"></div></div>
@@ -2463,8 +2463,20 @@ function refreshVoices(){
  else els.voiceInfo.textContent='Using the browser default voice.';
 }
 function minimumAnswerSeconds(){return speakingPart===1?10:(speakingPart===2?PART2_SILENCE_AFTER_SECONDS:(speakingPart===3?AUTO_ADVANCE_MIN_SECONDS:0))}
+function formatCountingTime(seconds){
+ const tenths=Math.max(0,Math.round((Number(seconds)||0)*10));
+ const total=tenths/10;
+ const hours=Math.floor(total/3600);
+ const minutes=Math.floor((total%3600)/60);
+ const secs=Math.round((total-hours*3600-minutes*60)*10)/10;
+ const secText=(hours||minutes?secs.toFixed(1).padStart(4,'0'):secs.toFixed(1))+'s';
+ const pad=value=>String(value).padStart(2,'0');
+ if(hours)return hours+'h '+pad(minutes)+'m '+secText;
+ if(minutes)return minutes+'m '+secText;
+ return secs.toFixed(1)+'s';
+}
 function setTime(value){
- const shown=formatRecordedTime(value);
+ const shown=formatCountingTime(value);
  if(prepActive||thinkActive){els.prepCountdown.textContent=shown;return}
  els.time.textContent=shown;
  els.recordTimer.classList.toggle('enough',!!recording&&Number(value)>=minimumAnswerSeconds());
