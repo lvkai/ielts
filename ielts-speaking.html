@@ -327,15 +327,15 @@ body:not(.part-mode-1) .topic-inline #topic{field-sizing:fixed;flex:0 1 340px;wi
  <section class="duration-stat-group" aria-label="Current topic recording durations">
   <div class="duration-stat-heading"><span>THIS TOPIC</span><span id="topicRecorded">0 recordings</span></div>
   <div class="duration-stat-values">
-   <div class="duration-stat-value"><strong id="topicTotal">0s</strong><span>Total duration</span></div>
-   <div class="duration-stat-value"><strong id="topicAverage">—</strong><span id="topicAverageLabel">Average</span></div>
+   <div class="duration-stat-value"><strong id="topicTotal">0s</strong><span id="topicTotalLabel">Total duration</span><span id="topicTotalMeta" hidden></span></div>
+   <div class="duration-stat-value"><strong id="topicAverage">—</strong><span id="topicAverageLabel">Average</span><span id="topicAverageMeta" hidden></span></div>
   </div>
  </section>
  <section class="duration-stat-group" aria-label="All topics recording durations">
   <div class="duration-stat-heading"><span>ALL TOPICS</span><span id="allRecorded">0 recordings</span></div>
   <div class="duration-stat-values">
-   <div class="duration-stat-value"><strong id="allTotal">0s</strong><span>Total duration</span></div>
-   <div class="duration-stat-value"><strong id="allAverage">—</strong><span id="allAverageLabel">Average</span></div>
+   <div class="duration-stat-value"><strong id="allTotal">0s</strong><span id="allTotalLabel">Total duration</span><span id="allTotalMeta" hidden></span></div>
+   <div class="duration-stat-value"><strong id="allAverage">—</strong><span id="allAverageLabel">Average</span><span id="allAverageMeta" hidden></span></div>
   </div>
  </section>
  <section class="duration-stat-group" aria-label="All recorded attempts, including repeats">
@@ -2480,20 +2480,28 @@ function formatRecordedTime(seconds){
  return parts.join(' ');
 }
 function getRecordingStats(topicFilter=null){
- let recorded=0,timed=0,total=0,part3Timed=0,part3Total=0;
+ const parts={2:{recorded:0,timed:0,total:0},3:{recorded:0,timed:0,total:0}};
+ let recorded=0,timed=0,total=0;
  for(const [topic,qs] of Object.entries(currentQuestions())){
   if(topicFilter!==null&&topic!==topicFilter)continue;
   for(let i=0;i<qs.length;i++){
    const item=items.get(getKey(topic,i));
    if(!item?.audio?.size||recordingTooShort(getKey(topic,i),item.seconds))continue;
+   const part=qs[i].part===2?2:qs[i].part===3?3:0;
    recorded++;
+   if(part)parts[part].recorded++;
    if(!Number.isFinite(item.seconds)||item.seconds<0)continue;
    timed++;
    total+=item.seconds;
-   if(qs[i].part===3){part3Timed++;part3Total+=item.seconds}
+   if(part){parts[part].timed++;parts[part].total+=item.seconds}
   }
  }
- return {recorded,timed,total,part3Timed,part3Total};
+ return {recorded,timed,total,parts};
+}
+function formatPartStat(stat){
+ const count=stat.recorded+' recording'+(stat.recorded===1?'':'s');
+ const average=stat.timed?(stat.total/stat.timed).toFixed(1)+'s':'—';
+ return {duration:stat.timed?formatRecordedTime(stat.total):'0s',detail:count+' · '+average};
 }
 function practiceCoverage(){
  let topics=0,practicedQuestions=0,topicTotal=0,questionTotal=0;
@@ -2819,22 +2827,45 @@ function renderDurationStats(){
  const coverage=practiceCoverage();
  els.practiceCoverage.textContent=coverage.topics+' / '+coverage.topicTotal+' topics';
  els.questionCoverage.textContent=coverage.questions+' / '+coverage.questionTotal+' questions';
+ const split=speakingPart!==1;
+ els.topicRecorded.hidden=split;
+ els.allRecorded.hidden=split;
  els.topicRecorded.textContent=topic.recorded+' recording'+(topic.recorded===1?'':'s');
  els.allRecorded.textContent=all.recorded+' recording'+(all.recorded===1?'':'s');
- els.topicTotal.textContent=topic.timed?formatRecordedTime(topic.total):'0s';
- els.allTotal.textContent=all.timed?formatRecordedTime(all.total):'0s';
- const averageLabel=speakingPart===1?'Average':'Part 3 average';
+ const topicTotalLabel=document.getElementById('topicTotalLabel');
+ const allTotalLabel=document.getElementById('allTotalLabel');
  const topicAverageLabel=document.getElementById('topicAverageLabel');
  const allAverageLabel=document.getElementById('allAverageLabel');
- if(topicAverageLabel)topicAverageLabel.textContent=averageLabel;
- if(allAverageLabel)allAverageLabel.textContent=averageLabel;
- if(speakingPart===1){
+ const topicTotalMeta=document.getElementById('topicTotalMeta');
+ const allTotalMeta=document.getElementById('allTotalMeta');
+ const topicAverageMeta=document.getElementById('topicAverageMeta');
+ const allAverageMeta=document.getElementById('allAverageMeta');
+ if(!split){
+  els.topicTotal.textContent=topic.timed?formatRecordedTime(topic.total):'0s';
+  els.allTotal.textContent=all.timed?formatRecordedTime(all.total):'0s';
   els.topicAverage.textContent=topic.timed?(topic.total/topic.timed).toFixed(1)+'s':'—';
   els.allAverage.textContent=all.timed?(all.total/all.timed).toFixed(1)+'s':'—';
- }else{
-  els.topicAverage.textContent=topic.part3Timed?(topic.part3Total/topic.part3Timed).toFixed(1)+'s':'—';
-  els.allAverage.textContent=all.part3Timed?(all.part3Total/all.part3Timed).toFixed(1)+'s':'—';
+  if(topicTotalLabel)topicTotalLabel.textContent='Total duration';
+  if(allTotalLabel)allTotalLabel.textContent='Total duration';
+  if(topicAverageLabel)topicAverageLabel.textContent='Average';
+  if(allAverageLabel)allAverageLabel.textContent='Average';
+  for(const meta of [topicTotalMeta,allTotalMeta,topicAverageMeta,allAverageMeta])if(meta)meta.hidden=true;
+  return;
  }
+ const topic2=formatPartStat(topic.parts[2]),topic3=formatPartStat(topic.parts[3]);
+ const all2=formatPartStat(all.parts[2]),all3=formatPartStat(all.parts[3]);
+ els.topicTotal.textContent=topic2.duration;
+ els.topicAverage.textContent=topic3.duration;
+ els.allTotal.textContent=all2.duration;
+ els.allAverage.textContent=all3.duration;
+ if(topicTotalLabel)topicTotalLabel.textContent='Part 2';
+ if(topicAverageLabel)topicAverageLabel.textContent='Part 3';
+ if(allTotalLabel)allTotalLabel.textContent='Part 2';
+ if(allAverageLabel)allAverageLabel.textContent='Part 3';
+ if(topicTotalMeta){topicTotalMeta.hidden=false;topicTotalMeta.textContent=topic2.detail}
+ if(topicAverageMeta){topicAverageMeta.hidden=false;topicAverageMeta.textContent=topic3.detail}
+ if(allTotalMeta){allTotalMeta.hidden=false;allTotalMeta.textContent=all2.detail}
+ if(allAverageMeta){allAverageMeta.hidden=false;allAverageMeta.textContent=all3.detail}
 }
 function renderHistory(){
  els.history.replaceChildren();
