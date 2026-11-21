@@ -1606,8 +1606,8 @@ function syncPartChrome(){
  }
  const limit=document.getElementById('timerLimit');
  if(limit){
-  limit.hidden=speakingPart===1;
-  limit.textContent=speakingPart===2?'/ '+formatRecordedTime(120):speakingPart===3?'/ '+formatRecordedTime(60):'';
+  limit.hidden=false;
+  limit.textContent='/ '+formatTimeLimit(answerSeconds());
  }
  const readLabel=speakingPart===2?'Record':'Read & Record';
  const readText=[...els.read.childNodes].find(node=>node.nodeType===Node.TEXT_NODE);
@@ -2480,6 +2480,9 @@ function formatRecordedTime(seconds){
  if(minutes)return minutes+'m '+pad(secs)+'s';
  return secs+'s';
 }
+function formatTimeLimit(seconds){
+ return Math.max(0,Math.round(Number(seconds)||0))+'s';
+}
 function getRecordingStats(topicFilter=null){
  let recorded=0,timed=0,total=0;
  for(const [topic,qs] of Object.entries(currentQuestions())){
@@ -2939,7 +2942,7 @@ function syncControls(){
  els.stop.style.display=recording?'inline-flex':'none';
  els.read.style.display=recording?'none':'';
  syncPartChrome();
- els.recordTimer.hidden=speakingPart===1?!(recording||showAnswerClock):(prepActive||thinkActive);
+ els.recordTimer.hidden=prepActive||thinkActive;
  els.prepCountdown.hidden=!(prepActive||thinkActive);
  const runningPart1=testActive&&testPart===1,runningPart2=testActive&&testPart===2,runningPart3=testActive&&testPart===3;
  const bankLocked=busy||testActive||prepActive||thinkActive;
