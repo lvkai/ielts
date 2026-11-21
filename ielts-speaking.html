@@ -32,11 +32,13 @@
 #topicCoverageDialog{border:0;border-radius:14px;padding:0;width:min(460px,calc(100vw - 28px));max-height:min(72vh,560px);color:#1c2b3a;box-shadow:0 18px 50px rgba(20,40,70,.22)}
 #practiceHistoryDialog{border:0;border-radius:14px;padding:0;width:min(560px,calc(100vw - 28px));max-height:min(78vh,680px);color:#1c2b3a;box-shadow:0 18px 50px rgba(20,40,70,.22)}
 #practiceHistoryDialog::backdrop{background:rgba(20,32,48,.38)}
-.history-part-tabs{display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid #e2e8f0}
+.history-part-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px;border-bottom:1px solid #e2e8f0}
 .history-part-tabs button{border:1px solid #d4deea;background:#fff;border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;font-weight:750;color:#254469;cursor:pointer}
 .history-part-tabs button[aria-selected="true"]{background:#234b81;color:#fff;border-color:#234b81}
 .history-log-day{display:flex;align-items:baseline;justify-content:space-between;gap:4px 12px;flex-wrap:wrap;margin:0;padding:8px 16px;background:#f4f7fb;color:#315782;font-size:12px;font-weight:750;letter-spacing:.02em}
 .history-log-day-stats{margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap}
+.history-log-part{display:flex;align-items:baseline;justify-content:space-between;gap:8px 12px;padding:10px 16px;border-bottom:1px solid #eef2f6;font-size:13px;font-weight:650}
+.history-log-part span:last-child{margin-left:auto;color:#315782;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
 .history-log-row{display:grid;grid-template-columns:minmax(108px,132px) minmax(0,1fr);gap:12px;width:100%;padding:10px 16px;border:0;border-bottom:1px solid #eef2f6;background:#fff;text-align:left;color:inherit;cursor:pointer}
 .history-log-row:hover{background:#f8fbff}
 .history-log-time{font-size:12px;font-weight:750;color:#315782;line-height:1.35}
@@ -320,7 +322,7 @@ body:not(.part-mode-1) .topic-inline #topic{field-sizing:fixed;flex:0 1 340px;wi
 </main>
 <aside class="panel side"><div class="side-top"><div><h3><button type="button" id="practiceHistoryLink" class="history-link">Practice history</button></h3><p class="practice-coverage"><button type="button" id="practiceCoverage" class="coverage-link">0 / 24 topics</button> · <span id="questionCoverage">0 / 120 questions</span></p></div></div>
 <dialog id="topicCoverageDialog" aria-labelledby="topicCoverageTitle"><div class="coverage-dialog-head"><h3 id="topicCoverageTitle">Topics practiced</h3><button type="button" id="closeTopicCoverage" class="coverage-close" aria-label="Close"><svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"><path d="M4.2 4.2 11.8 11.8M11.8 4.2 4.2 11.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="coverage-scroll" id="topicCoverageBody"></div></dialog>
-<dialog id="practiceHistoryDialog" aria-labelledby="practiceHistoryTitle"><div class="coverage-dialog-head"><h3 id="practiceHistoryTitle">Practice history</h3><button type="button" id="closePracticeHistory" class="coverage-close" aria-label="Close"><svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"><path d="M4.2 4.2 11.8 11.8M11.8 4.2 4.2 11.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="history-part-tabs" role="tablist" aria-label="Practice history part"><button type="button" id="historyTab1" role="tab" aria-selected="true">Part 1</button><button type="button" id="historyTab2" role="tab" aria-selected="false" tabindex="-1">Part 2</button><button type="button" id="historyTab3" role="tab" aria-selected="false" tabindex="-1">Part 3</button></div><div class="coverage-scroll" id="practiceHistoryBody"></div></dialog>
+<dialog id="practiceHistoryDialog" aria-labelledby="practiceHistoryTitle"><div class="coverage-dialog-head"><h3 id="practiceHistoryTitle">Practice history</h3><button type="button" id="closePracticeHistory" class="coverage-close" aria-label="Close"><svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"><path d="M4.2 4.2 11.8 11.8M11.8 4.2 4.2 11.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="history-part-tabs" role="tablist" aria-label="Practice history part"><button type="button" id="historyTab1" role="tab" aria-selected="true">Part 1</button><button type="button" id="historyTab2" role="tab" aria-selected="false" tabindex="-1">Part 2</button><button type="button" id="historyTab3" role="tab" aria-selected="false" tabindex="-1">Part 3</button><button type="button" id="historyTabAll" role="tab" aria-selected="false" tabindex="-1">All</button></div><div class="coverage-scroll" id="practiceHistoryBody"></div></dialog>
 <div class="duration-stats" aria-label="Recording duration statistics">
  <section class="duration-stat-group" aria-label="Current topic recording durations">
   <div class="duration-stat-heading"><span>THIS TOPIC</span><span id="topicRecorded">0 recordings</span></div>
@@ -2629,8 +2631,8 @@ function questionDetailForKey(key){
 }
 let historyViewPart=1;
 function updateHistoryTabs(){
- for(const part of [1,2,3]){
-  const button=document.getElementById('historyTab'+part);
+ for(const part of [1,2,3,0]){
+  const button=document.getElementById(part?'historyTab'+part:'historyTabAll');
   if(!button)continue;
   const on=part===historyViewPart;
   button.setAttribute('aria-selected',on?'true':'false');
@@ -2641,7 +2643,8 @@ function practiceAttemptRows(part=historyViewPart){
  const rows=[];
  for(const [key,entries] of practiceHistory){
   const detail=questionDetailForKey(key);
-  if(!detail||detail.part!==part)continue;
+  if(!detail||(detail.part!==1&&detail.part!==2&&detail.part!==3))continue;
+  if(part&&detail.part!==part)continue;
   for(const attempt of entries||[]){
    if(!attempt||!Number.isFinite(attempt.at))continue;
    rows.push({key,at:attempt.at,seconds:attempt.seconds,mode:attempt.mode,topic:detail.topic,index:detail.index,part:detail.part,question:detail.question});
@@ -2659,6 +2662,14 @@ function formatPracticeDay(at){
 }
 function formatPracticeClock(at){
  return new Date(at).toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
+}
+function formatPracticeCount(count){
+ return count+' question'+(count===1?'':'s');
+}
+function practiceMinuteCount(seconds){
+ const total=Number(seconds)||0;
+ if(!(total>0))return 0;
+ return Math.max(1,Math.round(total/60));
 }
 function topicBank(part,topic){
  const basic=part===1?part1BasicNames:basicTopicNames;
@@ -2678,7 +2689,7 @@ function renderPracticeHistoryDialog(){
  if(!rows.length){
   const empty=document.createElement('p');
   empty.className='history-log-empty';
-  empty.textContent='No Part '+historyViewPart+' practice recorded yet.';
+  empty.textContent=historyViewPart?'No Part '+historyViewPart+' practice recorded yet.':'No practice recorded yet.';
   els.practiceHistoryBody.replaceChildren(empty);
   return;
  }
@@ -2704,7 +2715,34 @@ function renderPracticeHistoryDialog(){
   let totalSeconds=0;
   for(const row of day.rows)if(Number.isFinite(row.seconds)&&row.seconds>0)totalSeconds+=row.seconds;
   const count=day.rows.length;
-  stats.textContent=count+' question'+(count===1?'':'s')+' · '+formatRecordedTime(totalSeconds);
+  if(historyViewPart===0){
+   const parts=[];
+   let shownMinutes=0;
+   for(const part of [1,2,3]){
+    const partRows=day.rows.filter(row=>row.part===part);
+    if(!partRows.length)continue;
+    let seconds=0;
+    for(const row of partRows)if(Number.isFinite(row.seconds)&&row.seconds>0)seconds+=row.seconds;
+    const minutes=practiceMinuteCount(seconds);
+    shownMinutes+=minutes;
+    parts.push({part,count:partRows.length,minutes});
+   }
+   stats.textContent=formatPracticeCount(count)+' · '+shownMinutes+' min';
+   heading.append(label,stats);
+   list.append(heading);
+   for(const part of parts){
+    const line=document.createElement('div');
+    line.className='history-log-part';
+    const name=document.createElement('span');
+    name.textContent='Part '+part.part;
+    const detail=document.createElement('span');
+    detail.textContent=formatPracticeCount(part.count)+' · '+part.minutes+' min';
+    line.append(name,detail);
+    list.append(line);
+   }
+   continue;
+  }
+  stats.textContent=formatPracticeCount(count)+' · '+formatRecordedTime(totalSeconds);
   heading.append(label,stats);
   list.append(heading);
   for(const row of day.rows){
@@ -2737,7 +2775,7 @@ function openPracticeHistory(){
  if(!els.practiceHistoryDialog.open)els.practiceHistoryDialog.showModal();
 }
 function showHistoryPart(part){
- if(part!==1&&part!==2&&part!==3||part===historyViewPart)return;
+ if((part!==0&&part!==1&&part!==2&&part!==3)||part===historyViewPart)return;
  historyViewPart=part;
  renderPracticeHistoryDialog();
  els.practiceHistoryBody.scrollTop=0;
@@ -4267,6 +4305,7 @@ els.closeTopicCoverage.addEventListener('click',()=>els.topicCoverageDialog.clos
 els.topicCoverageDialog.addEventListener('click',event=>{if(event.target===els.topicCoverageDialog)els.topicCoverageDialog.close()});
 els.practiceHistoryLink.addEventListener('click',openPracticeHistory);
 for(const part of [1,2,3])document.getElementById('historyTab'+part).addEventListener('click',()=>showHistoryPart(part));
+document.getElementById('historyTabAll').addEventListener('click',()=>showHistoryPart(0));
 els.closePracticeHistory.addEventListener('click',()=>els.practiceHistoryDialog.close());
 els.practiceHistoryDialog.addEventListener('click',event=>{if(event.target===els.practiceHistoryDialog)els.practiceHistoryDialog.close()});
 els.beginPart1.addEventListener('click',()=>beginOrStopTest(1));
