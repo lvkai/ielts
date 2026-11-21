@@ -322,7 +322,7 @@ body:not(.part-mode-1) .topic-inline #topic{field-sizing:fixed;flex:0 1 340px;wi
 </main>
 <aside class="panel side"><div class="side-top"><div><h3><button type="button" id="practiceHistoryLink" class="history-link">Practice history</button></h3><p class="practice-coverage"><button type="button" id="practiceCoverage" class="coverage-link">0 / 24 topics</button> · <span id="questionCoverage">0 / 120 questions</span></p></div></div>
 <dialog id="topicCoverageDialog" aria-labelledby="topicCoverageTitle"><div class="coverage-dialog-head"><h3 id="topicCoverageTitle">Topics practiced</h3><button type="button" id="closeTopicCoverage" class="coverage-close" aria-label="Close"><svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"><path d="M4.2 4.2 11.8 11.8M11.8 4.2 4.2 11.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="coverage-scroll" id="topicCoverageBody"></div></dialog>
-<dialog id="practiceHistoryDialog" aria-labelledby="practiceHistoryTitle"><div class="coverage-dialog-head"><h3 id="practiceHistoryTitle">Practice history</h3><button type="button" id="closePracticeHistory" class="coverage-close" aria-label="Close"><svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"><path d="M4.2 4.2 11.8 11.8M11.8 4.2 4.2 11.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="history-part-tabs" role="tablist" aria-label="Practice history part"><button type="button" id="historyTab1" role="tab" aria-selected="true">Part 1</button><button type="button" id="historyTab2" role="tab" aria-selected="false" tabindex="-1">Part 2</button><button type="button" id="historyTab3" role="tab" aria-selected="false" tabindex="-1">Part 3</button><button type="button" id="historyTabAll" role="tab" aria-selected="false" tabindex="-1">All</button></div><div class="coverage-scroll" id="practiceHistoryBody"></div></dialog>
+<dialog id="practiceHistoryDialog" aria-labelledby="practiceHistoryTitle"><div class="coverage-dialog-head"><h3 id="practiceHistoryTitle">Practice history</h3><button type="button" id="closePracticeHistory" class="coverage-close" aria-label="Close"><svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"><path d="M4.2 4.2 11.8 11.8M11.8 4.2 4.2 11.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="history-part-tabs" role="tablist" aria-label="Practice history part"><button type="button" id="historyTab1" role="tab" aria-selected="true">Part 1</button><button type="button" id="historyTab2" role="tab" aria-selected="false" tabindex="-1">Part 2</button><button type="button" id="historyTab3" role="tab" aria-selected="false" tabindex="-1">Part 3</button><button type="button" id="historyTabDate" role="tab" aria-selected="false" tabindex="-1">By Date</button><button type="button" id="historyTabByPart" role="tab" aria-selected="false" tabindex="-1">By Part</button></div><div class="coverage-scroll" id="practiceHistoryBody"></div></dialog>
 <div class="duration-stats" aria-label="Recording duration statistics">
  <section class="duration-stat-group" aria-label="Current topic recording durations">
   <div class="duration-stat-heading"><span>THIS TOPIC</span><span id="topicRecorded">0 recordings</span></div>
@@ -2631,8 +2631,8 @@ function questionDetailForKey(key){
 }
 let historyViewPart=1;
 function updateHistoryTabs(){
- for(const part of [1,2,3,0]){
-  const button=document.getElementById(part?'historyTab'+part:'historyTabAll');
+ for(const [part,id] of [[1,'historyTab1'],[2,'historyTab2'],[3,'historyTab3'],['date','historyTabDate'],['part','historyTabByPart']]){
+  const button=document.getElementById(id);
   if(!button)continue;
   const on=part===historyViewPart;
   button.setAttribute('aria-selected',on?'true':'false');
@@ -2644,7 +2644,7 @@ function practiceAttemptRows(part=historyViewPart){
  for(const [key,entries] of practiceHistory){
   const detail=questionDetailForKey(key);
   if(!detail||(detail.part!==1&&detail.part!==2&&detail.part!==3))continue;
-  if(part&&detail.part!==part)continue;
+  if((part===1||part===2||part===3)&&detail.part!==part)continue;
   for(const attempt of entries||[]){
    if(!attempt||!Number.isFinite(attempt.at))continue;
    rows.push({key,at:attempt.at,seconds:attempt.seconds,mode:attempt.mode,topic:detail.topic,index:detail.index,part:detail.part,question:detail.question});
@@ -2689,12 +2689,47 @@ function renderPracticeHistoryDialog(){
  if(!rows.length){
   const empty=document.createElement('p');
   empty.className='history-log-empty';
-  empty.textContent=historyViewPart?'No Part '+historyViewPart+' practice recorded yet.':'No practice recorded yet.';
+  empty.textContent=historyViewPart===1||historyViewPart===2||historyViewPart===3?'No Part '+historyViewPart+' practice recorded yet.':'No practice recorded yet.';
   els.practiceHistoryBody.replaceChildren(empty);
   return;
  }
  const list=document.createElement('div');
  list.className='history-log';
+ if(historyViewPart==='part'){
+  const parts=[];
+  let questions=0,minutes=0;
+  for(const part of [1,2,3]){
+   const partRows=rows.filter(row=>row.part===part);
+   let seconds=0;
+   for(const row of partRows)if(Number.isFinite(row.seconds)&&row.seconds>0)seconds+=row.seconds;
+   const partMinutes=practiceMinuteCount(seconds);
+   parts.push({part,count:partRows.length,minutes:partMinutes});
+   questions+=partRows.length;
+   minutes+=partMinutes;
+  }
+  const heading=document.createElement('h4');
+  heading.className='history-log-day';
+  const totalLabel=document.createElement('span');
+  totalLabel.textContent='Total';
+  heading.append(totalLabel);
+  const stats=document.createElement('span');
+  stats.className='history-log-day-stats';
+  stats.textContent=formatPracticeCount(questions)+' · '+minutes+' min';
+  heading.append(stats);
+  list.append(heading);
+  for(const part of parts){
+   const line=document.createElement('div');
+   line.className='history-log-part';
+   const name=document.createElement('span');
+   name.textContent='Part '+part.part;
+   const detail=document.createElement('span');
+   detail.textContent=formatPracticeCount(part.count)+' · '+part.minutes+' min';
+   line.append(name,detail);
+   list.append(line);
+  }
+  els.practiceHistoryBody.replaceChildren(list);
+  return;
+ }
  const days=[];
  let currentDay=null;
  for(const row of rows){
@@ -2715,31 +2750,10 @@ function renderPracticeHistoryDialog(){
   let totalSeconds=0;
   for(const row of day.rows)if(Number.isFinite(row.seconds)&&row.seconds>0)totalSeconds+=row.seconds;
   const count=day.rows.length;
-  if(historyViewPart===0){
-   const parts=[];
-   let shownMinutes=0;
-   for(const part of [1,2,3]){
-    const partRows=day.rows.filter(row=>row.part===part);
-    if(!partRows.length)continue;
-    let seconds=0;
-    for(const row of partRows)if(Number.isFinite(row.seconds)&&row.seconds>0)seconds+=row.seconds;
-    const minutes=practiceMinuteCount(seconds);
-    shownMinutes+=minutes;
-    parts.push({part,count:partRows.length,minutes});
-   }
-   stats.textContent=formatPracticeCount(count)+' · '+shownMinutes+' min';
+  if(historyViewPart==='date'){
+   stats.textContent=formatPracticeCount(count)+' · '+practiceMinuteCount(totalSeconds)+' min';
    heading.append(label,stats);
    list.append(heading);
-   for(const part of parts){
-    const line=document.createElement('div');
-    line.className='history-log-part';
-    const name=document.createElement('span');
-    name.textContent='Part '+part.part;
-    const detail=document.createElement('span');
-    detail.textContent=formatPracticeCount(part.count)+' · '+part.minutes+' min';
-    line.append(name,detail);
-    list.append(line);
-   }
    continue;
   }
   stats.textContent=formatPracticeCount(count)+' · '+formatRecordedTime(totalSeconds);
@@ -2775,7 +2789,7 @@ function openPracticeHistory(){
  if(!els.practiceHistoryDialog.open)els.practiceHistoryDialog.showModal();
 }
 function showHistoryPart(part){
- if((part!==0&&part!==1&&part!==2&&part!==3)||part===historyViewPart)return;
+ if((part!==1&&part!==2&&part!==3&&part!=='date'&&part!=='part')||part===historyViewPart)return;
  historyViewPart=part;
  renderPracticeHistoryDialog();
  els.practiceHistoryBody.scrollTop=0;
@@ -4305,7 +4319,8 @@ els.closeTopicCoverage.addEventListener('click',()=>els.topicCoverageDialog.clos
 els.topicCoverageDialog.addEventListener('click',event=>{if(event.target===els.topicCoverageDialog)els.topicCoverageDialog.close()});
 els.practiceHistoryLink.addEventListener('click',openPracticeHistory);
 for(const part of [1,2,3])document.getElementById('historyTab'+part).addEventListener('click',()=>showHistoryPart(part));
-document.getElementById('historyTabAll').addEventListener('click',()=>showHistoryPart(0));
+document.getElementById('historyTabDate').addEventListener('click',()=>showHistoryPart('date'));
+document.getElementById('historyTabByPart').addEventListener('click',()=>showHistoryPart('part'));
 els.closePracticeHistory.addEventListener('click',()=>els.practiceHistoryDialog.close());
 els.practiceHistoryDialog.addEventListener('click',event=>{if(event.target===els.practiceHistoryDialog)els.practiceHistoryDialog.close()});
 els.beginPart1.addEventListener('click',()=>beginOrStopTest(1));
