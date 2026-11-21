@@ -1705,7 +1705,7 @@ const MAX_SILENCE_GATE=0.020;
 const MAX_QUIET_CREDIT_MS=150;
 let monitorContext=null,monitorSource=null,monitorAnalyser=null,monitorSamples=null;
 let autoAdvanceKey=null,monitorLastSampleAt=null,silenceEligibleAt=null;
-let quietObservedMs=0,noiseSamples=[];
+let quietObservedMs=0,noiseSamples=[],lastSpeechAt=null,speechTimingReady=false;
 let englishVoices=[],voiceManuallyChosen=false,chosenVoiceURI=null;
 const getKey=(topic=els.topic.value,n=idx)=>topic+'::'+n;
 const getItem=(key=getKey())=>{if(!items.has(key))items.set(key,{audio:null,url:null,seconds:null,transcript:'',grammar:null});return items.get(key)};
@@ -3101,7 +3101,7 @@ async function startSilenceMonitor(mic){
   monitorAnalyser=ctx.createAnalyser();monitorAnalyser.fftSize=2048;
   monitorSource.connect(monitorAnalyser); // Don't connect to speakers: avoids mic feedback.
   monitorSamples=new Float32Array(monitorAnalyser.fftSize);
-  quietObservedMs=0;noiseSamples=[];silenceEligibleAt=null;monitorLastSampleAt=null;
+  quietObservedMs=0;noiseSamples=[];silenceEligibleAt=null;monitorLastSampleAt=null;lastSpeechAt=null;speechTimingReady=false;
   if(ctx.state==='suspended')await ctx.resume();
   return true;
  }catch(error){stopSilenceMonitor();setMessage('Silence detection unavailable; the normal time limit still works: '+error.message);return false}
@@ -3129,6 +3129,8 @@ function checkSilence(elapsed, timestamp){
  const gate=Math.max(MIN_SILENCE_GATE,Math.min(MAX_SILENCE_GATE,
   floor*NOISE_GATE_MULTIPLIER,high*0.90));
  const activeSound=rms>=gate;
+ speechTimingReady=true;
+ if(activeSound)lastSpeechAt=timestamp;
  const silenceAfter=speakingPart===1?10:(isPart2()?PART2_SILENCE_AFTER_SECONDS:AUTO_ADVANCE_MIN_SECONDS);
  const silenceHoldMs=(speakingPart===1?2:(isPart2()?PART2_SILENCE_SECONDS:SILENCE_SECONDS))*1000;
  if(elapsed<silenceAfter){
@@ -3147,16 +3149,18 @@ function checkSilence(elapsed, timestamp){
  quietObservedMs+=Math.min(gap,MAX_QUIET_CREDIT_MS);
  return quietObservedMs>=silenceHoldMs;
 }
+function practiceSeconds(full){
+ if(!speechTimingReady)return full;
+ if(lastSpeechAt===null)return 0;
+ const spoken=(lastSpeechAt-clockStart)/1000;
+ if(!Number.isFinite(spoken))return full;
+ return Math.min(full,Math.max(0,spoken));
+}
 function endRecording(reason='manual'){
  if(!recording)return;
- currentCaptureSeconds=Math.min(answerSeconds(),Math.max(0,(performance.now()-clockStart)/1000));
- // Drop the trailing quiet stretch from the reported duration. The audio itself stays intact.
- // Part 2 only trims a silence stop; its 120-second limit keeps the full duration.
- if(reason==='silence'||(!isPart2()&&reason==='timeout')){
-  const hold=speakingPart===1?2:(isPart2()?PART2_SILENCE_SECONDS:SILENCE_SECONDS);
-  const trailingQuietSeconds=Math.min(hold,Math.max(0,quietObservedMs/1000));
-  currentCaptureSeconds=Math.max(0,currentCaptureSeconds-trailingQuietSeconds);
- }
+ const full=Math.min(answerSeconds(),Math.max(0,(performance.now()-clockStart)/1000));
+ // Count practice time through the last detected speech. Trailing silence stays in the audio.
+ currentCaptureSeconds=practiceSeconds(full);
  if(testActive&&(reason==='silence'||reason==='timeout'))autoAdvanceKey=activeKey;
  recording=false;showAnswerClock=false;saving=true;stopTimer();stopSilenceMonitor();setState('Saving recording…');
  els.timeHelp.textContent=reason==='timeout'?'Time limit reached':reason==='silence'?'Silence detected':'Recording finished';
