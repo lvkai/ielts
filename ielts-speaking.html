@@ -39,6 +39,10 @@
 .history-log-day-stats{margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap}
 .history-log-part{display:flex;align-items:baseline;justify-content:space-between;gap:8px 12px;padding:10px 16px;border-bottom:1px solid #eef2f6;font-size:13px;font-weight:650}
 .history-log-part span:last-child{margin-left:auto;color:#315782;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
+.history-log-summary{display:grid;grid-template-columns:minmax(0,1fr) max-content max-content;column-gap:18px}
+.history-log-summary>.history-log-day,.history-log-summary>.history-log-part{display:grid;grid-template-columns:subgrid;grid-column:1 / -1;align-items:baseline}
+.history-log-count,.history-log-duration{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.history-log-summary>.history-log-part .history-log-duration{margin-left:0}
 .history-log-row{display:grid;grid-template-columns:minmax(108px,132px) minmax(0,1fr);gap:12px;width:100%;padding:10px 16px;border:0;border-bottom:1px solid #eef2f6;background:#fff;text-align:left;color:inherit;cursor:pointer}
 .history-log-row:hover{background:#f8fbff}
 .history-log-time{font-size:12px;font-weight:750;color:#315782;line-height:1.35}
@@ -2688,10 +2692,14 @@ function formatPracticeClock(at){
 function formatPracticeCount(count){
  return count+' question'+(count===1?'':'s');
 }
-function practiceMinuteCount(seconds){
- const total=Number(seconds)||0;
- if(!(total>0))return 0;
- return Math.max(1,Math.round(total/60));
+function appendPracticeColumns(parent,count,seconds){
+ const questions=document.createElement('span');
+ questions.className='history-log-count';
+ questions.textContent=formatPracticeCount(count);
+ const duration=document.createElement('span');
+ duration.className='history-log-duration';
+ duration.textContent=formatRecordedTime(seconds);
+ parent.append(questions,duration);
 }
 function topicBank(part,topic){
  const basic=part===1?part1BasicNames:basicTopicNames;
@@ -2716,37 +2724,32 @@ function renderPracticeHistoryDialog(){
   return;
  }
  const list=document.createElement('div');
- list.className='history-log';
+ list.className='history-log'+(historyViewPart==='date'||historyViewPart==='part'?' history-log-summary':'');
  if(historyViewPart==='part'){
   const parts=[];
-  let questions=0,minutes=0;
+  let questions=0,totalSeconds=0;
   for(const part of [1,2,3]){
    const partRows=rows.filter(row=>row.part===part);
    let seconds=0;
    for(const row of partRows)if(Number.isFinite(row.seconds)&&row.seconds>0)seconds+=row.seconds;
-   const partMinutes=practiceMinuteCount(seconds);
-   parts.push({part,count:partRows.length,minutes:partMinutes});
+   parts.push({part,count:partRows.length,seconds});
    questions+=partRows.length;
-   minutes+=partMinutes;
+   totalSeconds+=seconds;
   }
   const heading=document.createElement('h4');
   heading.className='history-log-day';
   const totalLabel=document.createElement('span');
   totalLabel.textContent='Total';
   heading.append(totalLabel);
-  const stats=document.createElement('span');
-  stats.className='history-log-day-stats';
-  stats.textContent=formatPracticeCount(questions)+' · '+minutes+' min';
-  heading.append(stats);
+  appendPracticeColumns(heading,questions,totalSeconds);
   list.append(heading);
   for(const part of parts){
    const line=document.createElement('div');
    line.className='history-log-part';
    const name=document.createElement('span');
    name.textContent='Part '+part.part;
-   const detail=document.createElement('span');
-   detail.textContent=formatPracticeCount(part.count)+' · '+part.minutes+' min';
-   line.append(name,detail);
+   line.append(name);
+   appendPracticeColumns(line,part.count,part.seconds);
    list.append(line);
   }
   els.practiceHistoryBody.replaceChildren(list);
@@ -2767,17 +2770,17 @@ function renderPracticeHistoryDialog(){
   heading.className='history-log-day';
   const label=document.createElement('span');
   label.textContent=formatPracticeDay(day.at);
-  const stats=document.createElement('span');
-  stats.className='history-log-day-stats';
   let totalSeconds=0;
   for(const row of day.rows)if(Number.isFinite(row.seconds)&&row.seconds>0)totalSeconds+=row.seconds;
   const count=day.rows.length;
   if(historyViewPart==='date'){
-   stats.textContent=formatPracticeCount(count)+' · '+practiceMinuteCount(totalSeconds)+' min';
-   heading.append(label,stats);
+   heading.append(label);
+   appendPracticeColumns(heading,count,totalSeconds);
    list.append(heading);
    continue;
   }
+  const stats=document.createElement('span');
+  stats.className='history-log-day-stats';
   stats.textContent=formatPracticeCount(count)+' · '+formatRecordedTime(totalSeconds);
   heading.append(label,stats);
   list.append(heading);
@@ -2787,7 +2790,7 @@ function renderPracticeHistoryDialog(){
   button.className='history-log-row';
   const time=document.createElement('span');
   time.className='history-log-time';
-  const seconds=Number.isFinite(row.seconds)?' · '+row.seconds.toFixed(1)+'s':'';
+  const seconds=Number.isFinite(row.seconds)?' · '+formatRecordedTime(row.seconds):'';
   time.textContent=formatPracticeClock(row.at)+seconds;
   const body=document.createElement('span');
   const topic=document.createElement('span');
@@ -2876,7 +2879,7 @@ function renderHistory(){
    attempts.slice().reverse().forEach(a=>{
     const row=create('div','record-attempt');
     row.append(create('span','mode'+(a.mode==='Silent'?' silent':''),a.mode),
-      create('strong','',a.seconds.toFixed(1)+'s'),
+      create('strong','',formatRecordedTime(a.seconds)),
       create('span','attempt-date',new Date(a.at).toLocaleString('en-CA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})));
     rows.append(row);
    });
