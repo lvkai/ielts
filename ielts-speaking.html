@@ -183,7 +183,6 @@
 .exam-note{font-size:12px;color:#56687c;line-height:1.55;margin:14px 0 0}
 .cue-card{background:#f5f8fd;border:1px solid #ccdced;border-left:4px solid #527aaa;border-radius:11px;margin:10px 0 15px;padding:15px 18px}
 .cue-card[hidden]{display:none}.cue-intro{font-size:13px;color:#435f81;font-weight:750}.cue-card ul{margin:10px 0 0;padding-left:21px;color:#243d5b;font-size:15px;line-height:1.75}
-.record-part{display:inline-block;font-weight:800;color:#315782;font-size:10px;letter-spacing:.02em;text-transform:uppercase;margin-bottom:5px}
 #prep{border-color:#c9d9e9}#prep[hidden]{display:none}#part3Think[hidden]{display:none}.part2-tools:not(:has(> :not([hidden]))){display:none}
 @media(max-width:540px){.header .mark{white-space:normal;text-align:center;max-width:130px}.topic-inline #topic{flex:1 1 145px;width:auto;max-width:none}.topic-inline .topic-next{padding:7px 8px}}
 
@@ -2870,7 +2869,7 @@ function renderHistory(){
   const card=create('div','record'+(i===idx?' active':''));
   if(speakingPart===2)card.classList.add('record-plain');
   const n=speakingPart===2?null:create('div','num',String(shown).padStart(2,'0'));
-  const body=create('div');body.append(create('div','record-part',speakingPart===1?'Part 1 · 30s':q.part===2?'Part 2 · 2 min':'Part 3 · 1 min'));body.append(create('div','record-q',q.q));
+  const body=create('div');body.append(create('div','record-q',q.q));
 
   if(attempts.length){
    const rows=create('div','record-attempts');
