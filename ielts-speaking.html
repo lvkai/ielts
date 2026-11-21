@@ -320,21 +320,21 @@ body:not(.part-mode-1) .topic-inline #topic{field-sizing:fixed;flex:0 1 340px;wi
  <section class="duration-stat-group" aria-label="Current topic recording durations">
   <div class="duration-stat-heading"><span>THIS TOPIC</span><span id="topicRecorded">0 recordings</span></div>
   <div class="duration-stat-values">
-   <div class="duration-stat-value"><strong id="topicTotal">0:00s</strong><span>Total duration</span></div>
+   <div class="duration-stat-value"><strong id="topicTotal">0s</strong><span>Total duration</span></div>
    <div class="duration-stat-value"><strong id="topicAverage">—</strong><span id="topicAverageLabel">Average</span></div>
   </div>
  </section>
  <section class="duration-stat-group" aria-label="All topics recording durations">
   <div class="duration-stat-heading"><span>ALL TOPICS</span><span id="allRecorded">0 recordings</span></div>
   <div class="duration-stat-values">
-   <div class="duration-stat-value"><strong id="allTotal">0:00s</strong><span>Total duration</span></div>
+   <div class="duration-stat-value"><strong id="allTotal">0s</strong><span>Total duration</span></div>
    <div class="duration-stat-value"><strong id="allAverage">—</strong><span id="allAverageLabel">Average</span></div>
   </div>
  </section>
  <section class="duration-stat-group" aria-label="All recorded attempts, including repeats">
   <div class="duration-stat-heading"><span>ALL RECORDINGS</span></div>
   <div class="duration-stat-values">
-   <div class="duration-stat-value"><strong id="lifetimeTotal">0:00s</strong><span>Total duration</span></div>
+   <div class="duration-stat-value"><strong id="lifetimeTotal">0s</strong><span>Total duration</span></div>
    <div class="duration-stat-value"><strong id="lifetimeCount">0</strong><span>Recording count</span></div>
   </div>
  </section>
@@ -2443,8 +2443,15 @@ function refreshVoices(){
 function setTime(value){const shown=Math.max(0,value).toFixed(1);if(prepActive||thinkActive)els.prepCountdown.textContent=shown+'s';else els.time.textContent=shown}
 function create(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el}
 function formatRecordedTime(seconds){
- const rounded=Math.max(0,Math.round(seconds));
- return Math.floor(rounded/60)+':'+String(rounded%60).padStart(2,'0')+'s';
+ const rounded=Math.max(0,Math.round(Number(seconds)||0));
+ const hours=Math.floor(rounded/3600);
+ const minutes=Math.floor((rounded%3600)/60);
+ const secs=rounded%60;
+ const parts=[];
+ if(hours)parts.push(hours+'h');
+ if(minutes)parts.push(minutes+'m');
+ if(secs||!parts.length)parts.push(secs+'s');
+ return parts.join(' ');
 }
 function getRecordingStats(topicFilter=null){
  let recorded=0,timed=0,total=0,part3Timed=0,part3Total=0;
@@ -2699,8 +2706,8 @@ function renderDurationStats(){
  els.questionCoverage.textContent=coverage.questions+' / '+coverage.questionTotal+' questions';
  els.topicRecorded.textContent=topic.recorded+' recording'+(topic.recorded===1?'':'s');
  els.allRecorded.textContent=all.recorded+' recording'+(all.recorded===1?'':'s');
- els.topicTotal.textContent=topic.timed?formatRecordedTime(topic.total):'0:00s';
- els.allTotal.textContent=all.timed?formatRecordedTime(all.total):'0:00s';
+ els.topicTotal.textContent=topic.timed?formatRecordedTime(topic.total):'0s';
+ els.allTotal.textContent=all.timed?formatRecordedTime(all.total):'0s';
  const averageLabel=speakingPart===1?'Average':'Part 3 average';
  const topicAverageLabel=document.getElementById('topicAverageLabel');
  const allAverageLabel=document.getElementById('allAverageLabel');
