@@ -50,7 +50,8 @@
 .coverage-table{width:100%;border-collapse:collapse;font-size:13px}
 .coverage-table td,.coverage-table th{padding:8px 16px;text-align:left;vertical-align:top}
 .coverage-table .category-row th{background:#f4f7fb;color:#315782;font-size:12px;letter-spacing:.02em}
-.coverage-table td.coverage-status{width:42px;text-align:center;white-space:nowrap;font-weight:800;font-size:16px;color:#166c59}
+.coverage-table td.coverage-status{width:52px;text-align:center;white-space:nowrap;font-weight:800;font-size:16px;color:#166c59}
+.coverage-table th.coverage-part2{width:52px;padding-left:6px;padding-right:6px;text-align:center;white-space:nowrap;font-size:11px;font-weight:750;letter-spacing:.02em}
 .coverage-table td.coverage-part3,.coverage-table th.coverage-part3{width:72px;padding-left:8px;padding-right:16px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:750;color:#315782}
 .coverage-table th.coverage-part3{font-size:11px;font-weight:750;letter-spacing:.02em}
 .coverage-topic{border:0;padding:0;background:none;color:#1c2b3a;font:inherit;font-weight:650;text-align:left;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
@@ -2532,14 +2533,17 @@ function renderTopicCoverageDialog(){
   const title=document.createElement('tr');
   title.className='category-row';
   const heading=document.createElement('th');
-  heading.colSpan=2;
+  heading.colSpan=showPart3?1:2;
   heading.textContent=name+' · '+done+'/'+rows.length;
   title.append(heading);
   if(showPart3){
+   const part2Head=document.createElement('th');
+   part2Head.className='coverage-part2';
+   part2Head.textContent='Part 2';
    const part3Head=document.createElement('th');
    part3Head.className='coverage-part3';
    part3Head.textContent='Part 3';
-   title.append(part3Head);
+   title.append(part2Head,part3Head);
   }
   body.append(title);
   for(const row of rows){
