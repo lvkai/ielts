@@ -1694,7 +1694,7 @@ let part3TransitionTimer=null,part1PauseTimer=null;
 // The voice activity meter reads the existing authorized microphone stream; no additional permission.
 const AUTO_ADVANCE_MIN_SECONDS=30;
 const SILENCE_SECONDS=3;
-const PART2_SILENCE_AFTER_SECONDS=100;
+const PART2_SILENCE_AFTER_SECONDS=90;
 const PART2_SILENCE_SECONDS=3;
 // Silence must be continuous. Speech immediately resets the quiet clock;
 // short voiced syllables must not be accumulated as a long silent period.
@@ -2925,7 +2925,7 @@ function render(){
  if(partTwo&&Array.isArray(q.cue))for(const point of q.cue){const li=document.createElement('li');li.textContent=point;els.cuePoints.append(li)}
  if(!recording&&!pending&&!saving&&!prepActive&&!thinkActive){
   setTime(0);setState('Ready');
-  els.timeHelp.textContent=speakingPart===1?'Part 1 · 30s maximum; ends after 2s continuous silence (after 10s).':testActive?(partTwo?'Part 2 · up to 120 seconds; 3s silence after 100s ends the test.':'Part 3 · next question after 3s continuous silence (after 30s) or at 60s.'):partTwo?'Part 2 · 60s to prepare, then up to 120s. After 100s, 3s silence ends the answer.':'Part 3 · 60s maximum; ends after 3s continuous silence (after 30s).';
+  els.timeHelp.textContent=speakingPart===1?'Part 1 · 30s maximum; ends after 2s continuous silence (after 10s).':testActive?(partTwo?'Part 2 · up to 120 seconds; 3s silence after 90s ends the test.':'Part 3 · next question after 3s continuous silence (after 30s) or at 60s.'):partTwo?'Part 2 · 60s to prepare, then up to 120s. After 90s, 3s silence ends the answer.':'Part 3 · 60s maximum; ends after 3s continuous silence (after 30s).';
  }
  els.playback.pause();if(saved.url){els.playback.style.display='block';els.audioEmpty.style.display='none';void preparePlaybackAudio(getKey(),saved)}
  else{void preparePlaybackAudio(getKey(),saved);els.playback.style.display='none';els.audioEmpty.style.display='block'}
@@ -3228,7 +3228,7 @@ async function startRecording(preparedMic=null){
  els.timeHelp.textContent=speakingPart===1
   ? (testActive?'Part 1 · next question after 2s continuous silence (after 10s) or at 30s.':'Part 1 · 30s maximum; 2s silence after 10s ends recording.')
   : isPart2()
-  ? 'Part 2 · up to 120 seconds; 3s silence after 100s ends recording.'
+  ? 'Part 2 · up to 120 seconds; 3s silence after 90s ends recording.'
   : (testActive?'Part 3 · next question after 3s continuous silence (after 30s) or at 60s.':'Part 3 · 3s continuous silence after 30s ends recording, without changing question.');
  setMessage('');syncControls();
  void startSilenceMonitor(mic);
