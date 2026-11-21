@@ -32,7 +32,8 @@
 #topicCoverageDialog{border:0;border-radius:14px;padding:0;width:min(460px,calc(100vw - 28px));max-height:min(72vh,560px);color:#1c2b3a;box-shadow:0 18px 50px rgba(20,40,70,.22)}
 #practiceHistoryDialog{border:0;border-radius:14px;padding:0;width:min(560px,calc(100vw - 28px));max-height:min(78vh,680px);color:#1c2b3a;box-shadow:0 18px 50px rgba(20,40,70,.22)}
 #practiceHistoryDialog::backdrop{background:rgba(20,32,48,.38)}
-.history-log-day{margin:0;padding:8px 16px;background:#f4f7fb;color:#315782;font-size:12px;font-weight:750;letter-spacing:.02em}
+.history-log-day{display:flex;align-items:baseline;justify-content:space-between;gap:4px 12px;flex-wrap:wrap;margin:0;padding:8px 16px;background:#f4f7fb;color:#315782;font-size:12px;font-weight:750;letter-spacing:.02em}
+.history-log-day-stats{margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap}
 .history-log-row{display:grid;grid-template-columns:minmax(108px,132px) minmax(0,1fr);gap:12px;width:100%;padding:10px 16px;border:0;border-bottom:1px solid #eef2f6;background:#fff;text-align:left;color:inherit;cursor:pointer}
 .history-log-row:hover{background:#f8fbff}
 .history-log-time{font-size:12px;font-weight:750;color:#315782;line-height:1.35}
@@ -2648,16 +2649,30 @@ function renderPracticeHistoryDialog(){
  }
  const list=document.createElement('div');
  list.className='history-log';
- let day='';
+ const days=[];
+ let currentDay=null;
  for(const row of rows){
   const key=practiceDayKey(row.at);
-  if(key!==day){
-   day=key;
-   const heading=document.createElement('h4');
-   heading.className='history-log-day';
-   heading.textContent=formatPracticeDay(row.at);
-   list.append(heading);
+  if(!currentDay||currentDay.key!==key){
+   currentDay={key,at:row.at,rows:[]};
+   days.push(currentDay);
   }
+  currentDay.rows.push(row);
+ }
+ for(const day of days){
+  const heading=document.createElement('h4');
+  heading.className='history-log-day';
+  const label=document.createElement('span');
+  label.textContent=formatPracticeDay(day.at);
+  const stats=document.createElement('span');
+  stats.className='history-log-day-stats';
+  let totalSeconds=0;
+  for(const row of day.rows)if(Number.isFinite(row.seconds)&&row.seconds>0)totalSeconds+=row.seconds;
+  const count=day.rows.length;
+  stats.textContent=count+' question'+(count===1?'':'s')+' · '+formatRecordedTime(totalSeconds);
+  heading.append(label,stats);
+  list.append(heading);
+  for(const row of day.rows){
   const button=document.createElement('button');
   button.type='button';
   button.className='history-log-row';
@@ -2676,6 +2691,7 @@ function renderPracticeHistoryDialog(){
   button.append(time,body);
   button.addEventListener('click',()=>openPracticeAttempt(row));
   list.append(button);
+  }
  }
  els.practiceHistoryBody.replaceChildren(list);
 }
