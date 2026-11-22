@@ -29,6 +29,7 @@
 .coverage-link:hover{color:#16365d}
 .history-link{border:0;padding:0;background:none;color:inherit;font:inherit;letter-spacing:-.01em;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .history-link:hover{color:#16365d}
+.transfer-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.transfer-row .btn{min-height:32px;padding:6px 10px;font-size:12px}
 #topicCoverageDialog{border:0;border-radius:14px;padding:0;width:min(460px,calc(100vw - 28px));max-height:min(72vh,560px);color:#1c2b3a;box-shadow:0 18px 50px rgba(20,40,70,.22)}
 #practiceHistoryDialog{border:0;border-radius:14px;padding:0;width:min(560px,calc(100vw - 28px));max-height:min(78vh,680px);color:#1c2b3a;box-shadow:0 18px 50px rgba(20,40,70,.22)}
 #practiceHistoryDialog::backdrop{background:rgba(20,32,48,.38)}
@@ -329,7 +330,7 @@ body:not(.part-mode-1) .topic-inline #topic{field-sizing:fixed;flex:0 1 340px;wi
 </section>
 <div class="storage-status" id="storageStatus" role="status" aria-live="polite">Checking local recording storage…</div>
 </main>
-<aside class="panel side"><div class="side-top"><div><h3><button type="button" id="practiceHistoryLink" class="history-link">Practice history</button></h3><p class="practice-coverage"><button type="button" id="practiceCoverage" class="coverage-link">0 / 24 topics</button> · <span id="questionCoverage">0 / 120 questions</span></p></div></div>
+<aside class="panel side"><div class="side-top"><div><h3><button type="button" id="practiceHistoryLink" class="history-link">Practice history</button></h3><p class="practice-coverage"><button type="button" id="practiceCoverage" class="coverage-link">0 / 24 topics</button> · <span id="questionCoverage">0 / 120 questions</span></p><div class="transfer-row"><button type="button" id="exportPractice" class="btn slim" title="Download practice records and recordings">Export</button><button type="button" id="importPractice" class="btn slim" title="Restore practice records and recordings from a file">Import</button><input id="importPracticeFile" type="file" accept=".ielts,application/octet-stream" hidden></div></div></div>
 <dialog id="topicCoverageDialog" aria-labelledby="topicCoverageTitle"><div class="coverage-dialog-head"><h3 id="topicCoverageTitle">Topics practiced</h3><button type="button" id="closeTopicCoverage" class="coverage-close" aria-label="Close"><svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"><path d="M4.2 4.2 11.8 11.8M11.8 4.2 4.2 11.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="coverage-scroll" id="topicCoverageBody"></div></dialog>
 <dialog id="practiceHistoryDialog" aria-labelledby="practiceHistoryTitle"><div class="coverage-dialog-head"><h3 id="practiceHistoryTitle">Practice history</h3><button type="button" id="closePracticeHistory" class="coverage-close" aria-label="Close"><svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"><path d="M4.2 4.2 11.8 11.8M11.8 4.2 4.2 11.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="history-part-tabs" role="tablist" aria-label="Practice history part"><button type="button" id="historyTab1" role="tab" aria-selected="true">Part 1</button><button type="button" id="historyTab2" role="tab" aria-selected="false" tabindex="-1">Part 2</button><button type="button" id="historyTab3" role="tab" aria-selected="false" tabindex="-1">Part 3</button><button type="button" id="historyTabDate" role="tab" aria-selected="false" tabindex="-1">By Date</button><button type="button" id="historyTabByPart" role="tab" aria-selected="false" tabindex="-1">By Part</button></div><div class="coverage-scroll" id="practiceHistoryBody"></div></dialog>
 <div class="duration-stats" aria-label="Recording duration statistics">
@@ -1117,7 +1118,7 @@ const questions={
   ]
 };
 const $=id=>document.getElementById(id);
-const els={bankBasic:$('bankBasic'),bankExtended:$('bankExtended'),topic:$('topic'),nextTopic:$('nextTopic'),randomTopic:$('randomTopic'),beginPart1:$('beginPart1'),beginPart2:$('beginPart2'),beginPart3:$('beginPart3'),queueRows:$('queueRows'),queueCount:$('queueCount'),prep:$('prep'),part3Think:$('part3Think'),cueCard:$('cueCard'),cuePoints:$('cuePoints'),rate:$('rate'),voice:$('voice'),voiceInfo:$('voiceInfo'),currentTopic:$('currentTopic'),qCount:$('qCount'),progress:$('progressFill'),question:$('question'),time:$('time'),recordTimer:$('recordTimer'),prepCountdown:$('prepCountdown'),state:$('state'),stateText:$('stateText'),timeHelp:$('timeHelp'),read:$('read'),stop:$('stopRecord'),next:$('next'),micMessage:$('micMessage'),playback:$('playback'),audioEmpty:$('audioEmpty'),playbackNote:$('playbackNote'),history:$('history'),practiceCoverage:$('practiceCoverage'),questionCoverage:$('questionCoverage'),topicCoverageDialog:$('topicCoverageDialog'),topicCoverageBody:$('topicCoverageBody'),closeTopicCoverage:$('closeTopicCoverage'),practiceHistoryLink:$('practiceHistoryLink'),practiceHistoryDialog:$('practiceHistoryDialog'),practiceHistoryBody:$('practiceHistoryBody'),closePracticeHistory:$('closePracticeHistory'),topicRecorded:$('topicRecorded'),topicTotal:$('topicTotal'),topicAverage:$('topicAverage'),allRecorded:$('allRecorded'),allTotal:$('allTotal'),allAverage:$('allAverage'),lifetimeCount:$('lifetimeCount'),lifetimeTotal:$('lifetimeTotal'),storageStatus:$('storageStatus'),asrModel:$('asrModel'),transcribeCurrent:$('transcribeCurrent'),grammarModel:$('grammarModel'),checkGrammar:$('checkGrammar'),autoLoad:$('autoLoad'),asrStatus:$('asrStatus'),asrTranscript:$('asrTranscript'),transcriptTiming:$('transcriptTiming'),transcriptCombined:$('transcriptCombined'),transcriptQuestion:$('transcriptQuestion'),transcriptTitle:$('transcriptTitle'),transcriptCue:$('transcriptCue'),gpuAdapter:$('gpuAdapter'),gpuDetails:$('gpuDetails'),grammarStatus:$('grammarStatus'),retryGrammar:$('retryGrammar'),inlineGrammar:$('inlineGrammar'),toggleTranscript:$('toggleTranscript'),copyTranscript:$('copyTranscript'),rejectedGrammar:$('rejectedGrammar'),rejectedGrammarSummary:$('rejectedGrammarSummary'),rejectedGrammarList:$('rejectedGrammarList')};
+const els={bankBasic:$('bankBasic'),bankExtended:$('bankExtended'),topic:$('topic'),nextTopic:$('nextTopic'),randomTopic:$('randomTopic'),beginPart1:$('beginPart1'),beginPart2:$('beginPart2'),beginPart3:$('beginPart3'),queueRows:$('queueRows'),queueCount:$('queueCount'),prep:$('prep'),part3Think:$('part3Think'),cueCard:$('cueCard'),cuePoints:$('cuePoints'),rate:$('rate'),voice:$('voice'),voiceInfo:$('voiceInfo'),currentTopic:$('currentTopic'),qCount:$('qCount'),progress:$('progressFill'),question:$('question'),time:$('time'),recordTimer:$('recordTimer'),prepCountdown:$('prepCountdown'),state:$('state'),stateText:$('stateText'),timeHelp:$('timeHelp'),read:$('read'),stop:$('stopRecord'),next:$('next'),micMessage:$('micMessage'),playback:$('playback'),audioEmpty:$('audioEmpty'),playbackNote:$('playbackNote'),history:$('history'),practiceCoverage:$('practiceCoverage'),questionCoverage:$('questionCoverage'),topicCoverageDialog:$('topicCoverageDialog'),topicCoverageBody:$('topicCoverageBody'),closeTopicCoverage:$('closeTopicCoverage'),practiceHistoryLink:$('practiceHistoryLink'),exportPractice:$('exportPractice'),importPractice:$('importPractice'),importPracticeFile:$('importPracticeFile'),practiceHistoryDialog:$('practiceHistoryDialog'),practiceHistoryBody:$('practiceHistoryBody'),closePracticeHistory:$('closePracticeHistory'),topicRecorded:$('topicRecorded'),topicTotal:$('topicTotal'),topicAverage:$('topicAverage'),allRecorded:$('allRecorded'),allTotal:$('allTotal'),allAverage:$('allAverage'),lifetimeCount:$('lifetimeCount'),lifetimeTotal:$('lifetimeTotal'),storageStatus:$('storageStatus'),asrModel:$('asrModel'),transcribeCurrent:$('transcribeCurrent'),grammarModel:$('grammarModel'),checkGrammar:$('checkGrammar'),autoLoad:$('autoLoad'),asrStatus:$('asrStatus'),asrTranscript:$('asrTranscript'),transcriptTiming:$('transcriptTiming'),transcriptCombined:$('transcriptCombined'),transcriptQuestion:$('transcriptQuestion'),transcriptTitle:$('transcriptTitle'),transcriptCue:$('transcriptCue'),gpuAdapter:$('gpuAdapter'),gpuDetails:$('gpuDetails'),grammarStatus:$('grammarStatus'),retryGrammar:$('retryGrammar'),inlineGrammar:$('inlineGrammar'),toggleTranscript:$('toggleTranscript'),copyTranscript:$('copyTranscript'),rejectedGrammar:$('rejectedGrammar'),rejectedGrammarSummary:$('rejectedGrammarSummary'),rejectedGrammarList:$('rejectedGrammarList')};
 const items=new Map();
 let idx=0,mediaRecorder=null,stream=null,tick=null,clockStart=0,currentCaptureSeconds=0,activeKey=null,recording=false,pending=false,saving=false,storageLoading=true,reader=null,readToken=0,showAnswerClock=false;
 
@@ -2137,57 +2138,308 @@ function mergePracticeEntries(current,incoming){
  combined.sort((a,b)=>b.at-a.at);
  return combined.slice(0,5);
 }
-function practiceTransferNotice(info){try{navigator.sendBeacon('http://127.0.0.1:8811/export',new Blob([JSON.stringify(info)],{type:'text/plain'}))}catch(_){}}
-async function finishPracticeImport(meta,recordings,source){
- let questions=0,attempts=0,saved=0;
+const NUMBER_STATS_KEY='ielts-number-dictation-stats';
+const DIRECTION_STATS_KEY='ielts-direction-dictation-stats';
+const DIRECTION_IDS=new Set(['n','ne','e','se','s','sw','w','nw']);
+let transferBusy=false;
+function attemptId(attempt){return attempt.at+'|'+attempt.mode+'|'+attempt.seconds}
+async function sha256Hex(buffer){
+ const digest=await crypto.subtle.digest('SHA-256',buffer);
+ return [...new Uint8Array(digest)].map(byte=>byte.toString(16).padStart(2,'0')).join('');
+}
+function cleanDictationStats(stats,valid){
+ const out={};
+ if(!stats||typeof stats!=='object')return out;
+ for(const [key,row] of Object.entries(stats)){
+  if(valid&&!valid(key))continue;
+  if(!row||typeof row!=='object')continue;
+  const misses=Math.max(0,Math.round(Number(row.misses)||0));
+  const lastTime=Math.max(0,Number(row.lastTime)||0);
+  if(!misses&&!lastTime)continue;
+  const item={};
+  if(misses)item.misses=misses;
+  if(lastTime)item.lastTime=lastTime;
+  out[key]=item;
+ }
+ return out;
+}
+function dictationKeyOk(key){const n=Number(key);return Number.isInteger(n)&&n>=1&&n<=99&&String(n)===String(key)}
+function readDictationStats(key,valid){
+ try{return cleanDictationStats(JSON.parse(localStorage.getItem(key)||'{}'),valid)}catch(_){return{}}
+}
+function writeDictationStats(key,stats){try{localStorage.setItem(key,JSON.stringify(stats))}catch(_){}}
+function mergeDictationStats(current,incoming,valid){
+ const base=cleanDictationStats(current,valid);
+ const extra=cleanDictationStats(incoming,valid);
+ let changed=0;
+ for(const [key,row] of Object.entries(extra)){
+  const prev=base[key]||{};
+  const misses=Math.max(Number(prev.misses)||0,Number(row.misses)||0);
+  const lastTime=Math.max(Number(prev.lastTime)||0,Number(row.lastTime)||0);
+  if((Number(prev.misses)||0)===misses&&(Number(prev.lastTime)||0)===lastTime)continue;
+  const next={};
+  if(misses)next.misses=misses;
+  if(lastTime)next.lastTime=lastTime;
+  base[key]=next;
+  changed++;
+ }
+ return {stats:base,changed};
+}
+async function takeSha256(take){
+ if(take.sha256)return take.sha256;
+ if(!(take.audio instanceof Blob)||!take.audio.size||!globalThis.crypto?.subtle)return null;
+ take.sha256=await sha256Hex(await take.audio.arrayBuffer());
+ return take.sha256;
+}
+function fillTakeGaps(take,incoming,key){
+ let filled=false;
+ const transcript=typeof incoming.transcript==='string'?incoming.transcript:'';
+ if(!(take.transcript||'').trim()&&transcript.trim()){take.transcript=transcript;filled=true}
+ const grammar=acceptedGrammar(incoming.grammar,take.transcript||'',key);
+ if(!take.grammar&&grammar){take.grammar=grammar;filled=true}
+ if(take.asrMs==null&&durationMs(incoming.asrMs)!=null){take.asrMs=durationMs(incoming.asrMs);filled=true}
+ if(take.grammarMs==null&&durationMs(incoming.grammarMs)!=null){take.grammarMs=durationMs(incoming.grammarMs);filled=true}
+ if(take.seconds==null&&Number.isFinite(Number(incoming.seconds))){take.seconds=Number(incoming.seconds);filled=true}
+ if(!(take.audio instanceof Blob&&take.audio.size)&&incoming.audio instanceof Blob&&incoming.audio.size){
+  take.audio=incoming.audio;take.url=URL.createObjectURL(incoming.audio);if(incoming.sha256)take.sha256=incoming.sha256;filled=true;
+ }
+ return filled;
+}
+async function mergeImportedTakes(key,incoming){
+ const entry=getItem(key);
+ if(!Array.isArray(entry.takes))entry.takes=[];
+ const beforeHashes=new Set();
+ for(const take of entry.takes){
+  const hash=await takeSha256(take);
+  if(hash)beforeHashes.add(hash);
+ }
+ let skipped=0,filled=0,saved=0,dropped=0;
+ const addedAts=[];
+ for(const item of incoming){
+  const at=Number.isFinite(Number(item.at))?Number(item.at):null;
+  let sha=item.sha256||null;
+  if(!sha&&item.audio instanceof Blob&&item.audio.size)sha=await sha256Hex(await item.audio.arrayBuffer());
+  const byAt=at!=null?entry.takes.find(take=>take.at===at):null;
+  let byHash=null;
+  if(!byAt&&sha){
+   for(const take of entry.takes)if((take.sha256||await takeSha256(take))===sha){byHash=take;break}
+  }
+  const match=byAt||byHash;
+  if(match){
+   skipped++;
+   if(fillTakeGaps(match,{...item,sha256:sha},key))filled++;
+   continue;
+  }
+  const transcript=typeof item.transcript==='string'?item.transcript:'';
+  const audio=item.audio instanceof Blob&&item.audio.size?item.audio:null;
+  if(!audio&&!transcript.trim())continue;
+  const take={
+   at:at!=null?at:nextRecordingAt(),
+   seconds:Number.isFinite(Number(item.seconds))?Number(item.seconds):null,
+   audio,url:audio?URL.createObjectURL(audio):null,transcript,
+   grammar:acceptedGrammar(item.grammar,transcript,key),
+   asrMs:durationMs(item.asrMs),grammarMs:durationMs(item.grammarMs),sha256:sha
+  };
+  entry.takes.unshift(take);
+  addedAts.push(take.at);
+ }
+ entry.takes.sort((a,b)=>b.at-a.at);
+ while(entry.takes.length>MAX_RECORDINGS){
+  const removed=entry.takes.pop();
+  if(removed?.url)URL.revokeObjectURL(removed.url);
+  const addedIndex=addedAts.indexOf(removed.at);
+  if(addedIndex>=0){addedAts.splice(addedIndex,1);dropped++}
+ }
+ saved=addedAts.length;
+ applyTake(entry,entry.takes.find(take=>take.at===entry.selectedAt)||entry.takes[0]||null);
+ return {saved,skipped,filled,dropped,changed:saved>0||filled>0};
+}
+async function keepTotals(target,incoming,apply){
+ if(!target||!incoming||!Number.isFinite(incoming.count)||!Number.isFinite(incoming.totalSeconds))return;
+ const current=await readLifetimeTotals(target);
+ if(current&&Number(current.count)>=incoming.count)return;
+ const next={key:'all',count:incoming.count,totalSeconds:incoming.totalSeconds,shortExcluded:incoming.shortExcluded===true};
+ await storeLifetimeTotals(target,next);
+ apply(next);
+}
+async function importPracticeData(data){
+ let saved=0,skipped=0,filled=0,dropped=0,practiceAdded=0;
  const activeDb=db;
  const databaseForKey=key=>part1StorageKey(key)?dbPart1:dbPart23;
- if(meta&&Array.isArray(meta.practice)){
-  for(const row of meta.practice){
-   if(!row||typeof row.key!=='string'||!knownQuestionKey(row.key)||!Array.isArray(row.entries))continue;
-   const target=databaseForKey(row.key);
+ try{
+  for(const row of Array.isArray(data.practice)?data.practice:[]){
+   if(!row||typeof row.key!=='string'||!Array.isArray(row.entries))continue;
+   const key=canonicalQuestionKey(row.key);
+   if(!knownQuestionKey(key))continue;
+   const target=databaseForKey(key);
    if(!target)continue;
-   const merged=mergePracticeEntries(practiceHistory.get(row.key),row.entries);
-   if(!merged.length)continue;
-   practiceHistory.set(row.key,merged);
+   const before=practiceHistory.get(key)||[];
+   const beforeIds=new Set(before.map(attemptId));
+   const merged=mergePracticeEntries(before,row.entries);
+   const added=merged.filter(entry=>!beforeIds.has(attemptId(entry)));
+   if(!added.length)continue;
+   practiceHistory.set(key,merged);
    db=target;
-   await persistPractice(row.key,merged);
-   questions++;attempts+=merged.length;
+   await persistPractice(key,merged);
+   practiceAdded+=added.length;
+  }
+  const byKey=new Map();
+  for(const rec of data.recordings||[]){
+   if(!rec||typeof rec.key!=='string')continue;
+   const key=canonicalQuestionKey(rec.key);
+   if(!knownQuestionKey(key))continue;
+   if(!byKey.has(key))byKey.set(key,[]);
+   byKey.get(key).push(rec);
+  }
+  for(const [key,incoming] of byKey){
+   const target=databaseForKey(key);
+   if(!target){skipped+=incoming.length;continue}
+   const result=await mergeImportedTakes(key,incoming);
+   saved+=result.saved;skipped+=result.skipped;filled+=result.filled;dropped+=result.dropped;
+   if(!result.changed)continue;
+   db=target;
+   await persistRecording(key,false);
+  }
+  const part1Practice=(data.practice||[]).filter(row=>row&&part1StorageKey(canonicalQuestionKey(row.key)));
+  const part23Practice=(data.practice||[]).filter(row=>row&&!part1StorageKey(canonicalQuestionKey(row.key)));
+  const recordingRows=(data.recordings||[]).filter(rec=>rec&&typeof rec.key==='string');
+  await keepTotals(dbPart23,totalsExcludingShort(data.totals,part23Practice,recordingRows.filter(rec=>!part1StorageKey(canonicalQuestionKey(rec.key)))),next=>{lifetimePart23=next;if(speakingPart!==1)lifetimeTotals=next});
+  await keepTotals(dbPart1,totalsExcludingShort(data.totalsPart1,part1Practice,recordingRows.filter(rec=>part1StorageKey(canonicalQuestionKey(rec.key)))),next=>{lifetimePart1=next;if(speakingPart===1)lifetimeTotals=next});
+  const numberStats=mergeDictationStats(readDictationStats(NUMBER_STATS_KEY,dictationKeyOk),data.numberStats,dictationKeyOk);
+  if(numberStats.changed)writeDictationStats(NUMBER_STATS_KEY,numberStats.stats);
+  const directionStats=mergeDictationStats(readDictationStats(DIRECTION_STATS_KEY,key=>DIRECTION_IDS.has(key)),data.directionStats,key=>DIRECTION_IDS.has(key));
+  if(directionStats.changed)writeDictationStats(DIRECTION_STATS_KEY,directionStats.stats);
+  return {saved,skipped,filled,dropped,practiceAdded,listening:numberStats.changed+directionStats.changed};
+ }finally{
+  db=activeDb;
+  render();renderHistory();renderDurationStats();
+ }
+}
+function formatTransferStatus(result,mode){
+ if(mode==='export'){
+  const recordings=result.saved,questions=result.questions;
+  return `Exported ${recordings} recording${recordings===1?'':'s'} and practice records for ${questions} question${questions===1?'':'s'}.`;
+ }
+ const bits=[];
+ if(result.saved||result.practiceAdded)bits.push(`Imported ${result.saved} recording${result.saved===1?'':'s'} and ${result.practiceAdded} practice record${result.practiceAdded===1?'':'s'}.`);
+ else bits.push('Nothing new to import.');
+ if(result.skipped)bits.push(`${result.skipped} recording${result.skipped===1?' was':'s were'} already on this computer.`);
+ if(result.filled)bits.push(`Filled in ${result.filled} saved recording${result.filled===1?'':'s'}.`);
+ if(result.dropped)bits.push(`${result.dropped} older recording${result.dropped===1?'':'s'} did not fit in the five kept for ${result.dropped===1?'its':'their'} question.`);
+ if(result.listening)bits.push('Updated listening practice.');
+ return bits.join(' ');
+}
+async function buildPracticeTransfer(){
+ if(!globalThis.crypto?.subtle)throw new Error('This browser cannot prepare the practice file.');
+ const practiceMap=new Map();
+ for(const [rawKey,entries] of practiceHistory){
+  const key=canonicalQuestionKey(rawKey);
+  if(!knownQuestionKey(key)||!entries?.length)continue;
+  practiceMap.set(key,mergePracticeEntries(practiceMap.get(key)||[],entries));
+ }
+ const practice=[...practiceMap].map(([key,entries])=>({key,entries:entries.map(entry=>({seconds:entry.seconds,mode:entry.mode,at:entry.at}))}));
+ const recordings=[];
+ const audioParts=[];
+ let offset=0;
+ const seenTake=new Map();
+ for(const [rawKey,entry] of items){
+  const key=canonicalQuestionKey(rawKey);
+  if(!knownQuestionKey(key))continue;
+  for(const take of entry.takes||[]){
+   const audio=take.audio instanceof Blob&&take.audio.size?take.audio:null;
+   const transcript=take.transcript||'';
+   if(!audio&&!transcript.trim())continue;
+   const sha=audio?await takeSha256(take):'';
+   const bucket=seenTake.get(key)||new Set();
+   seenTake.set(key,bucket);
+   const atKey='at:'+take.at;
+   if(bucket.has(atKey)||(sha&&bucket.has(sha)))continue;
+   bucket.add(atKey);
+   if(sha)bucket.add(sha);
+   let byteOffset=null,byteLength=null;
+   if(audio){
+    const buffer=await audio.arrayBuffer();
+    byteOffset=offset;byteLength=buffer.byteLength;offset+=byteLength;
+    audioParts.push(buffer);
+   }
+   recordings.push({key,at:take.at,seconds:Number.isFinite(Number(take.seconds))?Number(take.seconds):null,transcript,grammar:take.grammar||null,asrMs:durationMs(take.asrMs),grammarMs:durationMs(take.grammarMs),mime:audio?(audio.type||'audio/webm'):'',sha256:sha||null,byteOffset,byteLength});
   }
  }
- for(const rec of recordings){
-  if(!rec||typeof rec.key!=='string'||!knownQuestionKey(rec.key)||!(rec.buffer instanceof ArrayBuffer)||!rec.buffer.byteLength)continue;
-  const target=databaseForKey(rec.key);
-  if(!target)continue;
-  const blob=new Blob([rec.buffer],{type:typeof rec.mime==='string'&&rec.mime?rec.mime:'audio/webm'});
-  const entry=getItem(rec.key);
-  syncOpenTake(entry);
-  const transcript=typeof rec.transcript==='string'?rec.transcript:'';
-  const take={at:nextRecordingAt(),seconds:Number.isFinite(rec.seconds)?rec.seconds:null,audio:blob,url:URL.createObjectURL(blob),transcript,grammar:acceptedGrammar(rec.grammar,transcript,rec.key)};
-  entry.takes.unshift(take);
-  while(entry.takes.length>MAX_RECORDINGS){const dropped=entry.takes.pop();if(dropped?.url)URL.revokeObjectURL(dropped.url)}
-  applyTake(entry,entry.takes[0]);
-  db=target;
-  await persistRecording(rec.key,false);
-  saved++;
+ const meta={version:1,kind:'ielts-practice',practice,totals:{key:'all',count:Number(lifetimePart23.count)||0,totalSeconds:Number(lifetimePart23.totalSeconds)||0,shortExcluded:lifetimePart23.shortExcluded===true},totalsPart1:{key:'all',count:Number(lifetimePart1.count)||0,totalSeconds:Number(lifetimePart1.totalSeconds)||0,shortExcluded:lifetimePart1.shortExcluded===true},numberStats:readDictationStats(NUMBER_STATS_KEY,dictationKeyOk),directionStats:readDictationStats(DIRECTION_STATS_KEY,key=>DIRECTION_IDS.has(key)),recordings};
+ const jsonBytes=new TextEncoder().encode(JSON.stringify(meta));
+ const header=new Uint8Array(11);
+ header.set(new TextEncoder().encode('IELTS1\n'));
+ new DataView(header.buffer).setUint32(7,jsonBytes.length,true);
+ const questions=new Set([...practice.map(row=>row.key),...recordings.map(row=>row.key)]);
+ return {blob:new Blob([header,jsonBytes,...audioParts],{type:'application/octet-stream'}),saved:recordings.length,questions:questions.size};
+}
+async function readPracticeTransfer(buffer){
+ const bytes=new Uint8Array(buffer);
+ if(bytes.length<11)throw new Error('This practice file could not be read.');
+ if(new TextDecoder().decode(bytes.subarray(0,7))!=='IELTS1\n')throw new Error('This practice file could not be read.');
+ const jsonLength=new DataView(bytes.buffer,bytes.byteOffset+7,4).getUint32(0,true);
+ const jsonEnd=11+jsonLength;
+ if(!jsonLength||jsonEnd>bytes.length)throw new Error('This practice file is incomplete.');
+ let meta;
+ try{meta=JSON.parse(new TextDecoder().decode(bytes.subarray(11,jsonEnd)))}catch(_){throw new Error('This practice file could not be read.')}
+ if(!meta||meta.kind!=='ielts-practice'||meta.version!==1)throw new Error('This practice file could not be read.');
+ const recordings=[];
+ for(const rec of Array.isArray(meta.recordings)?meta.recordings:[]){
+  if(!rec||typeof rec.key!=='string')continue;
+  let audio=null,sha256=null;
+  if(rec.byteLength>0){
+   if(!Number.isInteger(rec.byteOffset)||!Number.isInteger(rec.byteLength)||rec.byteOffset<0)throw new Error('This practice file is incomplete.');
+   const start=jsonEnd+rec.byteOffset,end=start+rec.byteLength;
+   if(end>bytes.length)throw new Error('This practice file is incomplete.');
+   const slice=bytes.slice(start,end);
+   sha256=await sha256Hex(slice);
+   if(rec.sha256&&rec.sha256!==sha256)throw new Error('This practice file could not be read.');
+   audio=new Blob([slice],{type:typeof rec.mime==='string'&&rec.mime?rec.mime:'audio/webm'});
+  }
+  recordings.push({key:rec.key,at:rec.at,seconds:rec.seconds,transcript:rec.transcript,grammar:rec.grammar,asrMs:rec.asrMs,grammarMs:rec.grammarMs,audio,sha256});
  }
- db=activeDb;
- const keepTotals=async(target,incoming,apply)=>{
-  if(!target||!incoming||!Number.isFinite(incoming.count)||!Number.isFinite(incoming.totalSeconds))return;
-  const current=await readLifetimeTotals(target);
-  if(current&&Number(current.count)>=incoming.count)return;
-  const next={key:'all',count:incoming.count,totalSeconds:incoming.totalSeconds};
-  await storeLifetimeTotals(target,next);
-  apply(next);
- };
- const part1Practice=(meta&&meta.practice||[]).filter(row=>row&&part1StorageKey(row.key));
- const part23Practice=(meta&&meta.practice||[]).filter(row=>row&&!part1StorageKey(row.key));
- await keepTotals(dbPart23,totalsExcludingShort(meta&&meta.totals,part23Practice,recordings.filter(rec=>rec&&!part1StorageKey(rec.key))),next=>{lifetimePart23=next;if(speakingPart!==1)lifetimeTotals=next});
- await keepTotals(dbPart1,totalsExcludingShort(meta&&meta.totalsPart1,part1Practice,recordings.filter(rec=>rec&&part1StorageKey(rec.key))),next=>{lifetimePart1=next;if(speakingPart===1)lifetimeTotals=next});
- const status=`Imported ${saved} recordings and practice records for ${questions} questions.`;
+ return {practice:meta.practice,totals:meta.totals,totalsPart1:meta.totalsPart1,numberStats:meta.numberStats,directionStats:meta.directionStats,recordings};
+}
+async function exportPracticeFile(){
+ if(transferBusy||storageLoading)return;
+ transferBusy=true;syncControls();
+ setStorageStatus('Preparing the practice file…');
+ try{
+  const result=await buildPracticeTransfer();
+  const day=new Date().toLocaleDateString('en-CA').replace(/-/g,'');
+  const url=URL.createObjectURL(result.blob);
+  const link=document.createElement('a');
+  link.href=url;link.download=`ielts-practice-${day}.ielts`;
+  document.body.append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+  setStorageStatus(formatTransferStatus(result,'export'));
+ }catch(error){
+  setStorageStatus(error.message||'The practice file could not be prepared.',true);
+ }finally{transferBusy=false;syncControls()}
+}
+async function importPracticeFile(file){
+ if(transferBusy||storageLoading||!file)return;
+ transferBusy=true;syncControls();
+ setStorageStatus('Reading the practice file…');
+ try{
+  const data=await readPracticeTransfer(await file.arrayBuffer());
+  setStorageStatus('Importing practice records…');
+  setStorageStatus(formatTransferStatus(await importPracticeData(data),'import'));
+ }catch(error){
+  setStorageStatus(error.message||'The practice file could not be imported.',true);
+ }finally{transferBusy=false;syncControls()}
+}
+function practiceTransferNotice(info){try{navigator.sendBeacon('http://127.0.0.1:8811/export',new Blob([JSON.stringify(info)],{type:'text/plain'}))}catch(_){}}
+async function finishPracticeImport(meta,recordings,source){
+ const prepared=[];
+ for(const rec of recordings){
+  if(!rec||typeof rec.key!=='string'||!(rec.buffer instanceof ArrayBuffer)||!rec.buffer.byteLength)continue;
+  prepared.push({key:rec.key,at:rec.at,seconds:rec.seconds,transcript:rec.transcript,grammar:rec.grammar,asrMs:rec.asrMs,grammarMs:rec.grammarMs,mime:rec.mime,audio:new Blob([rec.buffer],{type:typeof rec.mime==='string'&&rec.mime?rec.mime:'audio/webm'}),sha256:await sha256Hex(rec.buffer)});
+ }
+ const result=await importPracticeData({practice:meta&&meta.practice,totals:meta&&meta.totals,totalsPart1:meta&&meta.totalsPart1,numberStats:meta&&meta.numberStats,directionStats:meta&&meta.directionStats,recordings:prepared});
+ const status=formatTransferStatus(result,'import');
  setStorageStatus(status);document.title=status;
- render();renderHistory();renderDurationStats();
- try{source&&source.postMessage({type:'ielts-import-done',db:DB_NAME,questions,attempts,recordings:saved},'*')}catch(_){}
+ try{source&&source.postMessage({type:'ielts-import-done',db:DB_NAME,questions:result.practiceAdded,attempts:result.practiceAdded,recordings:result.saved},'*')}catch(_){}
  history.replaceState(null,'',location.pathname+location.search);
 }
 function startPracticeReceiver(){
@@ -2225,7 +2477,7 @@ function exportPracticeIfRequested(){
   child.postMessage({type:'ielts-import-meta',db:DB_NAME,practice,totals,totalsPart1},'*');
   for(const rec of recordings){
    const buffer=await rec.entry.audio.arrayBuffer();
-   child.postMessage({type:'ielts-import-recording',db:DB_NAME,key:rec.key,seconds:rec.entry.seconds,transcript:rec.entry.transcript||'',grammar:rec.entry.grammar||null,mime:rec.entry.audio.type||'audio/webm',buffer},'*',[buffer]);
+   child.postMessage({type:'ielts-import-recording',db:DB_NAME,key:rec.key,at:rec.entry.at,seconds:rec.entry.seconds,transcript:rec.entry.transcript||'',grammar:rec.entry.grammar||null,asrMs:durationMs(rec.entry.asrMs),grammarMs:durationMs(rec.entry.grammarMs),mime:rec.entry.audio.type||'audio/webm',buffer},'*',[buffer]);
   }
   child.postMessage({type:'ielts-import-commit',db:DB_NAME},'*');
  };
@@ -3114,6 +3366,8 @@ function syncControls(){
  els.beginPart1.disabled=storageLoading||saving||thinkActive||(testActive&&!runningPart1)||(!testActive&&busy);
  els.beginPart2.disabled=storageLoading||saving||thinkActive||(testActive&&!runningPart2)||(!testActive&&busy);
  els.beginPart3.disabled=storageLoading||saving||thinkActive||(testActive&&!runningPart3)||(!testActive&&busy);
+ els.exportPractice.disabled=busy||transferBusy;
+ els.importPractice.disabled=busy||transferBusy;
  els.beginPart1.textContent=runningPart1?'Stop':'Begin Part 1';
  els.beginPart1.title=bankMode==='extended'?'Three topics chosen at random':'One topic from the first four, plus two other topics';
  els.beginPart2.textContent=runningPart2?'Stop':'Begin Part 2';
@@ -4598,6 +4852,13 @@ els.practiceCoverage.addEventListener('click',openTopicCoverage);
 els.closeTopicCoverage.addEventListener('click',()=>els.topicCoverageDialog.close());
 els.topicCoverageDialog.addEventListener('click',event=>{if(event.target===els.topicCoverageDialog)els.topicCoverageDialog.close()});
 els.practiceHistoryLink.addEventListener('click',openPracticeHistory);
+els.exportPractice.addEventListener('click',()=>{void exportPracticeFile()});
+els.importPractice.addEventListener('click',()=>{if(!els.importPractice.disabled)els.importPracticeFile.click()});
+els.importPracticeFile.addEventListener('change',()=>{
+ const file=els.importPracticeFile.files&&els.importPracticeFile.files[0];
+ els.importPracticeFile.value='';
+ if(file)void importPracticeFile(file);
+});
 for(const part of [1,2,3])document.getElementById('historyTab'+part).addEventListener('click',()=>showHistoryPart(part));
 document.getElementById('historyTabDate').addEventListener('click',()=>showHistoryPart('date'));
 document.getElementById('historyTabByPart').addEventListener('click',()=>showHistoryPart('part'));
