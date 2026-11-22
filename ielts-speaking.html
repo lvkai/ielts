@@ -4381,7 +4381,7 @@ els.beginPart2.addEventListener('click',()=>beginOrStopTest(2));
 els.beginPart3.addEventListener('click',()=>beginOrStopTest(3));
 els.prep.addEventListener('click',()=>{if(prepActive){const next=stopPreparation(true);if(next)next()}else startPreparation()});
 els.part3Think.addEventListener('click',()=>{if(thinkActive)stopPart3Think('Stopped. Nothing was saved.');else startPart3Think()});
-els.topic.addEventListener('change',()=>{if(recording||pending||saving||storageLoading||testActive||prepActive||thinkActive)return;rememberTopic();stopSilentTimer();stopReading();if(speakingPart===3)placePart3Start();else placeIdx();render();setMessage('Topic changed. Select a question to practise.')});
+els.topic.addEventListener('change',()=>{if(recording||pending||saving||storageLoading||testActive||prepActive||thinkActive)return;rememberTopic();stopSilentTimer();stopReading();if(speakingPart===3)placePart3Start();else placeIdx();render();setMessage('')});
 els.bankBasic.addEventListener('click',event=>{event.preventDefault();switchBank('basic')});
 els.bankExtended.addEventListener('click',event=>{event.preventDefault();switchBank('extended')});
 
