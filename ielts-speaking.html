@@ -3554,6 +3554,7 @@ function contextualGrammarMessages(question,answer){
   'If intended time cannot be established from the question and answer, leave the tense unchanged.',
   'Use NATURAL, CONVERSATIONAL SPOKEN ENGLISH suitable for IELTS Speaking, not formal essay English.',
   'Keep contractions exactly as spoken: I\'m, you\'re, it\'s, don\'t, can\'t, I\'ve, I\'ll, etc. NEVER expand I\'m to I am or don\'t to do not solely for formality.',
+  'Do not suggest a change that only alters punctuation, or that only switches a contraction and its full form in either direction.',
   'Preserve normal spoken phrasing and register, including natural short sentences; do not polish or formalize an already grammatical answer.',
   'Do not rewrite for style, add details, change factual meaning, or fix speech-recognition guesses without evidence.',
   'Return ONLY a JSON object with exactly this structure: {"edits":[{"from":"exact original substring","to":"replacement substring","reason":"brief reason"}]}.',
@@ -3615,31 +3616,84 @@ function readContextualGrammarOutput(output){
  parsed.edits=parsed.edits.slice(0,24);
  return parsed;
 }
-function expandsSpokenContraction(from,to){
- const a=from.replace(/\u2019/g,"'").toLowerCase();
- const b=to.replace(/\u2019/g,"'").toLowerCase();
- const pairs=[
-  ["i'm",'i am'],["you're",'you are'],["we're",'we are'],["they're",'they are'],
-  ["he's",'he is'],["he's",'he has'],["she's",'she is'],["she's",'she has'],
-  ["it's",'it is'],["it's",'it has'],["that's",'that is'],["that's",'that has'],
-  ["there's",'there is'],["there's",'there has'],["what's",'what is'],
-  ["i've",'i have'],["you've",'you have'],["we've",'we have'],["they've",'they have'],
-  ["i'll",'i will'],["you'll",'you will'],["we'll",'we will'],["they'll",'they will'],
-  ["i'd",'i would'],["i'd",'i had'],["you'd",'you would'],["we'd",'we would'],
-  ["don't",'do not'],["doesn't",'does not'],["didn't",'did not'],
-  ["can't",'cannot'],["can't",'can not'],["won't",'will not'],
-  ["isn't",'is not'],["aren't",'are not'],["wasn't",'was not'],["weren't",'were not'],
-  ["haven't",'have not'],["hasn't",'has not'],["hadn't",'had not'],
-  ["couldn't",'could not'],["wouldn't",'would not'],["shouldn't",'should not'],
-  ["let's",'let us']
+function wordSkeleton(text){
+ return String(text).replace(/\u2019/g,"'").replace(/[^\p{L}\p{N}'\s]+/gu,'').replace(/\s+/g,' ').trim();
+}
+function punctuationOnlyChange(from,to){
+ return from!==to&&wordSkeleton(from)===wordSkeleton(to);
+}
+function abbreviationTokens(text){
+ return String(text).replace(/\u2019/g,"'").toLowerCase().match(/[a-z]+(?:'[a-z]+)?/g)||[];
+}
+function abbreviationParses(tokens){
+ const groups=[
+  ['i-am',["i'm"],['i','am']],
+  ['you-are',["you're"],['you','are']],
+  ['we-are',["we're"],['we','are']],
+  ['they-are',["they're"],['they','are']],
+  ['he-is',["he's"],['he','is']],
+  ['he-has',["he's"],['he','has']],
+  ['she-is',["she's"],['she','is']],
+  ['she-has',["she's"],['she','has']],
+  ['it-is',["it's"],['it','is']],
+  ['it-has',["it's"],['it','has']],
+  ['that-is',["that's"],['that','is']],
+  ['that-has',["that's"],['that','has']],
+  ['there-is',["there's"],['there','is']],
+  ['there-has',["there's"],['there','has']],
+  ['what-is',["what's"],['what','is']],
+  ['i-have',["i've"],['i','have']],
+  ['you-have',["you've"],['you','have']],
+  ['we-have',["we've"],['we','have']],
+  ['they-have',["they've"],['they','have']],
+  ['i-will',["i'll"],['i','will']],
+  ['you-will',["you'll"],['you','will']],
+  ['we-will',["we'll"],['we','will']],
+  ['they-will',["they'll"],['they','will']],
+  ['i-would',["i'd"],['i','would']],
+  ['i-had',["i'd"],['i','had']],
+  ['you-would',["you'd"],['you','would']],
+  ['we-would',["we'd"],['we','would']],
+  ['do-not',["don't"],['do','not']],
+  ['does-not',["doesn't"],['does','not']],
+  ['did-not',["didn't"],['did','not']],
+  ['can-not',["can't"],['cannot'],['can','not']],
+  ['will-not',["won't"],['will','not']],
+  ['is-not',["isn't"],['is','not']],
+  ['are-not',["aren't"],['are','not']],
+  ['was-not',["wasn't"],['was','not']],
+  ['were-not',["weren't"],['were','not']],
+  ['have-not',["haven't"],['have','not']],
+  ['has-not',["hasn't"],['has','not']],
+  ['had-not',["hadn't"],['had','not']],
+  ['could-not',["couldn't"],['could','not']],
+  ['would-not',["wouldn't"],['would','not']],
+  ['should-not',["shouldn't"],['should','not']],
+  ['let-us',["let's"],['let','us']]
  ];
- const contains=(text,phrase)=>{
-  const start=text.indexOf(phrase);
-  if(start<0)return false;
-  const end=start+phrase.length;
-  return (start===0||!/\w/.test(text[start-1]))&&(end===text.length||!/\w/.test(text[end]));
+ const found=[];
+ const walk=(index,acc)=>{
+  if(index===tokens.length){found.push(acc.join(' '));return}
+  let matched=false;
+  for(const group of groups){
+   const key=group[0];
+   for(let n=1;n<group.length;n++){
+    const alt=group[n];
+    if(alt.every((word,offset)=>tokens[index+offset]===word)){
+     matched=true;walk(index+alt.length,acc.concat(key));
+    }
+   }
+  }
+  if(!matched)walk(index+1,acc.concat(tokens[index]));
  };
- return pairs.some(([short,long])=>contains(a,short)&&contains(b,long));
+ walk(0,[]);
+ return found;
+}
+function abbreviationOnlyChange(from,to){
+ const a=abbreviationTokens(from),b=abbreviationTokens(to);
+ if(!a.length||!b.length||a.join(' ')===b.join(' '))return false;
+ const left=new Set(abbreviationParses(a));
+ return abbreviationParses(b).some(parse=>left.has(parse));
 }
 function isUnchangedSuggestion(edit){
  const from=typeof edit?.from==='string'?edit.from:'';
@@ -3667,8 +3721,7 @@ function applyContextualGrammarEdits(source,parsed){
    reject(edit,'Invalid suggestion.');continue;
   }
   const from=edit.from,to=edit.to;
-  if(isUnchangedSuggestion(edit))continue;
-  if(expandsSpokenContraction(from,to)){reject(edit,'Spoken contraction left unchanged.');continue}
+  if(isUnchangedSuggestion(edit)||punctuationOnlyChange(from,to)||abbreviationOnlyChange(from,to))continue
   if(!from||from.length>110||to.length>130||/[\r\n]/.test(from+to)||
      !from.trim()||!to.trim()||grammarWords(to).length>grammarWords(from).length+3){
    reject(edit,'Empty or too large to apply.');continue;
