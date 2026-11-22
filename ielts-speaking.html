@@ -2506,14 +2506,21 @@ function formatLooseTime(seconds){
 function formatTimeLimit(seconds){
  return formatRecordedTime(seconds).replace(/ 00s$/,'');
 }
+function savedRecording(topic,index){
+ const key=getKey(topic,index);
+ const item=items.get(key);
+ if(!item?.audio?.size||recordingTooShort(key,item.seconds))return null;
+ return item;
+}
 function getRecordingStats(topicFilter=null){
  let recorded=0,timed=0,total=0;
- for(const [topic,qs] of Object.entries(currentQuestions())){
-  if(topicFilter!==null&&topic!==topicFilter)continue;
+ const names=topicFilter!==null?[topicFilter]:activeTopicNames();
+ for(const topic of names){
+  const qs=currentQuestions()[topic]||[];
   for(let i=0;i<qs.length;i++){
    if(speakingPart!==1&&qs[i].part!==speakingPart)continue;
-   const item=items.get(getKey(topic,i));
-   if(!item?.audio?.size||recordingTooShort(getKey(topic,i),item.seconds))continue;
+   const item=savedRecording(topic,i);
+   if(!item)continue;
    recorded++;
    if(!Number.isFinite(item.seconds)||item.seconds<0)continue;
    timed++;
@@ -2550,7 +2557,7 @@ function practiceCoverage(){
   for(let i=0;i<qs.length;i++){
    if(speakingPart!==1&&qs[i].part!==speakingPart)continue;
    inTopic++;
-   if(!items.get(getKey(topic,i))?.audio?.size)continue;
+   if(!savedRecording(topic,i))continue;
    practicedQuestions++;
    practiced=true;
   }
