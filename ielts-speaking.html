@@ -3554,7 +3554,7 @@ function contextualGrammarMessages(question,answer){
   'If intended time cannot be established from the question and answer, leave the tense unchanged.',
   'Use NATURAL, CONVERSATIONAL SPOKEN ENGLISH suitable for IELTS Speaking, not formal essay English.',
   'Keep contractions exactly as spoken: I\'m, you\'re, it\'s, don\'t, can\'t, I\'ve, I\'ll, etc. NEVER expand I\'m to I am or don\'t to do not solely for formality.',
-  'Do not suggest a change that only alters punctuation, or that only switches a contraction and its full form in either direction.',
+  'Do not suggest a change that only alters punctuation, switches a contraction and its full form, or replaces a word with another word pronounced the same way, such as its and it\'s.',
   'Preserve normal spoken phrasing and register, including natural short sentences; do not polish or formalize an already grammatical answer.',
   'Do not rewrite for style, add details, change factual meaning, or fix speech-recognition guesses without evidence.',
   'Return ONLY a JSON object with exactly this structure: {"edits":[{"from":"exact original substring","to":"replacement substring","reason":"brief reason"}]}.',
@@ -3695,6 +3695,43 @@ function abbreviationOnlyChange(from,to){
  const left=new Set(abbreviationParses(a));
  return abbreviationParses(b).some(parse=>left.has(parse));
 }
+let homophoneSets=null;
+function homophoneSet(word){
+ if(!homophoneSets){
+  homophoneSets=new Map();
+  for(const group of [
+   ["its","it's"],["their",'there',"they're"],["your","you're"],["whose","who's"],
+   ['to','too','two'],['hear','here'],['wear','where'],['write','right'],
+   ['no','know'],['buy','by','bye'],['week','weak'],['weather','whether'],
+   ['piece','peace'],['passed','past'],['for','four'],['see','sea'],
+   ['one','won'],['hole','whole'],['knew','new'],['night','knight'],
+   ['mail','male'],['meat','meet'],['bare','bear'],['break','brake'],
+   ['wait','weight'],['which','witch'],['wood','would'],['aloud','allowed'],
+   ['board','bored'],['principal','principle'],['flour','flower'],['sale','sail'],
+   ['tail','tale'],['son','sun'],['ate','eight'],['be','bee'],['made','maid'],
+   ['pair','pear'],['road','rode'],['role','roll'],['scene','seen'],
+   ['steal','steel'],['threw','through'],['waist','waste'],['cent','scent','sent'],
+   ['sight','site','cite'],['plain','plane'],['poor','pour'],['some','sum'],
+   ['stair','stare'],['sole','soul'],['rose','rows']
+  ]){
+   const set=new Set(group);
+   for(const item of group)homophoneSets.set(item,set);
+  }
+ }
+ return homophoneSets.get(word)||null;
+}
+function homophoneOnlyChange(from,to){
+ const a=abbreviationTokens(from),b=abbreviationTokens(to);
+ if(!a.length||a.length!==b.length||a.join(' ')===b.join(' '))return false;
+ let changed=false;
+ for(let i=0;i<a.length;i++){
+  if(a[i]===b[i])continue;
+  const set=homophoneSet(a[i]);
+  if(!set||!set.has(b[i]))return false;
+  changed=true;
+ }
+ return changed;
+}
 function isUnchangedSuggestion(edit){
  const from=typeof edit?.from==='string'?edit.from:'';
  const to=typeof edit?.to==='string'?edit.to:'';
@@ -3721,7 +3758,7 @@ function applyContextualGrammarEdits(source,parsed){
    reject(edit,'Invalid suggestion.');continue;
   }
   const from=edit.from,to=edit.to;
-  if(isUnchangedSuggestion(edit)||punctuationOnlyChange(from,to)||abbreviationOnlyChange(from,to))continue
+  if(isUnchangedSuggestion(edit)||punctuationOnlyChange(from,to)||abbreviationOnlyChange(from,to)||homophoneOnlyChange(from,to))continue
   if(!from||from.length>110||to.length>130||/[\r\n]/.test(from+to)||
      !from.trim()||!to.trim()||grammarWords(to).length>grammarWords(from).length+3){
    reject(edit,'Empty or too large to apply.');continue;
