@@ -2514,7 +2514,7 @@ function savedRecording(topic,index){
 }
 function getRecordingStats(topicFilter=null){
  let recorded=0,timed=0,total=0;
- const names=topicFilter!==null?[topicFilter]:activeTopicNames();
+ const names=topicFilter!==null?[topicFilter]:Object.keys(currentQuestions());
  for(const topic of names){
   const qs=currentQuestions()[topic]||[];
   for(let i=0;i<qs.length;i++){
