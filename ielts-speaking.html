@@ -228,6 +228,8 @@
 .transcript-cue{margin:5px 0 4px;font-size:13px;color:#617182;line-height:1.5}
 #asrTranscript{display:block;margin:0;min-height:105px;padding:5px 13px 13px;width:100%;height:auto;border:0;background:transparent;font:inherit;font-size:15px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;resize:none;outline:none;cursor:text}
 #asrTranscript[hidden]{display:none}
+.transcript-timing{margin:0;padding:0 13px 11px;font-size:12px;line-height:1.4;color:#687786}
+.transcript-timing[hidden]{display:none}
 .inline-grammar{margin:0;min-height:105px;padding:5px 13px 13px;border:0;border-radius:0;background:transparent;font-size:15px;line-height:1.6}
 .inline-grammar[hidden]{display:none}
 .storage-status:empty,.playback-note:empty,.asr-label-actions span:empty{display:none}
@@ -310,6 +312,7 @@ body:not(.part-mode-1) .topic-inline #topic{field-sizing:fixed;flex:0 1 340px;wi
     <div class="transcript-question"><p class="transcript-title" id="transcriptTitle" hidden></p><p class="transcript-question-text" id="transcriptQuestion"></p><div id="transcriptCue" class="transcript-cue" hidden></div></div>
     <div id="asrTranscript" role="textbox" aria-label="Transcript" contenteditable="plaintext-only" spellcheck="true"></div>
     <div id="inlineGrammar" class="inline-grammar" role="region" aria-label="Transcript with inline grammar suggestions" hidden></div>
+    <p id="transcriptTiming" class="transcript-timing" hidden></p>
   </div>
   <div class="grammar-tools"><span id="grammarStatus" class="grammar-status" role="status" aria-live="polite"></span><button type="button" id="retryGrammar" class="btn slim" hidden>Retry grammar</button></div>
   <details id="rejectedGrammar" class="rejected-grammar" hidden>
@@ -1114,7 +1117,7 @@ const questions={
   ]
 };
 const $=id=>document.getElementById(id);
-const els={bankBasic:$('bankBasic'),bankExtended:$('bankExtended'),topic:$('topic'),nextTopic:$('nextTopic'),randomTopic:$('randomTopic'),beginPart1:$('beginPart1'),beginPart2:$('beginPart2'),beginPart3:$('beginPart3'),queueRows:$('queueRows'),queueCount:$('queueCount'),prep:$('prep'),part3Think:$('part3Think'),cueCard:$('cueCard'),cuePoints:$('cuePoints'),rate:$('rate'),voice:$('voice'),voiceInfo:$('voiceInfo'),currentTopic:$('currentTopic'),qCount:$('qCount'),progress:$('progressFill'),question:$('question'),time:$('time'),recordTimer:$('recordTimer'),prepCountdown:$('prepCountdown'),state:$('state'),stateText:$('stateText'),timeHelp:$('timeHelp'),read:$('read'),stop:$('stopRecord'),next:$('next'),micMessage:$('micMessage'),playback:$('playback'),audioEmpty:$('audioEmpty'),playbackNote:$('playbackNote'),history:$('history'),practiceCoverage:$('practiceCoverage'),questionCoverage:$('questionCoverage'),topicCoverageDialog:$('topicCoverageDialog'),topicCoverageBody:$('topicCoverageBody'),closeTopicCoverage:$('closeTopicCoverage'),practiceHistoryLink:$('practiceHistoryLink'),practiceHistoryDialog:$('practiceHistoryDialog'),practiceHistoryBody:$('practiceHistoryBody'),closePracticeHistory:$('closePracticeHistory'),topicRecorded:$('topicRecorded'),topicTotal:$('topicTotal'),topicAverage:$('topicAverage'),allRecorded:$('allRecorded'),allTotal:$('allTotal'),allAverage:$('allAverage'),lifetimeCount:$('lifetimeCount'),lifetimeTotal:$('lifetimeTotal'),storageStatus:$('storageStatus'),asrModel:$('asrModel'),transcribeCurrent:$('transcribeCurrent'),grammarModel:$('grammarModel'),checkGrammar:$('checkGrammar'),autoLoad:$('autoLoad'),asrStatus:$('asrStatus'),asrTranscript:$('asrTranscript'),transcriptCombined:$('transcriptCombined'),transcriptQuestion:$('transcriptQuestion'),transcriptTitle:$('transcriptTitle'),transcriptCue:$('transcriptCue'),gpuAdapter:$('gpuAdapter'),gpuDetails:$('gpuDetails'),grammarStatus:$('grammarStatus'),retryGrammar:$('retryGrammar'),inlineGrammar:$('inlineGrammar'),toggleTranscript:$('toggleTranscript'),copyTranscript:$('copyTranscript'),rejectedGrammar:$('rejectedGrammar'),rejectedGrammarSummary:$('rejectedGrammarSummary'),rejectedGrammarList:$('rejectedGrammarList')};
+const els={bankBasic:$('bankBasic'),bankExtended:$('bankExtended'),topic:$('topic'),nextTopic:$('nextTopic'),randomTopic:$('randomTopic'),beginPart1:$('beginPart1'),beginPart2:$('beginPart2'),beginPart3:$('beginPart3'),queueRows:$('queueRows'),queueCount:$('queueCount'),prep:$('prep'),part3Think:$('part3Think'),cueCard:$('cueCard'),cuePoints:$('cuePoints'),rate:$('rate'),voice:$('voice'),voiceInfo:$('voiceInfo'),currentTopic:$('currentTopic'),qCount:$('qCount'),progress:$('progressFill'),question:$('question'),time:$('time'),recordTimer:$('recordTimer'),prepCountdown:$('prepCountdown'),state:$('state'),stateText:$('stateText'),timeHelp:$('timeHelp'),read:$('read'),stop:$('stopRecord'),next:$('next'),micMessage:$('micMessage'),playback:$('playback'),audioEmpty:$('audioEmpty'),playbackNote:$('playbackNote'),history:$('history'),practiceCoverage:$('practiceCoverage'),questionCoverage:$('questionCoverage'),topicCoverageDialog:$('topicCoverageDialog'),topicCoverageBody:$('topicCoverageBody'),closeTopicCoverage:$('closeTopicCoverage'),practiceHistoryLink:$('practiceHistoryLink'),practiceHistoryDialog:$('practiceHistoryDialog'),practiceHistoryBody:$('practiceHistoryBody'),closePracticeHistory:$('closePracticeHistory'),topicRecorded:$('topicRecorded'),topicTotal:$('topicTotal'),topicAverage:$('topicAverage'),allRecorded:$('allRecorded'),allTotal:$('allTotal'),allAverage:$('allAverage'),lifetimeCount:$('lifetimeCount'),lifetimeTotal:$('lifetimeTotal'),storageStatus:$('storageStatus'),asrModel:$('asrModel'),transcribeCurrent:$('transcribeCurrent'),grammarModel:$('grammarModel'),checkGrammar:$('checkGrammar'),autoLoad:$('autoLoad'),asrStatus:$('asrStatus'),asrTranscript:$('asrTranscript'),transcriptTiming:$('transcriptTiming'),transcriptCombined:$('transcriptCombined'),transcriptQuestion:$('transcriptQuestion'),transcriptTitle:$('transcriptTitle'),transcriptCue:$('transcriptCue'),gpuAdapter:$('gpuAdapter'),gpuDetails:$('gpuDetails'),grammarStatus:$('grammarStatus'),retryGrammar:$('retryGrammar'),inlineGrammar:$('inlineGrammar'),toggleTranscript:$('toggleTranscript'),copyTranscript:$('copyTranscript'),rejectedGrammar:$('rejectedGrammar'),rejectedGrammarSummary:$('rejectedGrammarSummary'),rejectedGrammarList:$('rejectedGrammarList')};
 const items=new Map();
 let idx=0,mediaRecorder=null,stream=null,tick=null,clockStart=0,currentCaptureSeconds=0,activeKey=null,recording=false,pending=false,saving=false,storageLoading=true,reader=null,readToken=0,showAnswerClock=false;
 
@@ -1714,6 +1717,27 @@ let englishVoices=[],voiceManuallyChosen=false,chosenVoiceURI=null;
 const getKey=(topic=els.topic.value,n=idx)=>topic+'::'+n;
 const MAX_RECORDINGS=5;
 const getItem=(key=getKey())=>{if(!items.has(key))items.set(key,{audio:null,url:null,seconds:null,transcript:'',grammar:null,takes:[],selectedAt:null});const item=items.get(key);if(!Array.isArray(item.takes))item.takes=[];return item};
+function durationMs(value){
+ if(value==null||value==='')return null;
+ const n=Number(value);
+ return Number.isFinite(n)&&n>=0?n:null;
+}
+function formatTaskSeconds(ms){
+ const tenths=Math.max(0,Math.round(ms/100));
+ const whole=Math.floor(tenths/10);
+ const frac=tenths%10;
+ return (frac?whole+'.'+frac:String(whole))+'s';
+}
+function renderTranscriptTiming(){
+ const entry=getItem();
+ const parts=[];
+ const asr=durationMs(entry.asrMs);
+ const grammar=durationMs(entry.grammarMs);
+ if(asr!==null)parts.push('Transcription '+formatTaskSeconds(asr));
+ if(grammar!==null)parts.push('Grammar '+formatTaskSeconds(grammar));
+ els.transcriptTiming.hidden=!parts.length;
+ els.transcriptTiming.textContent=parts.join(' · ');
+}
 function applyTake(item,take){
  item.selectedAt=take?take.at:null;
  item.audio=take?.audio||null;
@@ -1721,12 +1745,14 @@ function applyTake(item,take){
  item.seconds=take&&Number.isFinite(Number(take.seconds))?Number(take.seconds):null;
  item.transcript=take?.transcript||'';
  item.grammar=take?.grammar||null;
+ item.asrMs=durationMs(take?.asrMs);
+ item.grammarMs=durationMs(take?.grammarMs);
 }
 function syncOpenTake(item){
  if(!item?.takes?.length)return;
  const take=item.takes.find(entry=>entry.at===item.selectedAt)||item.takes[0];
  if(!take)return;
- take.audio=item.audio;take.url=item.url;take.seconds=item.seconds;take.transcript=item.transcript||'';take.grammar=item.grammar||null;
+ take.audio=item.audio;take.url=item.url;take.seconds=item.seconds;take.transcript=item.transcript||'';take.grammar=item.grammar||null;take.asrMs=durationMs(item.asrMs);take.grammarMs=durationMs(item.grammarMs);
  item.selectedAt=take.at;
 }
 function openRecordingTake(key,at){
@@ -1745,7 +1771,7 @@ function nextRecordingAt(){const now=Date.now();recordingClock=Math.max(now,reco
 function rememberRecording(key,blob,seconds){
  const item=getItem(key);
  syncOpenTake(item);
- const take={at:nextRecordingAt(),seconds,audio:blob,url:URL.createObjectURL(blob),transcript:'',grammar:null};
+ const take={at:nextRecordingAt(),seconds,audio:blob,url:URL.createObjectURL(blob),transcript:'',grammar:null,asrMs:null,grammarMs:null};
  item.takes.unshift(take);
  while(item.takes.length>MAX_RECORDINGS){
   const dropped=item.takes.pop();
@@ -2047,7 +2073,7 @@ function storedTakesFromRecord(record){
   const audio=raw.audio instanceof Blob&&raw.audio.size?raw.audio:null;
   const transcript=typeof raw.transcript==='string'?raw.transcript:'';
   if(!audio&&!transcript.trim())continue;
-  takes.push({at:Number(raw.at)||Number(record.updatedAt)||Date.now(),seconds:Number.isFinite(Number(raw.seconds))?Number(raw.seconds):null,audio,url:audio?URL.createObjectURL(audio):null,transcript,grammar:acceptedGrammar(raw.grammar,transcript,record.key)});
+  takes.push({at:Number(raw.at)||Number(record.updatedAt)||Date.now(),seconds:Number.isFinite(Number(raw.seconds))?Number(raw.seconds):null,audio,url:audio?URL.createObjectURL(audio):null,transcript,grammar:acceptedGrammar(raw.grammar,transcript,record.key),asrMs:durationMs(raw.asrMs),grammarMs:durationMs(raw.grammarMs)});
  }
  takes.sort((a,b)=>b.at-a.at);
  return takes.slice(0,MAX_RECORDINGS);
@@ -2079,7 +2105,7 @@ function persistRecording(key,countNewRecording=false){
   if(!takes.length){applyTake(item,null);return deleteStoredRow(DB_STORE,key)}
   if(!takes.some(take=>take.at===item.selectedAt))applyTake(item,takes[0]);
   const newest=takes[0];
-  return putStoredRecording({key,takes:takes.map(take=>({at:take.at,seconds:take.seconds,audio:take.audio,transcript:take.transcript||'',grammar:take.grammar||null})),audio:newest.audio,seconds:newest.seconds,transcript:newest.transcript||'',grammar:newest.grammar||null,updatedAt:Date.now()},countNewRecording);
+  return putStoredRecording({key,takes:takes.map(take=>({at:take.at,seconds:take.seconds,audio:take.audio,transcript:take.transcript||'',grammar:take.grammar||null,asrMs:durationMs(take.asrMs),grammarMs:durationMs(take.grammarMs)})),audio:newest.audio,seconds:newest.seconds,transcript:newest.transcript||'',grammar:newest.grammar||null,updatedAt:Date.now()},countNewRecording);
  });
  writeQueues.set(key,current);
  current.finally(()=>{if(writeQueues.get(key)===current)writeQueues.delete(key)}).catch(()=>{});
@@ -3885,6 +3911,7 @@ function renderGrammarResult(){
  els.retryGrammar.hidden=true;
  renderRejectedGrammar(valid&&entry.grammar?entry.grammar.rejectedEdits:[]);
  syncCopyTranscript();
+ renderTranscriptTiming();
 }
 function transcriptQuestionText(){
  const parts=[];
@@ -3924,6 +3951,7 @@ function rememberTranscriptDraft(){
  if((entry.transcript||'')===text)return false;
  entry.transcript=text;
  entry.grammar=null;
+ entry.grammarMs=null;
  transcriptNeedsSave=true;
  return true;
 }
@@ -4106,7 +4134,9 @@ async function runGrammarQueue(){
     if(stopped()||entry.transcript!==source)continue;
     grammarProgress={done:0,total:1};renderTaskQueue();
     const messages=contextualGrammarMessages(question,source);
+    const grammarStarted=performance.now();
     const output=await callInference('generate-grammar',{taskId:id,messages});
+    const grammarMs=performance.now()-grammarStarted;
     if(stopped()||entry.transcript!==source)continue;
     const parsed=readContextualGrammarOutput(output);
     if(!parsed){
@@ -4119,6 +4149,7 @@ async function runGrammarQueue(){
     entry.grammar={version:GRAMMAR_VERSION,question,source,corrected:result.corrected,
      status:result.status,total:result.total,accepted:result.accepted,
      rejected:result.rejected,rejectedEdits:result.rejectedEdits||[],at:Date.now()};
+    entry.grammarMs=grammarMs;
     try{await persistRecording(key)}
     catch(error){if(getKey()===key)grammarMessage('Context review finished but save failed: '+error.message,true)}
    }catch(error){
@@ -4301,17 +4332,21 @@ async function runAsrQueue(){
     await ensureWhisper();
     if(taskStopped(job.id)||!takeForBlob(job.key,job.blob)){if(taskStopped(job.id))setAsrStatus('');continue}
     setAsrStatus('');
+    const asrStarted=performance.now();
     const samples=await mono16k(job.blob);
     const stop=makeTaskStop(job.id);
     if(asrStop&&asrStop.id===job.id)asrStop.interrupt=stop.interrupt;
     if(taskStopped(job.id,stop)){setAsrStatus('');continue}
     const transcript=await transcribeSamples(samples,job.id);
+    const asrMs=performance.now()-asrStarted;
     const transcribed=takeForBlob(job.key,job.blob);
     if(taskStopped(job.id,stop)||!transcribed){if(taskStopped(job.id,stop))setAsrStatus('');continue}
     const entry=getItem(job.key);
     transcribed.transcript=transcript;
     transcribed.grammar=null;
-    if(entry.selectedAt===transcribed.at){entry.transcript=transcript;entry.grammar=null}
+    transcribed.asrMs=asrMs;
+    transcribed.grammarMs=null;
+    if(entry.selectedAt===transcribed.at){entry.transcript=transcript;entry.grammar=null;entry.asrMs=asrMs;entry.grammarMs=null}
     try{await persistRecording(job.key)}
     catch(error){setAsrStatus('Transcript ready, but database save failed: '+error.message,true);continue}
     if(getKey()===job.key)renderAsrResult();
