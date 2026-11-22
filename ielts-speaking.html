@@ -2140,6 +2140,7 @@ function mergePracticeEntries(current,incoming){
 }
 const NUMBER_STATS_KEY='ielts-number-dictation-stats';
 const DIRECTION_STATS_KEY='ielts-direction-dictation-stats';
+const CODE_STATS_KEY='ielts-code-dictation-stats';
 const DIRECTION_IDS=new Set(['n','ne','e','se','s','sw','w','nw']);
 let transferBusy=false;
 function attemptId(attempt){return attempt.at+'|'+attempt.mode+'|'+attempt.seconds}
@@ -2164,6 +2165,7 @@ function cleanDictationStats(stats,valid){
  return out;
 }
 function dictationKeyOk(key){const n=Number(key);return Number.isInteger(n)&&n>=1&&n<=99&&String(n)===String(key)}
+function codeStatKey(key){return typeof key==='string'&&/^(?:\d{8}|\d{10}|\d{11}|\d{16})$/.test(key)}
 function readDictationStats(key,valid){
  try{return cleanDictationStats(JSON.parse(localStorage.getItem(key)||'{}'),valid)}catch(_){return{}}
 }
@@ -2309,7 +2311,9 @@ async function importPracticeData(data){
   if(numberStats.changed)writeDictationStats(NUMBER_STATS_KEY,numberStats.stats);
   const directionStats=mergeDictationStats(readDictationStats(DIRECTION_STATS_KEY,key=>DIRECTION_IDS.has(key)),data.directionStats,key=>DIRECTION_IDS.has(key));
   if(directionStats.changed)writeDictationStats(DIRECTION_STATS_KEY,directionStats.stats);
-  return {saved,skipped,filled,dropped,practiceAdded,listening:numberStats.changed+directionStats.changed};
+  const codeStats=mergeDictationStats(readDictationStats(CODE_STATS_KEY,codeStatKey),data.codeStats,codeStatKey);
+  if(codeStats.changed)writeDictationStats(CODE_STATS_KEY,codeStats.stats);
+  return {saved,skipped,filled,dropped,practiceAdded,listening:numberStats.changed+directionStats.changed+codeStats.changed};
  }finally{
   db=activeDb;
   render();renderHistory();renderDurationStats();
@@ -2365,7 +2369,7 @@ async function buildPracticeTransfer(){
    recordings.push({key,at:take.at,seconds:Number.isFinite(Number(take.seconds))?Number(take.seconds):null,transcript,grammar:take.grammar||null,asrMs:durationMs(take.asrMs),grammarMs:durationMs(take.grammarMs),mime:audio?(audio.type||'audio/webm'):'',sha256:sha||null,byteOffset,byteLength});
   }
  }
- const meta={version:1,kind:'ielts-practice',practice,totals:{key:'all',count:Number(lifetimePart23.count)||0,totalSeconds:Number(lifetimePart23.totalSeconds)||0,shortExcluded:lifetimePart23.shortExcluded===true},totalsPart1:{key:'all',count:Number(lifetimePart1.count)||0,totalSeconds:Number(lifetimePart1.totalSeconds)||0,shortExcluded:lifetimePart1.shortExcluded===true},numberStats:readDictationStats(NUMBER_STATS_KEY,dictationKeyOk),directionStats:readDictationStats(DIRECTION_STATS_KEY,key=>DIRECTION_IDS.has(key)),recordings};
+ const meta={version:1,kind:'ielts-practice',practice,totals:{key:'all',count:Number(lifetimePart23.count)||0,totalSeconds:Number(lifetimePart23.totalSeconds)||0,shortExcluded:lifetimePart23.shortExcluded===true},totalsPart1:{key:'all',count:Number(lifetimePart1.count)||0,totalSeconds:Number(lifetimePart1.totalSeconds)||0,shortExcluded:lifetimePart1.shortExcluded===true},numberStats:readDictationStats(NUMBER_STATS_KEY,dictationKeyOk),directionStats:readDictationStats(DIRECTION_STATS_KEY,key=>DIRECTION_IDS.has(key)),codeStats:readDictationStats(CODE_STATS_KEY,codeStatKey),recordings};
  const jsonBytes=new TextEncoder().encode(JSON.stringify(meta));
  const header=new Uint8Array(11);
  header.set(new TextEncoder().encode('IELTS1\n'));
@@ -2398,7 +2402,7 @@ async function readPracticeTransfer(buffer){
   }
   recordings.push({key:rec.key,at:rec.at,seconds:rec.seconds,transcript:rec.transcript,grammar:rec.grammar,asrMs:rec.asrMs,grammarMs:rec.grammarMs,audio,sha256});
  }
- return {practice:meta.practice,totals:meta.totals,totalsPart1:meta.totalsPart1,numberStats:meta.numberStats,directionStats:meta.directionStats,recordings};
+ return {practice:meta.practice,totals:meta.totals,totalsPart1:meta.totalsPart1,numberStats:meta.numberStats,directionStats:meta.directionStats,codeStats:meta.codeStats,recordings};
 }
 async function exportPracticeFile(){
  if(transferBusy||storageLoading)return;
@@ -2436,7 +2440,7 @@ async function finishPracticeImport(meta,recordings,source){
   if(!rec||typeof rec.key!=='string'||!(rec.buffer instanceof ArrayBuffer)||!rec.buffer.byteLength)continue;
   prepared.push({key:rec.key,at:rec.at,seconds:rec.seconds,transcript:rec.transcript,grammar:rec.grammar,asrMs:rec.asrMs,grammarMs:rec.grammarMs,mime:rec.mime,audio:new Blob([rec.buffer],{type:typeof rec.mime==='string'&&rec.mime?rec.mime:'audio/webm'}),sha256:await sha256Hex(rec.buffer)});
  }
- const result=await importPracticeData({practice:meta&&meta.practice,totals:meta&&meta.totals,totalsPart1:meta&&meta.totalsPart1,numberStats:meta&&meta.numberStats,directionStats:meta&&meta.directionStats,recordings:prepared});
+ const result=await importPracticeData({practice:meta&&meta.practice,totals:meta&&meta.totals,totalsPart1:meta&&meta.totalsPart1,numberStats:meta&&meta.numberStats,directionStats:meta&&meta.directionStats,codeStats:meta&&meta.codeStats,recordings:prepared});
  const status=formatTransferStatus(result,'import');
  setStorageStatus(status);document.title=status;
  try{source&&source.postMessage({type:'ielts-import-done',db:DB_NAME,questions:result.practiceAdded,attempts:result.practiceAdded,recordings:result.saved},'*')}catch(_){}
