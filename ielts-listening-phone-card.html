@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Free IELTS listening dictation for phone numbers and credit card numbers. Hear the number in groups, then type it before the timer ends.">
+<meta name="description" content="Free IELTS listening dictation. Start with four digits, then practise phone numbers and credit card numbers. Hear the number, then type it before the timer ends.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/ielts-listening-phone-card.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -38,9 +38,9 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 <div class="wrap">
  <nav class="home-nav" aria-label="Site"><a href="index.html">← Home</a></nav>
  <header>
-  <div><div class="eyebrow">IELTS LISTENING TRAINER</div><h1 class="heading">Phone and Card Dictation</h1><p class="sub">Hear a phone number or a 16-digit card number, then type it before the timer ends. Numbers are read in groups. 0 is spoken as oh, and repeated digits are double or triple. Eight numbers per round.</p></div>
+  <div><div class="eyebrow">IELTS LISTENING TRAINER</div><h1 class="heading">Phone and Card Dictation</h1><p class="sub">Start with four digits. Phone numbers and 16-digit card numbers are in the Practice menu. 0 is spoken as oh, and repeated digits are double or triple. Eight numbers per round.</p></div>
   <div class="settings" aria-label="Test settings">
-   <label class="setting"><span>Practice</span><select id="kind" aria-label="Practice type"><option value="phone" selected>Phone</option><option value="card">Card</option><option value="both">Phone and card</option></select></label>
+   <label class="setting"><span>Practice</span><select id="kind" aria-label="Practice type"><option value="four" selected>4 digits</option><option value="phone">Phone</option><option value="card">Card</option><option value="both">Phone and card</option></select></label>
    <label class="setting voice"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
    <label class="setting"><span>Playback speed</span><select id="speed" aria-label="Playback speed"><option value="0.8">0.8×</option><option value="1" selected>1.0×</option><option value="1.2">1.2×</option></select></label>
    <label class="setting"><span>Time limit</span><select id="limit" aria-label="Time limit per question"><option value="12">12 sec</option><option value="15">15 sec</option><option value="20" selected>20 sec</option><option value="30">30 sec</option></select></label>
@@ -55,7 +55,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
     </button>
     <h2 class="activity-title" id="activityTitle">Ready to begin?</h2>
-    <p class="activity-text" id="activityText" role="status">Start a round of 8 numbers.</p>
+    <p class="activity-text" id="activityText" role="status">Start a round of eight 4-digit numbers.</p>
     <div class="timer-wrap"><span id="timer" class="timer-value">--</span><span class="timer-label">sec</span></div>
     <div id="timerTrack" class="timer-progress"><div id="timerFill"></div></div>
    </div>
@@ -124,6 +124,10 @@ function plantRepeat(text,groups){
  return chars.join('');
 }
 function makeItem(kind){
+ if(kind==='four'){
+  const groups=[4];
+  return {kind:'four',groups,digits:plantRepeat(digitsOf(4),groups)};
+ }
  if(kind==='card'){
   const groups=[4,4,4,4];
   return {kind:'card',groups,digits:plantRepeat(digitsOf(16),groups)};
@@ -153,6 +157,7 @@ function displayOf(item){
 }
 function groupsFor(digits){
  if(digits.length===16)return [4,4,4,4];
+ if(digits.length===4)return [4];
  if(digits.length===11)return digits.startsWith('0')?[5,6]:[4,3,4];
  if(digits.length===10)return [3,3,4];
  if(digits.length===8)return [4,4];
@@ -160,7 +165,7 @@ function groupsFor(digits){
 }
 function itemFromStat(key,row){
  const groups=Array.isArray(row.groups)&&row.groups.reduce((sum,n)=>sum+n,0)===key.length?row.groups:groupsFor(key);
- return {kind:row.kind==='card'||key.length===16?'card':'phone',digits:key,groups};
+ return {kind:key.length===4?'four':row.kind==='card'||key.length===16?'card':'phone',digits:key,groups};
 }
 function onlyDigits(value){return String(value||'').replace(/\D/g,'')}
 let items=[],answers=[],position=0,phase='idle',speechGeneration=0,speechEndTimer=null,tick=null,nextTimer=null,expiresAt=0,duration=20000,answerStartedAt=null,reviewMisses=[];
@@ -177,7 +182,7 @@ function noteAttempt(item,ok,elapsed){
 function statRows(pick){
  return Object.entries(codeStats).map(([key,row])=>{
   const misses=Number(row&&row.misses)||0,lastTime=Number(row&&row.lastTime)||0;
-  if(!/^(?:\d{8}|\d{10}|\d{11}|\d{16})$/.test(key))return null;
+  if(!/^(?:\d{4}|\d{8}|\d{10}|\d{11}|\d{16})$/.test(key))return null;
   const item=itemFromStat(key,row||{});
   return pick({key,item,misses,lastTime,label:displayOf(item)});
  }).filter(Boolean);
@@ -303,7 +308,7 @@ function refreshRows(){
   row.append(c1,c2,c3,c4,c5);host.append(row);
  }
 }
-function kindLabel(item){return item&&item.kind==='card'?'Card':'Phone'}
+function kindLabel(item){return item&&item.kind==='card'?'Card':item&&item.kind==='phone'?'Phone':'4 digits'}
 function refreshStats(){
  el('qIndex').textContent=phase==='idle'?'0':phase==='complete'?String(items.length):String(Math.min(position+1,items.length));
  const current=items[position];
@@ -360,8 +365,8 @@ function talk(){
 }
 function setUpQuestion(){
  const item=items[position];
- phase='speaking';answerStartedAt=null;el('answer').value='';el('answer').maxLength=item.kind==='card'?19:14;el('answer').disabled=false;el('submit').disabled=false;el('play').disabled=false;
- el('activityTitle').textContent=item.kind==='card'?'Listen and type the card number':'Listen and type the phone number';
+ phase='speaking';answerStartedAt=null;el('answer').value='';el('answer').maxLength=item.digits.length+Math.max(0,item.groups.length-1);el('answer').disabled=false;el('submit').disabled=false;el('play').disabled=false;
+ el('activityTitle').textContent=item.kind==='card'?'Listen and type the card number':item.kind==='phone'?'Listen and type the phone number':'Listen and type the four digits';
  el('activityText').textContent='Preparing audio…';el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerFill').style.width='0%';el('timerTrack').classList.remove('urgent');refreshStats();el('answer').focus({preventScroll:true});talk();
 }
 function showRoundControls(running){el('start').classList.toggle('hide',running);el('stop').classList.toggle('hide',!running);if(running)el('retry').classList.add('hide')}
