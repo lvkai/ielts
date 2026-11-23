@@ -2165,7 +2165,7 @@ function cleanDictationStats(stats,valid){
  return out;
 }
 function dictationKeyOk(key){const n=Number(key);return Number.isInteger(n)&&n>=1&&n<=99&&String(n)===String(key)}
-function codeStatKey(key){return typeof key==='string'&&/^(?:\d{4}|\d{8}|\d{10}|\d{11}|\d{16})$/.test(key)}
+function codeStatKey(key){return typeof key==='string'&&/^(?:\d{4}|\d{6}|\d{8}|\d{10}|\d{11}|\d{16})$/.test(key)}
 function readDictationStats(key,valid){
  try{return cleanDictationStats(JSON.parse(localStorage.getItem(key)||'{}'),valid)}catch(_){return{}}
 }

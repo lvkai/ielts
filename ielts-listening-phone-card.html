@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Free IELTS listening dictation. Start with four digits, then practise phone numbers and credit card numbers. Hear the number, then type it before the timer ends.">
+<meta name="description" content="Free IELTS listening game. Start with four digits and move up toward phone numbers and a 16-digit card number. Clear a round to level up. Too many misses move you down.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/ielts-listening-phone-card.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="IELTS Listening Phone and Card Dictation">
-<meta property="og:description" content="Free IELTS listening practice. Hear a phone number or credit card number and type it before the timer ends.">
+<meta property="og:description" content="A listening game from four digits up to a card number. Clear 6 of 8 to level up. 3 or fewer moves you down.">
 <meta property="og:url" content="https://lvkai.github.io/ielts/ielts-listening-phone-card.html">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Listening Phone and Card Dictation","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-phone-card.html","description":"Free IELTS listening practice. Hear a phone number or credit card number, then type it before the timer ends.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
@@ -29,6 +29,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 .setting.voice select{width:200px}@media(max-width:800px){.setting.voice select{width:100%}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
 .home-nav{margin:0 0 10px}.home-nav a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.home-nav a:hover{text-decoration:underline}.home-nav a:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}
+.level-board{margin:0 0 18px}.level-rule{margin:4px 0 0;font-size:12px;line-height:1.5;color:var(--muted)}.levels{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.level{flex:1 1 68px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 8px 7px;text-align:left;color:var(--text)}.level b{display:block;font-size:15px;font-weight:800;letter-spacing:-.02em}.level span{display:block;margin-top:2px;font-size:11px;color:var(--muted);font-weight:650}.level.now{background:var(--blue);border-color:var(--blue);color:#fff}.level.now span{color:#e4ebff}.level.done{background:#f3fbf7;border-color:#c9eadb}.level:hover:not(:disabled){border-color:#b9c8ee}.level:disabled{opacity:.42}
 .history-links{display:flex;gap:12px;margin-top:6px}.text-link{border:0;padding:0;background:none;color:var(--blue);font-size:13px;font-weight:750;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.text-link:hover{color:#2148c4}
 .stop{color:var(--red);border-color:#f0d0d0}.stop:hover:not(:disabled){background:#fdecee}
 .stats-dialog{border:0;border-radius:16px;padding:0;width:min(460px,calc(100vw - 28px));max-height:min(72vh,560px);color:var(--text);box-shadow:0 18px 50px rgba(24,35,57,.22)}.stats-dialog::backdrop{background:rgba(24,35,57,.38)}.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}.dialog-head h3{margin:0;font-size:16px}.dialog-close{width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:var(--red);font-size:18px;font-weight:700;line-height:1;cursor:pointer}.dialog-close:hover{background:#fdecee}.dialog-scroll{overflow:auto;max-height:min(46vh,360px)}.stats-table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}.stats-table th,.stats-table td{padding:9px 16px;text-align:left}.stats-table th{font-size:11px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line)}.stats-table td:last-child,.stats-table th:last-child{text-align:right}.stats-table td:first-child{overflow-wrap:anywhere}.dialog-empty{margin:0;padding:22px 16px;color:var(--muted);font-size:13px}.dialog-actions{display:flex;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line)}.dialog-actions .primary{min-height:44px;height:44px;padding:0 16px;font-size:13px}
@@ -38,9 +39,8 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 <div class="wrap">
  <nav class="home-nav" aria-label="Site"><a href="index.html">← Home</a></nav>
  <header>
-  <div><div class="eyebrow">IELTS LISTENING TRAINER</div><h1 class="heading">Phone and Card Dictation</h1><p class="sub">Start with four digits. Phone numbers and 16-digit card numbers are in the Practice menu. 0 is spoken as oh, and repeated digits are double or triple. Eight numbers per round.</p></div>
+  <div><div class="eyebrow">IELTS LISTENING TRAINER</div><h1 class="heading">Phone and Card Dictation</h1><p class="sub">A level game from 4 digits up to a 16-digit card number. Each round has 8 numbers. Clear 6 to move up. 3 or fewer moves you down. 0 is spoken as oh, and repeated digits are double or triple.</p></div>
   <div class="settings" aria-label="Test settings">
-   <label class="setting"><span>Practice</span><select id="kind" aria-label="Practice type"><option value="four" selected>4 digits</option><option value="phone">Phone</option><option value="card">Card</option><option value="both">Phone and card</option></select></label>
    <label class="setting voice"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
    <label class="setting"><span>Playback speed</span><select id="speed" aria-label="Playback speed"><option value="0.8">0.8×</option><option value="1" selected>1.0×</option><option value="1.2">1.2×</option></select></label>
    <label class="setting"><span>Time limit</span><select id="limit" aria-label="Time limit per question"><option value="12">12 sec</option><option value="15">15 sec</option><option value="20" selected>20 sec</option><option value="30">30 sec</option></select></label>
@@ -48,6 +48,11 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
  </header>
  <main class="layout">
   <section class="panel practice" aria-label="Dictation practice">
+   <div class="level-board">
+    <div class="overline" id="levelName">Level 1 of 6 · 4 digits</div>
+    <p class="level-rule" id="levelRule">Clear 6 of 8 to move up. 3 or fewer moves you down. You can open any level you have already reached.</p>
+    <div class="levels" id="levelList" role="list" aria-label="Levels"></div>
+   </div>
    <div class="top"><div class="overline" id="roundLabel">Ready</div><div class="progress-count"><b id="qIndex">0</b> / <span id="qTotal">8</span></div></div>
    <div class="track"><div class="track-fill" id="progress"></div></div>
    <div class="activity">
@@ -55,7 +60,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
     </button>
     <h2 class="activity-title" id="activityTitle">Ready to begin?</h2>
-    <p class="activity-text" id="activityText" role="status">Start a round of eight 4-digit numbers.</p>
+    <p class="activity-text" id="activityText" role="status">Level 1 of 6. Four digits.</p>
     <div class="timer-wrap"><span id="timer" class="timer-value">--</span><span class="timer-label">sec</span></div>
     <div id="timerTrack" class="timer-progress"><div id="timerFill"></div></div>
    </div>
@@ -64,7 +69,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
     <div class="answer-row"><input id="answer" type="text" inputmode="numeric" maxlength="19" autocomplete="off" spellcheck="false" disabled><button id="submit" class="primary" type="button" disabled>Submit</button></div>
     <div class="below"><p class="tip">Spaces are optional · Press Enter or wait for the timer</p><span id="feedback" class="feedback" aria-live="polite"></span></div>
    </div>
-   <div class="actions" id="actions"><button id="start" class="primary" type="button">Start round</button><button id="stop" class="secondary stop hide" type="button">Stop</button><button id="retry" class="secondary hide" type="button">Retry mistakes</button></div>
+   <div class="actions" id="actions"><button id="start" class="primary" type="button">Start level 1</button><button id="stop" class="secondary stop hide" type="button">Stop</button><button id="retry" class="secondary hide" type="button">Retry mistakes</button></div>
   </section>
   <aside class="panel results" aria-label="Question results">
    <div class="result-top"><div><h2>Results</h2><div class="history-links"><button type="button" id="openMissed" class="text-link">Missed</button><button type="button" id="openSlow" class="text-link">Slowest</button></div></div><div class="result-metrics"><span class="score">Correct <b id="score">0</b> / <b id="completed">0</b></span><span class="score">Average time <b id="avgTime">—</b></span></div></div>
@@ -73,7 +78,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="footnote" id="summary">Answers and response times appear after each question. Timing starts after the number is read.</div>
   </aside>
  </main>
- <p class="bottom">These are practice numbers, not real phone lines or cards. Speech uses an English voice on this device. Missed numbers and answer times stay in this browser.</p>
+ <p class="bottom">These are practice numbers, not real phone lines or cards. Speech uses an English voice on this device. Your level, missed numbers, and answer times stay in this browser.</p>
 </div>
 <dialog id="missDialog" class="stats-dialog" aria-labelledby="missTitle">
  <div class="dialog-head"><h3 id="missTitle">Missed</h3><button type="button" id="closeMiss" class="dialog-close" aria-label="Close">×</button></div>
@@ -89,11 +94,21 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 (()=>{'use strict';
 const el=id=>document.getElementById(id);
 const ROUND=8;
+const PASS_NEED=6;
+const DROP_AT=3;
 const DIGIT=['oh','one','two','three','four','five','six','seven','eight','nine'];
-const PHONE_PATTERNS=[{groups:[4,4]},{groups:[3,3,4]},{groups:[5,6],first:'0'},{groups:[4,3,4]}];
+const LEVELS=[
+ {name:'4 digits',digits:4,groups:[4],kind:'four'},
+ {name:'6 digits',digits:6,groups:[3,3],kind:'six'},
+ {name:'8 digits',digits:8,groups:[4,4],kind:'phone'},
+ {name:'10 digits',digits:10,groups:[3,3,4],kind:'phone'},
+ {name:'11 digits',digits:11,groups:null,kind:'phone'},
+ {name:'Card',digits:16,groups:[4,4,4,4],kind:'card'}
+];
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
 const VOICE_KEY='ielts-dictation-voice';
 const STATS_KEY='ielts-code-dictation-stats';
+const LEVEL_KEY='ielts-code-dictation-level';
 function randomBelow(n){
  if(n<=1)return 0;
  if(globalThis.crypto?.getRandomValues){
@@ -123,18 +138,15 @@ function plantRepeat(text,groups){
  if(triple)chars[index+2]=chars[index];
  return chars.join('');
 }
-function makeItem(kind){
- if(kind==='four'){
-  const groups=[4];
-  return {kind:'four',groups,digits:plantRepeat(digitsOf(4),groups)};
+function makeItem(level){
+ let groups=level.groups;
+ let first;
+ if(!groups){
+  const lead=randomBelow(2)===0;
+  groups=lead?[5,6]:[4,3,4];
+  if(lead)first='0';
  }
- if(kind==='card'){
-  const groups=[4,4,4,4];
-  return {kind:'card',groups,digits:plantRepeat(digitsOf(16),groups)};
- }
- const pattern=PHONE_PATTERNS[randomBelow(PHONE_PATTERNS.length)];
- const length=pattern.groups.reduce((sum,size)=>sum+size,0);
- return {kind:'phone',groups:pattern.groups,digits:plantRepeat(digitsOf(length,pattern.first),pattern.groups)};
+ return {kind:level.kind,groups,digits:plantRepeat(digitsOf(level.digits,first),groups)};
 }
 function speakGroup(text){
  const words=[];
@@ -157,18 +169,33 @@ function displayOf(item){
 }
 function groupsFor(digits){
  if(digits.length===16)return [4,4,4,4];
- if(digits.length===4)return [4];
  if(digits.length===11)return digits.startsWith('0')?[5,6]:[4,3,4];
  if(digits.length===10)return [3,3,4];
  if(digits.length===8)return [4,4];
+ if(digits.length===6)return [3,3];
+ if(digits.length===4)return [4];
  return [digits.length];
 }
 function itemFromStat(key,row){
  const groups=Array.isArray(row.groups)&&row.groups.reduce((sum,n)=>sum+n,0)===key.length?row.groups:groupsFor(key);
- return {kind:key.length===4?'four':row.kind==='card'||key.length===16?'card':'phone',digits:key,groups};
+ const level=LEVELS.find(entry=>entry.digits===key.length);
+ return {kind:key.length===16?'card':level?level.kind:'phone',digits:key,groups};
 }
 function onlyDigits(value){return String(value||'').replace(/\D/g,'')}
-let items=[],answers=[],position=0,phase='idle',speechGeneration=0,speechEndTimer=null,tick=null,nextTimer=null,expiresAt=0,duration=20000,answerStartedAt=null,reviewMisses=[];
+let items=[],answers=[],position=0,phase='idle',speechGeneration=0,speechEndTimer=null,tick=null,nextTimer=null,expiresAt=0,duration=20000,answerStartedAt=null,reviewMisses=[],countsRank=false;
+function loadLevel(){
+ try{
+  const raw=JSON.parse(localStorage.getItem(LEVEL_KEY)||'{}');
+  let nextRank=Number(raw.rank),nextBest=Number(raw.best);
+  if(!Number.isInteger(nextRank)||nextRank<1||nextRank>LEVELS.length)nextRank=1;
+  if(!Number.isInteger(nextBest)||nextBest<1||nextBest>LEVELS.length)nextBest=nextRank;
+  if(nextBest<nextRank)nextBest=nextRank;
+  return {rank:nextRank,best:nextBest};
+ }catch(_){return {rank:1,best:1}}
+}
+let {rank,best}=loadLevel();
+function saveLevel(){try{localStorage.setItem(LEVEL_KEY,JSON.stringify({rank,best}))}catch(_){}}
+function currentLevel(){return LEVELS[rank-1]}
 function loadStats(){try{const raw=JSON.parse(localStorage.getItem(STATS_KEY)||'{}');return raw&&typeof raw==='object'?raw:{}}catch(_){return{}}}
 let codeStats=loadStats();
 function saveStats(){try{localStorage.setItem(STATS_KEY,JSON.stringify(codeStats))}catch(_){}}
@@ -182,7 +209,7 @@ function noteAttempt(item,ok,elapsed){
 function statRows(pick){
  return Object.entries(codeStats).map(([key,row])=>{
   const misses=Number(row&&row.misses)||0,lastTime=Number(row&&row.lastTime)||0;
-  if(!/^(?:\d{4}|\d{8}|\d{10}|\d{11}|\d{16})$/.test(key))return null;
+  if(!/^(?:\d{4}|\d{6}|\d{8}|\d{10}|\d{11}|\d{16})$/.test(key))return null;
   const item=itemFromStat(key,row||{});
   return pick({key,item,misses,lastTime,label:displayOf(item)});
  }).filter(Boolean);
@@ -308,7 +335,64 @@ function refreshRows(){
   row.append(c1,c2,c3,c4,c5);host.append(row);
  }
 }
-function kindLabel(item){return item&&item.kind==='card'?'Card':item&&item.kind==='phone'?'Phone':'4 digits'}
+function kindLabel(item){return item&&item.kind==='card'?'Card':item?item.digits.length+' digits':'4 digits'}
+function listenTitle(item){return item.kind==='card'?'Listen and type the card number':'Listen and type the '+item.digits.length+' digits'}
+function renderLevels(){
+ const host=el('levelList');
+ host.replaceChildren();
+ const locked=phase!=='idle'&&phase!=='complete';
+ LEVELS.forEach((level,index)=>{
+  const n=index+1;
+  const button=document.createElement('button');
+  button.type='button';
+  button.className='level'+(n===rank?' now':'')+(n<rank?' done':'');
+  button.disabled=locked||n>best;
+  button.setAttribute('aria-pressed',n===rank?'true':'false');
+  button.setAttribute('aria-label',`Level ${n}, ${level.name}`+(n>best?', locked':n===rank?', current':''));
+  const strong=document.createElement('b');
+  strong.textContent=String(level.digits);
+  const note=document.createElement('span');
+  note.textContent=n===rank?'Now':n>best?'Locked':`Level ${n}`;
+  button.append(strong,note);
+  button.addEventListener('click',()=>chooseLevel(n));
+  host.append(button);
+ });
+ el('levelName').textContent=`Level ${rank} of ${LEVELS.length} · ${currentLevel().name}`;
+}
+function chooseLevel(n){
+ if((phase!=='idle'&&phase!=='complete')||n<1||n>best||n===rank)return;
+ rank=n;saveLevel();
+ el('start').textContent=`Start level ${rank}`;
+ if(phase==='idle'){
+  el('activityTitle').textContent='Ready to begin?';
+  el('activityText').textContent=`Level ${rank} of ${LEVELS.length}. ${currentLevel().name}.`;
+ }else{
+  el('activityTitle').textContent='Ready to begin?';
+  el('activityText').textContent=`Next round is level ${rank} · ${currentLevel().name}.`;
+ }
+ renderLevels();
+}
+function settleRank(correct){
+ let move='stay';
+ if(correct>=PASS_NEED){
+  if(rank<LEVELS.length){rank+=1;move='up'}
+  else move='top';
+ }else if(correct<=DROP_AT){
+  if(rank>1){rank-=1;move='down'}
+  else move='floor';
+ }
+ best=Math.max(best,rank);
+ saveLevel();
+ return move;
+}
+function rankSentence(move){
+ const level=currentLevel();
+ if(move==='up')return `Level up to ${rank} · ${level.name}.`;
+ if(move==='down')return `Level down to ${rank} · ${level.name}.`;
+ if(move==='top')return 'Top level held. The card number stays at level 6.';
+ if(move==='floor')return 'Stay on level 1. Clear 6 of 8 to move up.';
+ return 'Same level. Clear 6 of 8 to move up.';
+}
 function refreshStats(){
  el('qIndex').textContent=phase==='idle'?'0':phase==='complete'?String(items.length):String(Math.min(position+1,items.length));
  const current=items[position];
@@ -319,6 +403,7 @@ function refreshStats(){
  el('completed').textContent=String(answers.length);
  el('avgTime').textContent=answers.length?(answers.reduce((total,item)=>total+item.elapsed,0)/answers.length).toFixed(1)+'s':'—';
  refreshRows();
+ renderLevels();
 }
 function displayTime(ms){const remain=Math.max(0,ms);el('timer').textContent=(remain/1000).toFixed(1);el('timer').classList.toggle('urgent',remain<=3000);el('timerTrack').classList.toggle('urgent',remain<=3000);el('timerFill').style.width=(duration?Math.min(100,remain/duration*100):0)+'%'}
 function beginCountdown(){if(phase!=='speaking')return;phase='answering';duration=Number(el('limit').value)*1000;answerStartedAt=performance.now();expiresAt=answerStartedAt+duration;displayTime(duration);el('activityText').textContent='Submit before time runs out';refreshStats();clearTick();tick=setInterval(()=>{const remain=expiresAt-performance.now();displayTime(remain);if(remain<=0)finish('timeout')},40)}
@@ -366,17 +451,16 @@ function talk(){
 function setUpQuestion(){
  const item=items[position];
  phase='speaking';answerStartedAt=null;el('answer').value='';el('answer').maxLength=item.digits.length+Math.max(0,item.groups.length-1);el('answer').disabled=false;el('submit').disabled=false;el('play').disabled=false;
- el('activityTitle').textContent=item.kind==='card'?'Listen and type the card number':item.kind==='phone'?'Listen and type the phone number':'Listen and type the four digits';
+ el('activityTitle').textContent=listenTitle(item);
  el('activityText').textContent='Preparing audio…';el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerFill').style.width='0%';el('timerTrack').classList.remove('urgent');refreshStats();el('answer').focus({preventScroll:true});talk();
 }
 function showRoundControls(running){el('start').classList.toggle('hide',running);el('stop').classList.toggle('hide',!running);if(running)el('retry').classList.add('hide')}
 function drawRound(){
- const kind=el('kind').value;
+ const level=currentLevel();
  const made=[];
  const seen=new Set();
  while(made.length<ROUND){
-  const type=kind==='both'?(randomBelow(2)?'card':'phone'):kind;
-  const item=makeItem(type);
+  const item=makeItem(level);
   if(seen.has(item.digits))continue;
   seen.add(item.digits);
   made.push(item);
@@ -385,9 +469,10 @@ function drawRound(){
 }
 function startSet(preset){
  prepareDing();clearTick();clearNext();cancelSpeech();
+ countsRank=!(preset&&preset.length);
  items=preset&&preset.length?preset.slice(0,ROUND):drawRound();
  answers=[];position=0;phase='idle';showRoundControls(true);
- el('summary').textContent='Answers stay hidden until each question is completed. Time starts after the number is read.';
+ el('summary').textContent=countsRank?`Level ${rank} · ${currentLevel().name}. ${PASS_NEED} correct moves up. ${DROP_AT} or fewer moves down.`:'Practice round. Your level stays the same.';
  setUpQuestion();
 }
 function stopRound(){
@@ -395,10 +480,10 @@ function stopRound(){
  clearTick();clearNext();cancelSpeech();
  const answered=answers.length;
  el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';
- if(!answered){items=[];position=0;phase='idle';reviewMisses=[];el('activityTitle').textContent='Ready to begin?';el('activityText').textContent='Round stopped.';el('start').textContent='Start round';showRoundControls(false);el('retry').classList.add('hide');el('summary').textContent='Answers and response times appear after each question. Timing starts after the number is read.';refreshStats();return}
- phase='complete';reviewMisses=answers.filter(x=>!x.ok).map(x=>x.item);const correct=answers.filter(x=>x.ok).length;
- el('activityTitle').textContent='Round stopped';el('activityText').textContent=`Stopped after ${answered} of ${items.length}.`;el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);
- el('summary').innerHTML=`Stopped · Score: <strong>${correct} / ${answered}</strong>. ${reviewMisses.length?'Retry the incorrect numbers.':'The answered numbers were correct.'}`;refreshStats();
+ if(!answered){items=[];position=0;phase='idle';reviewMisses=[];countsRank=false;el('activityTitle').textContent='Ready to begin?';el('activityText').textContent=`Round stopped. Level ${rank} stays.`;el('start').textContent=`Start level ${rank}`;showRoundControls(false);el('retry').classList.add('hide');el('summary').textContent='Answers and response times appear after each question. Timing starts after the number is read.';refreshStats();return}
+ phase='complete';reviewMisses=answers.filter(x=>!x.ok).map(x=>x.item);const correct=answers.filter(x=>x.ok).length;countsRank=false;
+ el('activityTitle').textContent='Round stopped';el('activityText').textContent=`Stopped after ${answered} of ${items.length}. Level ${rank} stays.`;el('start').textContent=`Start level ${rank}`;showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);
+ el('summary').innerHTML=`Stopped · Score: <strong>${correct} / ${answered}</strong>. Level ${rank} stays.`;refreshStats();
 }
 function finish(reason){
  if(!(phase==='speaking'||phase==='answering'))return;
@@ -425,12 +510,16 @@ function endSet(){
  if(phase==='complete')return;
  clearTick();cancelSpeech();phase='complete';
  const correct=answers.filter(x=>x.ok).length;
- playCompletionSound(correct===items.length);
+ const move=countsRank?settleRank(correct):'';
+ playCompletionSound(move==='up'||move==='top'||correct===items.length);
  reviewMisses=answers.filter(x=>!x.ok).map(x=>x.item);
- el('activityTitle').textContent='Round complete';el('activityText').textContent=`${correct} of ${items.length} correct`;
+ const rankText=countsRank?rankSentence(move):'Practice round. Your level stays the same.';
+ countsRank=false;
+ el('activityTitle').textContent=move==='up'?'Level up':move==='down'?'Level down':move==='top'?'Top level':'Round complete';
+ el('activityText').textContent=`${correct} of ${items.length} correct. ${rankText}`;
  el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';
- el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);el('feedback').textContent='';
- el('summary').innerHTML=`Score: <strong>${correct} / ${items.length}</strong> · Accuracy: <strong>${Math.round(correct/items.length*100)}%</strong>. ${reviewMisses.length?'Retry the incorrect numbers.':'Perfect round!'}`;refreshStats();
+ el('start').textContent=`Start level ${rank}`;showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);el('feedback').textContent='';
+ el('summary').innerHTML=`Score: <strong>${correct} / ${items.length}</strong> · Accuracy: <strong>${Math.round(correct/items.length*100)}%</strong>. ${rankText}`;refreshStats();
 }
 el('answer').addEventListener('input',()=>{
  const cleaned=el('answer').value.replace(/[^\d\s-]/g,'');
@@ -453,6 +542,8 @@ el('answer').addEventListener('keydown',event=>{if(event.key==='Enter'){event.pr
 fillVoices();
 el('voice').addEventListener('change',rememberVoice);
 if(speechOK)window.speechSynthesis.addEventListener('voiceschanged',fillVoices);
+el('activityText').textContent=`Level ${rank} of ${LEVELS.length}. ${currentLevel().name}.`;
+el('start').textContent=`Start level ${rank}`;
 refreshStats();
 })();
 </script>
