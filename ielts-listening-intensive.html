@@ -94,7 +94,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
  </section>
  <section id="stageWork" class="panel" hidden aria-label="Transcribing">
   <h2>Transcribing</h2>
-  <div class="track" aria-hidden="true"><div id="workFill" class="track-fill"></div></div>
+  <div class="track" id="workTrack" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="workStatus"><div id="workFill" class="track-fill"></div></div>
   <p id="workStatus" class="status" role="status">Preparing the recording…</p>
   <div class="work-actions"><button type="button" id="cancel" class="secondary">Cancel</button></div>
  </section>
@@ -303,6 +303,16 @@ function answerHint(typed,target){
 function clock(seconds){
  const total=Math.max(0,Math.round(seconds||0));
  return Math.floor(total/60)+':'+String(total%60).padStart(2,'0');
+}
+function chunkCount(sampleCount){
+ const rate=16000,windowSamples=rate*28,stride=rate*5,jump=windowSamples-2*stride;
+ let count=0,offset=0;
+ while(count<10000){
+  count++;
+  if(offset+windowSamples>=sampleCount)break;
+  offset+=jump;
+ }
+ return count;
 }
 
 let libraryPromise=null;
@@ -568,8 +578,17 @@ function reveal(){
 function setWork(message,ratio){
  el('workStatus').textContent=message;
  const fill=el('workFill');
- if(ratio==null){fill.classList.add('busy');fill.style.width=''}
- else{fill.classList.remove('busy');fill.style.width=Math.max(0,Math.min(100,ratio))+'%'}
+ const track=el('workTrack');
+ if(ratio==null){
+  fill.classList.add('busy');
+  fill.style.width='';
+  track.setAttribute('aria-valuenow','0');
+ }else{
+  const width=Math.max(0,Math.min(100,ratio));
+  fill.classList.remove('busy');
+  fill.style.width=width+'%';
+  track.setAttribute('aria-valuenow',String(Math.round(width)));
+ }
 }
 async function loadLibrary(){
  if(!libraryPromise){
@@ -660,9 +679,43 @@ async function startJob(file){
   setWork('Loading the speech model…',null);
   const transcriber=await loadTranscriber(onDownload);
   if(mine!==job)return;
-  setWork('Transcribing the recording. A long section can take several minutes.',null);
-  const result=await transcriber(samples,{return_timestamps:'word',chunk_length_s:28,stride_length_s:5});
+  const {WhisperTextStreamer}=await loadLibrary();
+  const totalChunks=chunkCount(samples.length);
+  let doneChunks=0,within=0,shown=0;
+  const started=performance.now();
+  const paint=()=>{
+   if(mine!==job)return;
+   const frac=Math.min(1,Math.max(0,within/28));
+   const raw=(Math.min(doneChunks,totalChunks)+(doneChunks>=totalChunks?0:frac))/totalChunks*100;
+   shown=Math.max(shown,Math.min(100,raw));
+   const elapsed=(performance.now()-started)/1000;
+   setWork('Transcribing '+clock(duration*shown/100)+' of '+clock(duration)+' · '+clock(elapsed)+' elapsed',shown);
+  };
+  const streamer=new WhisperTextStreamer(transcriber.tokenizer,{
+   skip_special_tokens:true,
+   callback_function:()=>{},
+   on_chunk_end:time=>{
+    if(!Number.isFinite(time))return;
+    within=Math.max(within,time);
+    paint();
+   },
+   on_finalize:()=>{
+    streamer.waiting_for_timestamp=false;
+    doneChunks+=1;
+    within=0;
+    paint();
+   }
+  });
+  paint();
+  const tick=setInterval(paint,400);
+  let result;
+  try{
+   result=await transcriber(samples,{return_timestamps:'word',chunk_length_s:28,stride_length_s:5,streamer});
+  }finally{
+   clearInterval(tick);
+  }
   if(mine!==job)return;
+  setWork('Splitting into sentences…',100);
   const built=sentencesFromWords(result&&result.chunks);
   sentences=built.length?built:(result&&result.text? [markSentence({text:cleanText(result.text),start:0,end:duration})] : []);
   clampSentences(duration);
