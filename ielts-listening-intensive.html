@@ -67,6 +67,12 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .answer:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 4px #315eea14}
 .below{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:10px}
 .feedback{font-size:13px;font-weight:720;color:var(--muted);text-align:right}.feedback.ok{color:var(--green)}.feedback.no{color:var(--red)}
+.diff{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.diff p{margin:0;line-height:1.65}
+.diff-label{display:inline-block;min-width:5.2em;color:var(--muted);font-size:12px;font-weight:750}
+.diff mark{border-radius:5px;padding:0 3px;font-weight:750}
+.diff mark.bad{background:#fde8e8;color:#9d2c2c}
+.diff mark.good{background:#e5f6ee;color:#0f6b48}
 .reveal{margin-top:12px;padding:12px 14px;border-radius:12px;background:#f4f7fb;line-height:1.55}
 .practice-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .setting{display:grid;gap:4px}.setting span{font-size:11px;color:var(--muted);font-weight:650}
@@ -124,10 +130,12 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
    <label class="answer-label" for="answer">Your dictation</label>
    <textarea id="answer" class="answer" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="Type the sentence"></textarea>
    <div class="below"><span class="note" style="margin:0">Enter checks · Shift+Enter adds a line</span><span id="feedback" class="feedback" role="status"></span></div>
+   <div id="diff" class="diff" hidden aria-live="polite"></div>
    <p id="reveal" class="reveal" hidden></p>
   </div>
   <div class="practice-actions" style="margin-top:14px">
    <button type="button" id="check" class="primary">Check</button>
+   <button type="button" id="pause" class="secondary" aria-pressed="false">Pause</button>
    <button type="button" id="show" class="secondary" hidden>Show sentence</button>
    <button type="button" id="skipPrompt" class="secondary" hidden>Continue</button>
    <label class="setting"><span>Speed</span><select id="speed" aria-label="Playback speed"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1" selected>1.0×</option><option value="1.15">1.15×</option></select></label>
@@ -300,6 +308,47 @@ function answerHint(typed,target){
  if(got.length!==want.length)return 'This sentence has '+want.length+(want.length===1?' word.':' words.');
  return 'Some words differ.';
 }
+function wordDiff(typed,target){
+ const got=normalizeWords(typed);
+ const want=normalizeWords(target);
+ const n=got.length,m=want.length;
+ const dp=Array.from({length:n+1},()=>new Uint16Array(m+1));
+ for(let i=n-1;i>=0;i--){
+  for(let j=m-1;j>=0;j--)dp[i][j]=got[i]===want[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+ }
+ const ops=[];
+ let i=0,j=0;
+ while(i<n&&j<m){
+  if(got[i]===want[j]){ops.push({type:'same',got:got[i],want:want[j]});i++;j++}
+  else if(dp[i+1][j]>=dp[i][j+1]){ops.push({type:'extra',got:got[i]});i++}
+  else{ops.push({type:'missing',want:want[j]});j++}
+ }
+ while(i<n)ops.push({type:'extra',got:got[i++]});
+ while(j<m)ops.push({type:'missing',want:want[j++]});
+ return ops;
+}
+function diffLine(label,ops,key){
+ const line=document.createElement('p');
+ const name=document.createElement('span');
+ name.className='diff-label';
+ name.textContent=label;
+ line.append(name);
+ ops.forEach(op=>{
+  const word=op[key];
+  if(!word)return;
+  const piece=document.createElement(op.type==='same'?'span':'mark');
+  if(op.type!=='same')piece.className=key==='got'?'bad':'good';
+  piece.textContent=word+' ';
+  line.append(piece);
+ });
+ return line;
+}
+function renderDiff(typed,target){
+ const host=el('diff');
+ const ops=wordDiff(typed,target);
+ host.replaceChildren(diffLine('You',ops,'got'),diffLine('Sentence',ops,'want'));
+ host.hidden=false;
+}
 function clock(seconds){
  const total=Math.max(0,Math.round(seconds||0));
  return Math.floor(total/60)+':'+String(total%60).padStart(2,'0');
@@ -324,6 +373,9 @@ let cursor=0;
 let loopToken=0;
 let loopTimer=0;
 let moving=false;
+let paused=false;
+let loopFrom=0;
+let loopTo=0;
 let phase='upload';
 let misses=0;
 const downloads=new Map();
@@ -439,7 +491,7 @@ function seekAndPlay(audio,from,token,onReady){
  const start=()=>{
   if(token!==loopToken)return;
   audio.play().then(()=>{
-   if(token!==loopToken)return;
+   if(token!==loopToken||paused){audio.pause();el('speaker').classList.remove('playing');return}
    el('speaker').classList.add('playing');
    onReady(true);
   }).catch(()=>{
@@ -460,18 +512,20 @@ function loopSentence(sentence){
  clearTimeout(loopTimer);
  const audio=el('track');
  const {from,to}=playbackBounds(sentence);
+ loopFrom=from;
+ loopTo=to;
  let armed=false;
  const arm=()=>{armed=true};
- const play=()=>seekAndPlay(audio,from,token,ok=>{if(ok)arm();else el('feedback').textContent='Tap the speaker to play.'});
+ const play=()=>{if(paused||token!==loopToken)return;seekAndPlay(audio,from,token,ok=>{if(ok)arm();else el('feedback').textContent='Tap the speaker to play.'})};
  const watch=()=>{
   if(token!==loopToken)return;
-  if(!armed){loopTimer=setTimeout(watch,40);return}
+  if(paused||!armed){loopTimer=setTimeout(watch,paused?80:40);return}
   paintLoop(from,to);
   if(audio.currentTime>=to-0.04){
    armed=false;
    audio.pause();
    el('speaker').classList.remove('playing');
-   loopTimer=setTimeout(()=>{play();watch()},700);
+   loopTimer=setTimeout(()=>{if(token!==loopToken)return;if(paused){watch();return}play();watch()},700);
   }else loopTimer=setTimeout(watch,40);
  };
  play();
@@ -482,6 +536,8 @@ function playOnce(sentence,done){
  clearTimeout(loopTimer);
  const audio=el('track');
  const {from,to}=playbackBounds(sentence);
+ loopFrom=from;
+ loopTo=to;
  let armed=false;
  let finished=false;
  seekAndPlay(audio,from,token,ok=>{
@@ -490,7 +546,7 @@ function playOnce(sentence,done){
  });
  const watch=()=>{
   if(token!==loopToken||finished)return;
-  if(!armed){loopTimer=setTimeout(watch,40);return}
+  if(paused||!armed){loopTimer=setTimeout(watch,paused?80:40);return}
   paintLoop(from,to);
   if(audio.currentTime>=to-0.04||audio.ended){
    finished=true;
@@ -516,6 +572,9 @@ function showPracticeChrome(sentence){
  el('show').hidden=true;
  el('skipPrompt').hidden=!sentence.prompt;
  el('reveal').hidden=true;
+ el('diff').hidden=true;
+ el('diff').replaceChildren();
+ resetPause();
  el('feedback').textContent='';
  el('feedback').className='feedback';
  el('answer').value='';
@@ -561,13 +620,42 @@ function checkAnswer(){
   stopAudio();
   el('feedback').className='feedback ok';
   el('feedback').textContent='Correct';
+  el('diff').hidden=true;
+  el('diff').replaceChildren();
   setTimeout(()=>{moving=false;if(phase==='practice')enter(cursor+1)},420);
   return;
  }
  misses++;
  el('feedback').className='feedback no';
- el('feedback').textContent=answerHint(el('answer').value,sentence.text);
+ el('feedback').textContent=normalizeWords(el('answer').value).length?'Different words are marked.':answerHint(el('answer').value,sentence.text);
  el('show').hidden=false;
+ if(normalizeWords(el('answer').value).length)renderDiff(el('answer').value,sentence.text);
+ else{el('diff').hidden=true;el('diff').replaceChildren()}
+}
+function resetPause(){
+ paused=false;
+ el('pause').textContent='Pause';
+ el('pause').setAttribute('aria-pressed','false');
+}
+function togglePause(){
+ if(phase!=='practice')return;
+ paused=!paused;
+ el('pause').textContent=paused?'Resume':'Pause';
+ el('pause').setAttribute('aria-pressed',paused?'true':'false');
+ const audio=el('track');
+ if(paused){
+  audio.pause();
+  el('speaker').classList.remove('playing');
+  return;
+ }
+ const sentence=sentences[cursor];
+ if(!sentence)return;
+ if(audio.currentTime<loopFrom-0.05||audio.currentTime>loopTo-0.04){
+  if(sentence.prompt)playOnce(sentence,()=>{if(phase==='practice')enter(cursor+1)});
+  else loopSentence(sentence);
+  return;
+ }
+ audio.play().then(()=>el('speaker').classList.add('playing')).catch(()=>{});
 }
 function reveal(){
  const sentence=sentences[cursor];
@@ -759,11 +847,18 @@ el('backReview').addEventListener('click',()=>{stopAudio();renderReview();show('
 el('check').addEventListener('click',checkAnswer);
 el('show').addEventListener('click',reveal);
 el('skipPrompt').addEventListener('click',()=>{if(phase==='practice')enter(cursor+1)});
+el('pause').addEventListener('click',togglePause);
 el('speaker').addEventListener('click',()=>{
+ resetPause();
  const sentence=sentences[cursor];
  if(!sentence)return;
  if(sentence.prompt)playOnce(sentence,()=>{if(phase==='practice')enter(cursor+1)});
  else loopSentence(sentence);
+});
+el('answer').addEventListener('input',()=>{
+ el('diff').hidden=true;
+ el('diff').replaceChildren();
+ if(el('feedback').classList.contains('no')){el('feedback').textContent='';el('feedback').className='feedback'}
 });
 el('answer').addEventListener('keydown',event=>{
  if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();checkAnswer()}
