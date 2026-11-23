@@ -78,7 +78,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .practice-layout{display:flex;align-items:flex-start;gap:16px}.practice-main{flex:1;min-width:0}
 .sentence-nav{width:156px;flex:none;display:flex;flex-direction:column;gap:4px;max-height:min(70vh,640px);overflow:auto;padding-right:2px}
 .jump{display:flex;align-items:center;gap:6px;width:100%;border:0;background:transparent;border-radius:10px;min-height:34px;padding:0 6px;color:var(--text);font-size:13px;font-weight:750;text-align:left}
-.jump.now{background:var(--blue-soft);color:var(--blue)}.jump .kind{width:16px;height:16px;display:flex;flex:none}.jump .kind svg{width:16px;height:16px}.jump b{font-variant-numeric:tabular-nums}.nav-time{margin-left:auto;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;font-weight:700}.jump.now .nav-time{color:var(--blue)}
+.jump.now{background:var(--blue-soft);color:var(--blue)}.jump .kind{width:16px;height:16px;display:flex;flex:none}.jump .kind svg{width:16px;height:16px}.jump b{font-variant-numeric:tabular-nums}.nav-time{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;font-weight:700}.jump.now .nav-time{color:var(--blue)}
 .practice-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;width:100%;margin:12px 0 0;padding-top:16px}.practice-actions .primary,.practice-actions .secondary{min-height:42px}
 .setting{position:relative;display:flex;align-items:center}.setting span{position:absolute;left:0;bottom:calc(100% + 3px);font-size:11px;line-height:1;color:var(--muted);font-weight:650;white-space:nowrap}.setting select{appearance:none;border:1px solid var(--line);border-radius:12px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;min-height:42px;padding:0 28px 0 12px;font-weight:700}
 .note{margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.6}.note.warn{color:var(--red)}
@@ -132,7 +132,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
  </section>
  <section id="stageReview" class="panel" hidden aria-label="Check sentences">
   <div class="review-head"><div><h2>Check the sentences</h2><label id="nameField" class="name-field" hidden><span>Name</span><input id="recordName" type="text" maxlength="80" autocomplete="off" aria-label="Recording name"></label><p id="saveNote" class="note"></p></div><p id="reviewCount" class="count"></p></div>
-  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined.</p>
+  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined.</p>
   <div id="sentences" class="list"></div>
   <div class="start-bar">
    <button type="button" id="another" class="secondary">Choose another file</button>
@@ -382,6 +382,12 @@ function renderDiff(typed,target){
 function clock(seconds){
  const total=Math.max(0,Math.round(seconds||0));
  return Math.floor(total/60)+':'+String(total%60).padStart(2,'0');
+}
+function clockFine(seconds){
+ const tenths=Math.max(0,Math.round((Number(seconds)||0)*10)/10);
+ const mins=Math.floor(tenths/60);
+ const secs=(tenths-mins*60).toFixed(1);
+ return mins+':'+secs.padStart(4,'0');
 }
 function chunkCount(sampleCount){
  const rate=16000,windowSamples=rate*28,stride=rate*5,jump=windowSamples-2*stride;
@@ -778,7 +784,7 @@ function renderReview(){
   const meta=document.createElement('div');
   meta.className='meta';
   const title=document.createElement('b');
-  title.textContent=String(index+1).padStart(2,'0')+'  '+clock(sentence.start)+'–'+clock(sentence.end);
+  title.textContent=String(index+1).padStart(2,'0')+'  '+clockFine(sentence.start)+'–'+clockFine(sentence.end);
   const flag=document.createElement('button');
   flag.type='button';
   flag.className='flag';
@@ -817,7 +823,14 @@ function renderReview(){
   startHere.type='button';
   startHere.textContent='Start here';
   startHere.addEventListener('click',()=>beginPractice(index));
-  tools.append(split,merge,startHere);
+  const edge=(label,side,delta)=>{
+   const button=document.createElement('button');
+   button.type='button';
+   button.textContent=label;
+   button.addEventListener('click',()=>nudgeBoundary(index,side,delta));
+   return button;
+  };
+  tools.append(edge('Start −0.1', 'start', -0.1),edge('Start +0.1', 'start', 0.1),edge('End −0.1', 'end', -0.1),edge('End +0.1', 'end', 0.1),split,merge,startHere);
   row.append(meta,area,tools);
   host.append(row);
  });
@@ -891,11 +904,42 @@ function mergeNext(index){
  renderReview();
  remember();
 }
+function roundTime(value){return Math.round(value*100)/100}
+function nudgeBoundary(index,edge,delta){
+ const sentence=sentences[index];
+ if(!sentence)return;
+ const minSpan=0.3;
+ const limit=Number.isFinite(el('track').duration)?el('track').duration:sentence.end+5;
+ if(edge==='start'){
+  const prev=sentences[index-1];
+  const floor=prev?prev.start+minSpan:0;
+  const at=roundTime(Math.min(sentence.end-minSpan, Math.max(floor, sentence.start+delta)));
+  sentence.start=at;
+  if(prev)prev.end=at;
+ }else{
+  const next=sentences[index+1];
+  const ceiling=next?next.end-minSpan:limit;
+  const at=roundTime(Math.min(ceiling, Math.max(sentence.start+minSpan, sentence.end+delta)));
+  sentence.end=at;
+  if(next)next.start=at;
+ }
+ renderReview();
+ renderSentenceNav();
+ remember();
+}
 function playbackBounds(sentence){
  const audio=el('track');
  const duration=Number.isFinite(audio.duration)?audio.duration:sentence.end+0.2;
- const from=Math.max(0,sentence.start-0.08);
- const to=Math.min(duration,Math.max(from+0.25,sentence.end+0.14));
+ const index=sentences.indexOf(sentence);
+ const prev=sentences[index-1];
+ const next=sentences[index+1];
+ const before=prev?Math.max(0,sentence.start-prev.end):sentence.start;
+ const after=next?Math.max(0,next.start-sentence.end):Math.max(0,duration-sentence.end);
+ let from=Math.max(0,sentence.start-Math.min(0.04,before/2));
+ let to=Math.min(duration,sentence.end+Math.min(0.06,after/2));
+ const cap=next?next.start-0.02:duration;
+ to=Math.min(cap,Math.max(from+0.15,to));
+ if(to<from+0.12)to=Math.min(duration,from+0.12);
  return {from,to};
 }
 function paintLoop(from,to){
