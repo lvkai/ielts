@@ -455,8 +455,15 @@ function openDb(){
  }
  return dbPromise;
 }
+function asSentence(sentence){
+ const source=Array.isArray(sentence)?sentence.find(item=>item&&typeof item==='object'):sentence;
+ const text=source&&source.text!=null?String(source.text):'';
+ const start=Number(source&&source.start)||0;
+ const end=Number(source&&source.end);
+ return {text,start,end:Number.isFinite(end)?end:start,prompt:!!(source&&source.prompt)};
+}
 function snapshot(){
- return sentences.map(sentence=>({text:sentence.text,start:sentence.start,end:sentence.end,prompt:!!sentence.prompt}));
+ return sentences.map(asSentence);
 }
 function currentName(){
  const name=el('recordName').value.trim();
@@ -595,7 +602,7 @@ async function openRecording(id,mode){
   const duration=await attachTrack(audio.blob);
   if(mine!==job)return;
   currentId=id;
-  sentences=(record.sentences||[]).map(sentence=>({text:sentence.text,start:Number(sentence.start)||0,end:Number(sentence.end)||0,prompt:!!sentence.prompt}));
+  sentences=(record.sentences||[]).map(asSentence);
   clampSentences(duration||record.duration||0);
   if(!sentences.length)throw new Error('That saved recording has no sentences.');
   el('recordName').value=record.name||'Recording';
@@ -804,7 +811,7 @@ function renderReview(){
   actions.append(play,flag);
   meta.append(title,actions);
   const area=document.createElement('textarea');
-  area.value=sentence.text;
+  area.value=sentence.text||'';
   area.spellcheck=true;
   area.setAttribute('aria-label','Sentence '+(index+1));
   area.addEventListener('input',()=>{sentence.text=area.value;updateReviewCount();remember()});
@@ -900,7 +907,7 @@ function mergeNext(index){
  stopAudio();
  const current=sentences[index];
  const text=cleanText(current.text+' '+next.text);
- sentences.splice(index,2,[markSentence({text,start:current.start,end:next.end})]);
+ sentences.splice(index,2,markSentence({text,start:current.start,end:next.end}));
  renderReview();
  remember();
 }
