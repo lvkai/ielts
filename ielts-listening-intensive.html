@@ -77,7 +77,9 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .practice-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .setting{display:grid;gap:4px}.setting span{font-size:11px;color:var(--muted);font-weight:650}
 .setting select{appearance:none;border:1px solid var(--line);border-radius:10px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;padding:8px 28px 8px 10px;font-weight:700}
-.note{margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
+.note{margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.6}.note.warn{color:var(--red)}
+.name-field{display:flex;align-items:center;gap:8px;margin-top:10px}.name-field span{font-size:12px;color:var(--muted);font-weight:750}.name-field input{width:min(360px,100%);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-weight:700}
+.library{margin-top:22px}.library h2{margin:0 0 4px;font-size:16px;letter-spacing:-.02em}.library-empty{margin:8px 0 0;color:var(--muted);font-size:13px}.library-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--line)}.library-item .open{flex:1;min-width:0;border:0;background:none;padding:0;color:var(--text);font-weight:750;text-align:left}.library-item .open:hover{color:var(--blue)}.library-meta{margin-left:auto;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}.library-item .danger{border:0;background:none;padding:0;color:var(--red);font-size:12px;font-weight:750}
 .fine{margin:18px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
 @media(max-width:640px){.wrap{padding:22px 14px 40px}.panel{padding:18px 14px}.start-bar{align-items:stretch;flex-direction:column}.primary,.secondary{width:100%}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
@@ -95,8 +97,12 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
    <button type="button" id="choose" class="primary">Upload MP3</button>
    <input id="file" type="file" accept=".mp3,audio/mpeg,.wav,audio/wav,.m4a,audio/mp4,audio/x-m4a" hidden>
   </div>
-  <p class="note">Instruction lines, such as “You will hear…” and “Now turn to section 1”, are marked for you. They play once and are not dictated. You can change a mark before starting. The recording stays on this device. The first transcription downloads an English speech model.</p>
+  <p class="note">Instruction lines, such as “You will hear…” and “Now turn to section 1”, are marked for you. They play once and are not dictated. You can change a mark before starting. Each upload is saved in this browser with its transcription, so the next time you open it by name. The first transcription downloads an English speech model.</p>
   <p id="uploadError" class="note" style="color:var(--red)" role="status"></p>
+  <div id="library" class="library" hidden>
+   <h2>Saved recordings</h2>
+   <div id="libraryList"></div>
+  </div>
  </section>
  <section id="stageWork" class="panel" hidden aria-label="Transcribing">
   <h2>Transcribing</h2>
@@ -105,7 +111,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
   <div class="work-actions"><button type="button" id="cancel" class="secondary">Cancel</button></div>
  </section>
  <section id="stageReview" class="panel" hidden aria-label="Check sentences">
-  <div class="review-head"><h2>Check the sentences</h2><p id="reviewCount" class="count"></p></div>
+  <div class="review-head"><div><h2>Check the sentences</h2><label id="nameField" class="name-field" hidden><span>Name</span><input id="recordName" type="text" maxlength="80" autocomplete="off" aria-label="Recording name"></label><p id="saveNote" class="note"></p></div><p id="reviewCount" class="count"></p></div>
   <p class="note">Edit anything the transcription got wrong. This text is the answer. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined.</p>
   <div id="sentences" class="list"></div>
   <div class="start-bar">
@@ -150,7 +156,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
    <button type="button" id="doneAnother" class="secondary">Choose another file</button>
   </div>
  </section>
- <p class="fine">Audio is transcribed in this browser and is not uploaded. A correct sentence, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play.</p>
+ <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. A correct sentence, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play.</p>
 </div>
 <audio id="track" preload="auto" playsinline></audio>
 <script>
@@ -378,7 +384,187 @@ let loopFrom=0;
 let loopTo=0;
 let phase='upload';
 let misses=0;
+let currentId=null;
+let saveTimer=0;
+let writeChain=Promise.resolve();
+let dbPromise=null;
 const downloads=new Map();
+function queueWrite(task){
+ writeChain=writeChain.then(task,task);
+ return writeChain;
+}
+function requestResult(request){
+ return new Promise((resolve,reject)=>{
+  request.onsuccess=()=>resolve(request.result);
+  request.onerror=()=>reject(request.error);
+ });
+}
+function txDone(tx){
+ return new Promise((resolve,reject)=>{
+  tx.oncomplete=()=>resolve();
+  tx.onerror=()=>reject(tx.error);
+  tx.onabort=()=>reject(tx.error||new Error('The save was cancelled.'));
+ });
+}
+function openDb(){
+ if(!('indexedDB' in window))return Promise.reject(new Error('This browser cannot save recordings.'));
+ if(!dbPromise){
+  dbPromise=new Promise((resolve,reject)=>{
+   const request=indexedDB.open('ielts-intensive',1);
+   request.onupgradeneeded=()=>{
+    const db=request.result;
+    if(!db.objectStoreNames.contains('recordings'))db.createObjectStore('recordings',{keyPath:'id'});
+    if(!db.objectStoreNames.contains('audio'))db.createObjectStore('audio',{keyPath:'id'});
+   };
+   request.onsuccess=()=>resolve(request.result);
+   request.onerror=()=>{dbPromise=null;reject(request.error)};
+  });
+ }
+ return dbPromise;
+}
+function snapshot(){
+ return sentences.map(sentence=>({text:sentence.text,start:sentence.start,end:sentence.end,prompt:!!sentence.prompt}));
+}
+function currentName(){
+ const name=el('recordName').value.trim();
+ return name||'Recording';
+}
+function stem(file){
+ const name=String(file&&file.name||'').replace(/\.[^.]+$/,'').trim();
+ return name||'Recording';
+}
+async function listRecordings(){
+ const db=await openDb();
+ const tx=db.transaction('recordings','readonly');
+ const records=await requestResult(tx.objectStore('recordings').getAll());
+ await txDone(tx);
+ return records.sort((a,b)=>b.created-a.created);
+}
+function createRecording(file,name,duration){
+ const id=crypto.randomUUID();
+ return queueWrite(async()=>{
+  const db=await openDb();
+  const tx=db.transaction(['recordings','audio'],'readwrite');
+  tx.objectStore('recordings').put({id,name,fileName:file.name||'recording',created:Date.now(),duration,sentences:snapshot()});
+  tx.objectStore('audio').put({id,blob:file,mimeType:file.type||'audio/mpeg'});
+  await txDone(tx);
+  return id;
+ });
+}
+function updateRecording(id,patch){
+ return queueWrite(async()=>{
+  const db=await openDb();
+  const tx=db.transaction('recordings','readwrite');
+  const store=tx.objectStore('recordings');
+  const existing=await requestResult(store.get(id));
+  if(existing)store.put(Object.assign(existing,patch));
+  await txDone(tx);
+ });
+}
+function deleteRecording(id){
+ return queueWrite(async()=>{
+  const db=await openDb();
+  const tx=db.transaction(['recordings','audio'],'readwrite');
+  tx.objectStore('recordings').delete(id);
+  tx.objectStore('audio').delete(id);
+  await txDone(tx);
+ });
+}
+async function getRecording(id){
+ const db=await openDb();
+ const tx=db.transaction('recordings','readonly');
+ const record=await requestResult(tx.objectStore('recordings').get(id));
+ await txDone(tx);
+ return record;
+}
+async function getAudio(id){
+ const db=await openDb();
+ const tx=db.transaction('audio','readonly');
+ const audio=await requestResult(tx.objectStore('audio').get(id));
+ await txDone(tx);
+ return audio;
+}
+function remember(){
+ if(!currentId)return;
+ clearTimeout(saveTimer);
+ saveTimer=setTimeout(()=>{flushRecording()},300);
+}
+function flushRecording(){
+ clearTimeout(saveTimer);
+ if(!currentId)return Promise.resolve();
+ return updateRecording(currentId,{name:currentName(),sentences:snapshot()});
+}
+async function renderLibrary(){
+ const host=el('libraryList');
+ let records=[];
+ try{records=await listRecordings()}
+ catch(_){el('library').hidden=true;return}
+ el('library').hidden=false;
+ host.replaceChildren();
+ if(!records.length){
+  const empty=document.createElement('p');
+  empty.className='library-empty';
+  empty.textContent='Saved recordings appear here.';
+  host.append(empty);
+  return;
+ }
+ records.forEach(record=>{
+  const row=document.createElement('div');
+  row.className='library-item';
+  const open=document.createElement('button');
+  open.type='button';
+  open.className='open';
+  open.textContent=record.name||'Recording';
+  open.addEventListener('click',()=>openRecording(record.id));
+  const meta=document.createElement('span');
+  meta.className='library-meta';
+  const count=Array.isArray(record.sentences)?record.sentences.length:0;
+  meta.textContent=clock(record.duration)+' · '+count+' sentence'+(count===1?'':'s');
+  const remove=document.createElement('button');
+  remove.type='button';
+  remove.className='danger';
+  remove.textContent='Delete';
+  remove.addEventListener('click',async()=>{
+   const label=record.name||'Recording';
+   if(!confirm('Delete “'+label+'”?'))return;
+   await deleteRecording(record.id);
+   if(currentId===record.id)currentId=null;
+   renderLibrary();
+  });
+  row.append(open,meta,remove);
+  host.append(row);
+ });
+}
+async function openRecording(id){
+ const mine=++job;
+ stopAudio();
+ if(currentId&&currentId!==id)await flushRecording();
+ show('work');
+ setWork('Opening the saved recording…',null);
+ try{
+  const record=await getRecording(id);
+  const audio=await getAudio(id);
+  if(!record||!audio||!audio.blob)throw new Error('That saved recording could not be opened.');
+  if(mine!==job)return;
+  const duration=await attachTrack(audio.blob);
+  if(mine!==job)return;
+  currentId=id;
+  sentences=(record.sentences||[]).map(sentence=>({text:sentence.text,start:Number(sentence.start)||0,end:Number(sentence.end)||0,prompt:!!sentence.prompt}));
+  clampSentences(duration||record.duration||0);
+  if(!sentences.length)throw new Error('That saved recording has no sentences.');
+  el('recordName').value=record.name||'Recording';
+  el('nameField').hidden=false;
+  el('saveNote').className='note';
+  el('saveNote').textContent='Saved in this browser.';
+  renderReview();
+  show('review');
+ }catch(error){
+  if(mine!==job)return;
+  show('upload');
+  el('uploadError').textContent=(error&&error.message?error.message:'That saved recording could not be opened.');
+  renderLibrary();
+ }
+}
 
 function show(stage){
  phase=stage;
@@ -423,13 +609,13 @@ function renderReview(){
   flag.className='flag';
   flag.setAttribute('aria-pressed',sentence.prompt?'true':'false');
   flag.textContent=sentence.prompt?'Instruction':'Dictate';
-  flag.addEventListener('click',()=>{sentence.prompt=!sentence.prompt;renderReview()});
+  flag.addEventListener('click',()=>{sentence.prompt=!sentence.prompt;renderReview();remember()});
   meta.append(title,flag);
   const area=document.createElement('textarea');
   area.value=sentence.text;
   area.spellcheck=true;
   area.setAttribute('aria-label','Sentence '+(index+1));
-  area.addEventListener('input',()=>{sentence.text=area.value;updateReviewCount()});
+  area.addEventListener('input',()=>{sentence.text=area.value;updateReviewCount();remember()});
   const tools=document.createElement('div');
   tools.className='tiny';
   const split=document.createElement('button');
@@ -462,6 +648,7 @@ function splitAt(index,cursorAt){
  const mid=sentence.start+(sentence.end-sentence.start)*ratio;
  sentences.splice(index,1,markSentence({text:left,start:sentence.start,end:mid}),markSentence({text:right,start:mid,end:sentence.end}));
  renderReview();
+ remember();
 }
 function mergeNext(index){
  const next=sentences[index+1];
@@ -470,6 +657,7 @@ function mergeNext(index){
  const text=cleanText(current.text+' '+next.text);
  sentences.splice(index,2,[markSentence({text,start:current.start,end:next.end})]);
  renderReview();
+ remember();
 }
 function playbackBounds(sentence){
  const audio=el('track');
@@ -600,6 +788,7 @@ function enter(index){
 function beginPractice(index){
  sentences=sentences.map(sentence=>({...sentence,text:cleanText(sentence.text)})).filter(sentence=>sentence.text);
  if(!sentences.length)return;
+ remember();
  renderReview();
  show('practice');
  enter(Math.max(0,index||0));
@@ -755,6 +944,12 @@ function attachTrack(file){
 async function startJob(file){
  const mine=++job;
  stopAudio();
+ if(currentId){
+  const previous=currentId;
+  const patch={name:currentName(),sentences:snapshot()};
+  currentId=null;
+  updateRecording(previous,patch);
+ }
  downloads.clear();
  show('work');
  setWork('Preparing the recording…',null);
@@ -808,20 +1003,43 @@ async function startJob(file){
   sentences=built.length?built:(result&&result.text? [markSentence({text:cleanText(result.text),start:0,end:duration})] : []);
   clampSentences(duration);
   if(!sentences.length)throw new Error('No speech was found in this recording.');
+  try{
+   const name=stem(file);
+   currentId=await createRecording(file,name,duration);
+   if(mine!==job)return;
+   el('recordName').value=name;
+   el('nameField').hidden=false;
+   el('saveNote').className='note';
+   el('saveNote').textContent='Saved in this browser. Open it later without transcribing again.';
+  }catch(_){
+   if(mine!==job)return;
+   currentId=null;
+   el('nameField').hidden=true;
+   el('saveNote').className='note warn';
+   el('saveNote').textContent='This recording could not be saved in this browser.';
+  }
   renderReview();
   show('review');
  }catch(error){
   if(mine!==job)return;
   show('upload');
   el('uploadError').textContent=(error&&error.message?error.message:'Transcription failed.')+' Choose the file to try again.';
+  renderLibrary();
  }
 }
 function resetToUpload(){
  job++;
  stopAudio();
+ if(currentId){
+  const previous=currentId;
+  const patch={name:currentName(),sentences:snapshot()};
+  currentId=null;
+  updateRecording(previous,patch).then(()=>renderLibrary());
+ }
  sentences=[];
  el('uploadError').textContent='';
  show('upload');
+ renderLibrary();
 }
 document.addEventListener('dragover',event=>event.preventDefault());
 document.addEventListener('drop',event=>event.preventDefault());
@@ -864,6 +1082,12 @@ el('answer').addEventListener('keydown',event=>{
  if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();checkAnswer()}
 });
 el('speed').addEventListener('change',()=>{const audio=el('track');if(audio.src)audio.playbackRate=rate()});
+el('recordName').addEventListener('input',remember);
+el('recordName').addEventListener('blur',()=>{
+ if(!el('recordName').value.trim())el('recordName').value='Recording';
+ flushRecording();
+});
+renderLibrary();
 })();
 </script>
 </body>
