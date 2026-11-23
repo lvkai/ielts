@@ -4,98 +4,115 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Free IELTS listening game. Start with four digits and move up toward phone numbers and a 16-digit card number. Clear a round to level up. Too many misses move you down.">
+<meta name="description" content="Digit Climb is an IELTS listening game. Start at four digits and climb to a 16-digit card number. Clear 6 of 8 to move up. 3 or fewer moves you down.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/ielts-listening-phone-card.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
-<meta property="og:title" content="IELTS Listening Phone and Card Dictation">
-<meta property="og:description" content="A listening game from four digits up to a card number. Clear 6 of 8 to level up. 3 or fewer moves you down.">
+<meta property="og:title" content="Digit Climb · IELTS Listening">
+<meta property="og:description" content="A listening game from four digits up to a card number. Clear 6 of 8 to climb. 3 or fewer and you drop.">
 <meta property="og:url" content="https://lvkai.github.io/ielts/ielts-listening-phone-card.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Listening Phone and Card Dictation","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-phone-card.html","description":"Free IELTS listening practice. Hear a phone number or credit card number, then type it before the timer ends.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Digit Climb","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-phone-card.html","description":"An IELTS listening game. Hear grouped digits, type them, and climb from four digits to a card number.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
-<title>IELTS Listening Phone and Card Dictation</title>
+<title>Digit Climb · IELTS Listening</title>
 <style>
-:root{--bg:#f6f8fb;--surface:#fff;--text:#182339;--muted:#738097;--line:#e4eaf2;--blue:#315eea;--blue-soft:#edf1ff;--green:#168363;--red:#c54d4d;--r:19px}
-*{box-sizing:border-box}html{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif}body{margin:0;background:var(--bg);color:var(--text);min-height:100vh}button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.44}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}.wrap{max-width:1100px;margin:0 auto;padding:43px 22px 56px}
-header{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:26px}.eyebrow{color:var(--blue);font-size:11px;letter-spacing:.15em;font-weight:800;margin-bottom:9px}.heading{font-size:clamp(25px,3.7vw,36px);letter-spacing:-.045em;line-height:1.15;margin:0}.sub{font-size:13px;color:var(--muted);margin:10px 0 0;max-width:46em}.settings{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.setting{display:grid;gap:6px}.setting span{font-size:11px;color:var(--muted);font-weight:650}.setting select{appearance:none;border:1px solid var(--line);border-radius:10px;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;min-width:100px;padding:11px 30px 11px 13px;font-weight:700;color:var(--text);font-size:13px}
-.layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(340px,1fr);gap:18px;align-items:start}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 9px 36px rgba(35,49,79,.035)}.practice{padding:26px 29px 28px;min-height:548px;display:flex;flex-direction:column}.top{display:flex;justify-content:space-between;align-items:center;gap:16px}.overline{color:var(--muted);font-size:13px;font-weight:650}.progress-count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}.progress-count b{font-size:22px;color:var(--text);font-weight:800}.track{height:5px;margin-top:17px;border-radius:100px;background:#eef1f6;overflow:hidden}.track-fill{width:0;height:100%;border-radius:100px;background:var(--blue);transition:width .25s}
-.activity{display:flex;align-items:center;flex-direction:column;justify-content:center;gap:0;min-height:268px;text-align:center;padding:28px 0 18px}.sound{height:92px;width:92px;border-radius:27px;border:1px solid #dbe4ff;background:var(--blue-soft);display:flex;align-items:center;justify-content:center;color:var(--blue);transition:transform .15s,background .15s}.sound:hover:not(:disabled){transform:scale(1.025);background:#e5ecff}.sound svg{width:36px;height:36px}.sound.playing{background:#dbe5ff}.activity-title{font-size:20px;font-weight:760;letter-spacing:-.022em;margin:22px 0 6px}.activity-text{min-height:22px;font-size:13px;color:var(--muted);margin:0;line-height:1.6}.timer-wrap{display:flex;align-items:center;justify-content:center;margin-top:21px;gap:7px}.timer-value{font-size:32px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;font-weight:800}.timer-value.urgent{color:var(--red)}.timer-label{font-size:12px;color:var(--muted)}.timer-progress{height:5px;max-width:220px;width:100%;background:#edf1f7;border-radius:100px;margin:12px auto 0;overflow:hidden}.timer-progress>div{height:100%;width:0%;background:var(--blue);transition:width .04s linear}.timer-progress.urgent>div{background:var(--red)}
-.input-area{margin-top:auto}.answer-label{display:block;font-size:13px;color:#39465d;font-weight:750;margin-bottom:11px}.answer-row{display:flex;gap:11px}.answer-row input{width:100%;min-width:0;height:63px;padding:0 16px;border:1.5px solid #d6deeb;border-radius:13px;background:#fff;font-size:clamp(16px,2.4vw,24px);font-weight:730;letter-spacing:.02em;color:var(--text);font-variant-numeric:tabular-nums}.answer-row input:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 4px #315eea10}.answer-row input:disabled{background:#f9fafc}.primary{border:0;background:var(--blue);color:#fff;font-size:14px;font-weight:750;border-radius:13px;padding:0 27px;min-height:63px;white-space:nowrap}.primary:hover:not(:disabled){background:#264fd0}.secondary{border:1px solid #d8e1f0;background:white;color:#455874;font-size:13px;font-weight:730;border-radius:12px;padding:11px 16px}.secondary:hover:not(:disabled){background:#f6f8fc}.below{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px}.tip{font-size:12px;color:var(--muted);line-height:1.5;margin:0}.feedback{font-size:13px;font-weight:720;color:var(--muted);text-align:right}.feedback.ok{color:var(--green)}.feedback.no{color:var(--red)}.actions{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap}.actions .primary{height:51px;min-height:51px}.actions .secondary{min-height:51px}.hide{display:none!important}
-.results{padding:23px 23px 20px;min-height:548px}.result-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 14px;margin-bottom:10px}.result-top h2{font-size:17px;margin:0;letter-spacing:-.02em}.result-metrics{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.score{font-size:12px;color:var(--muted)}.score b{font-size:17px;color:var(--text);font-variant-numeric:tabular-nums}.cols,.res-row{display:grid;grid-template-columns:28px minmax(0,1.15fr) minmax(0,1.15fr) 52px 46px;align-items:center;gap:6px}.cols{font-size:11px;color:var(--muted);padding:15px 8px 11px;border-bottom:1px solid var(--line)}.res-row{min-height:46px;border-bottom:1px solid #f0f3f7;padding:9px 8px;font-size:12px;font-variant-numeric:tabular-nums}.res-row span{overflow-wrap:anywhere}.res-row:last-child{border-bottom:0}.res-row.active{border-radius:9px;background:#f2f5ff;border-color:transparent}.num{font-size:12px;color:#a0acc0}.hidden-val{color:#c7ceda}.truth{font-weight:760}.status{font-size:11px;font-weight:800;white-space:nowrap}.status.good{color:var(--green)}.status.bad{color:var(--red)}.status.timeout{color:#ad7419}.status.icon{font-size:19px;line-height:1}.status.mute{color:#9aa7ba}.status.current{color:var(--blue)}.time-used{font-size:12px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.footnote{margin-top:15px;padding-top:15px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.6}.footnote strong{color:var(--text)}.bottom{margin-top:22px;text-align:center;font-size:12px;line-height:1.7;color:var(--muted)}
-@media(max-width:800px){.wrap{padding:27px 16px 34px}header{align-items:start;flex-direction:column}.settings{width:100%}.setting{flex:1}.setting select{width:100%}.layout{grid-template-columns:1fr}.practice{min-height:518px}.results{min-height:0}.activity{min-height:246px}.bottom{margin-top:16px}}
-@media(max-width:460px){.wrap{padding:22px 12px 25px}.heading{font-size:27px}.practice{padding:20px 17px 21px;min-height:500px}.results{padding:19px 15px}.sound{height:78px;width:78px;border-radius:23px}.activity-title{font-size:18px}.answer-row input{height:58px}.primary{min-height:58px;padding:0 16px}.cols,.res-row{grid-template-columns:24px minmax(0,1fr) minmax(0,1fr) 40px 40px;gap:4px}}
-.setting.voice select{width:200px}@media(max-width:800px){.setting.voice select{width:100%}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
-.home-nav{margin:0 0 10px}.home-nav a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.home-nav a:hover{text-decoration:underline}.home-nav a:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}
-.level-board{margin:0 0 18px}.level-rule{margin:4px 0 0;font-size:12px;line-height:1.5;color:var(--muted)}.levels{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.level{flex:1 1 68px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 8px 7px;text-align:left;color:var(--text)}.level b{display:block;font-size:15px;font-weight:800;letter-spacing:-.02em}.level span{display:block;margin-top:2px;font-size:11px;color:var(--muted);font-weight:650}.level.now{background:var(--blue);border-color:var(--blue);color:#fff}.level.now span{color:#e4ebff}.level.done{background:#f3fbf7;border-color:#c9eadb}.level:hover:not(:disabled){border-color:#b9c8ee}.level:disabled{opacity:.42}
-.history-links{display:flex;gap:12px;margin-top:6px}.text-link{border:0;padding:0;background:none;color:var(--blue);font-size:13px;font-weight:750;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.text-link:hover{color:#2148c4}
-.stop{color:var(--red);border-color:#f0d0d0}.stop:hover:not(:disabled){background:#fdecee}
-.stats-dialog{border:0;border-radius:16px;padding:0;width:min(460px,calc(100vw - 28px));max-height:min(72vh,560px);color:var(--text);box-shadow:0 18px 50px rgba(24,35,57,.22)}.stats-dialog::backdrop{background:rgba(24,35,57,.38)}.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}.dialog-head h3{margin:0;font-size:16px}.dialog-close{width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:var(--red);font-size:18px;font-weight:700;line-height:1;cursor:pointer}.dialog-close:hover{background:#fdecee}.dialog-scroll{overflow:auto;max-height:min(46vh,360px)}.stats-table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}.stats-table th,.stats-table td{padding:9px 16px;text-align:left}.stats-table th{font-size:11px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line)}.stats-table td:last-child,.stats-table th:last-child{text-align:right}.stats-table td:first-child{overflow-wrap:anywhere}.dialog-empty{margin:0;padding:22px 16px;color:var(--muted);font-size:13px}.dialog-actions{display:flex;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line)}.dialog-actions .primary{min-height:44px;height:44px;padding:0 16px;font-size:13px}
+:root{--bg:#e7eef8;--paper:#f6f8fb;--ink:#182339;--muted:#6d7b90;--line:#e1e8f2;--blue:#315eea;--navy:#1c2b4a;--gold:#f5b942;--green:#168363;--red:#c54d4d}
+*{box-sizing:border-box}html{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif}body{margin:0;background:var(--bg);color:var(--ink);min-height:100vh}button,select{font:inherit}button{cursor:pointer}button:disabled{cursor:default}button:focus-visible,select:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}
+.shell{width:min(460px,100%);min-height:100vh;margin:0 auto;background:var(--paper);padding:18px 16px 28px}
+.shell:has(#playScreen:not([hidden])){padding:0;background:var(--navy)}
+.shell:has(#resultScreen:not([hidden])){padding:0;background:var(--paper)}
+.shell:has(#playScreen:not([hidden])) .topbar,.shell:has(#resultScreen:not([hidden])) .topbar{display:none}
+.topbar{display:flex;align-items:center;gap:12px}.back{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:12px;color:var(--blue);text-decoration:none;font-weight:800}.back:hover{background:#e8eeff}.eyebrow{color:var(--blue);font-size:11px;letter-spacing:.14em;font-weight:800}.topbar h1{margin:1px 0 0;font-size:26px;letter-spacing:-.04em;line-height:1}.gear{margin-left:auto;width:36px;height:36px;border:1px solid var(--line);border-radius:12px;background:#fff;color:#31415c;font-size:18px}
+.rule{margin:14px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
+.screen[hidden]{display:none!important}
+.path{display:flex;flex-direction:column;gap:8px;margin:16px 0 14px}.stage{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:16px;background:#fff;color:var(--ink);text-align:left}.stage:nth-child(even){margin-left:22px;width:calc(100% - 22px)}.stage:nth-child(odd){margin-right:22px;width:calc(100% - 22px)}.stage b{display:block;font-size:16px;letter-spacing:-.02em}.stage small{display:block;margin-top:2px;color:var(--muted);font-size:12px;font-weight:650}.badge{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:15px;background:#edf1ff;color:var(--blue);font-size:18px;font-weight:800}.mark{font-size:12px;font-weight:800;color:var(--muted)}.stage.now{border-color:var(--blue);box-shadow:0 0 0 3px #315eea22}.stage.now .mark{color:var(--blue)}.stage.boss .badge{background:#fff4d6;color:#8a5a00}.stage:disabled{opacity:.48}
+.play-btn{width:100%;border:0;border-radius:16px;min-height:54px;background:var(--blue);color:#fff;font-size:16px;font-weight:800}.play-btn:hover:not(:disabled){background:#264fd0}.ghost{width:100%;margin-top:8px;border:1px solid var(--line);border-radius:14px;min-height:46px;background:#fff;color:#31415c;font-size:14px;font-weight:750}.ghost:hover:not(:disabled){background:#f4f7fb}.links{display:flex;justify-content:center;gap:16px;margin-top:14px}.links button{border:0;background:none;color:var(--blue);font-size:13px;font-weight:750;text-decoration:underline;text-underline-offset:3px}.note{min-height:18px;margin:10px 0 0;text-align:center;color:var(--muted);font-size:12px}.fine{margin:18px 0 0;text-align:center;color:var(--muted);font-size:12px;line-height:1.6}
+.board{background:var(--navy);color:#fff;border-radius:0;padding:16px 14px max(12px,env(safe-area-inset-bottom));min-height:100vh;display:flex;flex-direction:column}
+.hud{display:flex;justify-content:space-between;gap:12px;align-items:end}.hud-kicker{font-size:12px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:#b9c6e4}.hud-title{margin-top:2px;font-size:22px;font-weight:800;letter-spacing:-.03em}.hud-side{text-align:right}.hud-q{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}.hud-clear{font-size:12px;color:#b9c6e4}
+.pips{display:flex;gap:6px;margin:12px 0 4px}.pip{width:100%;height:8px;border-radius:99px;background:rgba(255,255,255,.14)}.pip.now{background:#9eb6ff}.pip.good{background:#73e0b2}.pip.bad{background:#ff8f8f}.pip.gate{box-shadow:0 7px 0 var(--gold)}
+.speaker{width:84px;height:84px;margin:18px auto 8px;border:0;border-radius:28px;background:#2a3d66;color:#fff;display:flex;align-items:center;justify-content:center}.speaker svg{width:34px;height:34px}.speaker.playing{background:#3d5bd0}.speaker:disabled{opacity:.4}
+.slots{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-height:52px;margin-top:8px}.slot-group{display:flex;gap:4px}.slot{width:28px;height:40px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}.slot.filled{background:#fff;color:var(--navy)}.slot.good{background:#c9f6e2;color:#0d5c3d;border-color:transparent}.slot.bad{background:#ffd4d4;color:#8d2a2a;border-color:transparent}.slots.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-3px)}}
+.status{min-height:22px;margin:10px 0 0;text-align:center;color:#d5def2;font-size:13px;font-weight:650}.status.bad{color:#ffb4b4}
+.timebar{position:relative;height:28px;margin-top:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}.timebar>div{height:100%;width:0;background:#7eb0ff}.timebar.urgent>div{background:#ff8d8d}.timebar span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:auto;padding-top:14px}.key{height:58px;border:0;border-radius:16px;background:#2a3d66;color:#fff;font-size:22px;font-weight:800}.key:hover:not(:disabled){background:#365088}.key:active:not(:disabled){transform:translateY(1px)}.key:disabled{opacity:.38}.key.go{background:var(--blue)}.key.go:hover:not(:disabled){background:#264fd0}
+.leave{align-self:center;margin-top:8px;border:0;background:transparent;color:#b7c3dc;font-size:13px;font-weight:750}
+.result{min-height:100vh;padding:32px 16px 24px;text-align:center}.result.up{background:linear-gradient(#f6f8fb,#e7f8ef)}.result.down{background:linear-gradient(#f6f8fb,#fff0f0)}.stars{margin:8px 0 0;letter-spacing:4px}.star{color:#d5dbe6;font-size:34px}.star.on{color:var(--gold)}.result h2{margin:8px 0 6px;font-size:34px;letter-spacing:-.045em}.result-text{margin:0 auto 16px;max-width:22em;color:#31415c;font-size:15px;line-height:1.5}.result .pips{max-width:280px;margin:0 auto 18px}.result .pip{background:#e4eaf3}.result .pip.good{background:#1aa36e}.result .pip.bad{background:#e15b5b}
+.stats-dialog{border:0;border-radius:16px;padding:0;width:min(420px,calc(100vw - 28px));max-height:min(72vh,560px);color:var(--ink);box-shadow:0 18px 50px rgba(24,35,57,.22)}.stats-dialog::backdrop{background:rgba(24,35,57,.45)}.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}.dialog-head h3{margin:0;font-size:16px}.dialog-close{width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:var(--red);font-size:18px;font-weight:700;cursor:pointer}.dialog-scroll{overflow:auto;max-height:min(46vh,360px)}.stats-table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}.stats-table th,.stats-table td{padding:9px 16px;text-align:left}.stats-table th{font-size:11px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line)}.stats-table td:last-child,.stats-table th:last-child{text-align:right}.stats-table td:first-child{overflow-wrap:anywhere}.dialog-empty{margin:0;padding:22px 16px;color:var(--muted);font-size:13px}.dialog-actions{display:flex;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line)}.dialog-actions .play-btn{width:auto;min-height:44px;padding:0 16px}
+.setup-body{display:grid;gap:12px;padding:16px}.setup-body label{display:grid;gap:6px;font-size:12px;font-weight:700;color:var(--muted)}.setup-body select{appearance:none;border:1px solid var(--line);border-radius:10px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236d7b90' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;padding:11px 30px 11px 12px;font-weight:750;color:var(--ink)}
+.hide{display:none!important}
+@media(max-width:380px){.stage:nth-child(even){margin-left:12px;width:calc(100% - 12px)}.stage:nth-child(odd){margin-right:12px;width:calc(100% - 12px)}.key{height:52px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
- <nav class="home-nav" aria-label="Site"><a href="index.html">← Home</a></nav>
- <header>
-  <div><div class="eyebrow">IELTS LISTENING TRAINER</div><h1 class="heading">Phone and Card Dictation</h1><p class="sub">A level game from 4 digits up to a 16-digit card number. Each round has 8 numbers. Clear 6 to move up. 3 or fewer moves you down. 0 is spoken as oh, and repeated digits are double or triple.</p></div>
-  <div class="settings" aria-label="Test settings">
-   <label class="setting voice"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
-   <label class="setting"><span>Playback speed</span><select id="speed" aria-label="Playback speed"><option value="0.8">0.8×</option><option value="1" selected>1.0×</option><option value="1.2">1.2×</option></select></label>
-   <label class="setting"><span>Time limit</span><select id="limit" aria-label="Time limit per question"><option value="12">12 sec</option><option value="15">15 sec</option><option value="20" selected>20 sec</option><option value="30">30 sec</option></select></label>
-  </div>
+<div class="shell">
+ <header class="topbar">
+  <a class="back" href="index.html" aria-label="Home">←</a>
+  <div><div class="eyebrow">IELTS LISTENING</div><h1>Digit Climb</h1></div>
+  <button type="button" id="openSetup" class="gear" aria-label="Settings">⚙</button>
  </header>
- <main class="layout">
-  <section class="panel practice" aria-label="Dictation practice">
-   <div class="level-board">
-    <div class="overline" id="levelName">Level 1 of 6 · 4 digits</div>
-    <p class="level-rule" id="levelRule">Clear 6 of 8 to move up. 3 or fewer moves you down. You can open any level you have already reached.</p>
-    <div class="levels" id="levelList" role="list" aria-label="Levels"></div>
-   </div>
-   <div class="top"><div class="overline" id="roundLabel">Ready</div><div class="progress-count"><b id="qIndex">0</b> / <span id="qTotal">8</span></div></div>
-   <div class="track"><div class="track-fill" id="progress"></div></div>
-   <div class="activity">
-    <button type="button" id="play" class="sound" aria-label="Replay number" title="Replay number" disabled>
-     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
-    </button>
-    <h2 class="activity-title" id="activityTitle">Ready to begin?</h2>
-    <p class="activity-text" id="activityText" role="status">Level 1 of 6. Four digits.</p>
-    <div class="timer-wrap"><span id="timer" class="timer-value">--</span><span class="timer-label">sec</span></div>
-    <div id="timerTrack" class="timer-progress"><div id="timerFill"></div></div>
-   </div>
-   <div class="input-area">
-    <label class="answer-label" for="answer">Your answer</label>
-    <div class="answer-row"><input id="answer" type="text" inputmode="numeric" maxlength="19" autocomplete="off" spellcheck="false" disabled><button id="submit" class="primary" type="button" disabled>Submit</button></div>
-    <div class="below"><p class="tip">Spaces are optional · Press Enter or wait for the timer</p><span id="feedback" class="feedback" aria-live="polite"></span></div>
-   </div>
-   <div class="actions" id="actions"><button id="start" class="primary" type="button">Start level 1</button><button id="stop" class="secondary stop hide" type="button">Stop</button><button id="retry" class="secondary hide" type="button">Retry mistakes</button></div>
-  </section>
-  <aside class="panel results" aria-label="Question results">
-   <div class="result-top"><div><h2>Results</h2><div class="history-links"><button type="button" id="openMissed" class="text-link">Missed</button><button type="button" id="openSlow" class="text-link">Slowest</button></div></div><div class="result-metrics"><span class="score">Correct <b id="score">0</b> / <b id="completed">0</b></span><span class="score">Average time <b id="avgTime">—</b></span></div></div>
-   <div class="cols"><span>No.</span><span>You entered</span><span>Answer</span><span>Result</span><span style="text-align:right">Time</span></div>
-   <div id="rows"></div>
-   <div class="footnote" id="summary">Answers and response times appear after each question. Timing starts after the number is read.</div>
-  </aside>
- </main>
- <p class="bottom">These are practice numbers, not real phone lines or cards. Speech uses an English voice on this device. Your level, missed numbers, and answer times stay in this browser.</p>
+ <section id="mapScreen" class="screen" aria-label="Stage map">
+  <p class="rule">Hear the digits, then tap them in. Clear 6 of 8 to climb. 3 or fewer and you drop a stage. 0 is oh. Repeats are double or triple.</p>
+  <div class="path" id="path"></div>
+  <button type="button" id="playLevel" class="play-btn">Play stage 1</button>
+  <p class="note" id="mapNote" role="status"></p>
+  <div class="links"><button type="button" id="openMissed">Missed</button><button type="button" id="openSlow">Slowest</button></div>
+  <p class="fine">Practice numbers only, not real phone lines or cards. Speech uses an English voice on this device. Your stage stays in this browser.</p>
+ </section>
+ <section id="playScreen" class="screen board" hidden tabindex="-1" aria-label="Stage">
+  <div class="hud">
+   <div><div class="hud-kicker" id="hudLevel">Stage 1</div><div class="hud-title" id="hudName">4 digits</div></div>
+   <div class="hud-side"><div class="hud-q" id="hudQuestion">1 / 8</div><div class="hud-clear" id="clearCount">0 / 6 to climb</div></div>
+  </div>
+  <div class="pips" id="pips" aria-hidden="true"></div>
+  <button type="button" id="replay" class="speaker" aria-label="Replay number">
+   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+  </button>
+  <div class="slots" id="slots" aria-label="Your answer"></div>
+  <p class="status" id="playStatus" role="status">Listen…</p>
+  <div id="timebar" class="timebar"><div id="timerFill"></div><span id="timer">--</span></div>
+  <div class="keys" id="keys">
+   <button type="button" class="key" data-digit="1">1</button><button type="button" class="key" data-digit="2">2</button><button type="button" class="key" data-digit="3">3</button>
+   <button type="button" class="key" data-digit="4">4</button><button type="button" class="key" data-digit="5">5</button><button type="button" class="key" data-digit="6">6</button>
+   <button type="button" class="key" data-digit="7">7</button><button type="button" class="key" data-digit="8">8</button><button type="button" class="key" data-digit="9">9</button>
+   <button type="button" class="key" id="del" aria-label="Delete">⌫</button><button type="button" class="key" data-digit="0">0</button><button type="button" class="key go" id="go">Go</button>
+  </div>
+  <button type="button" id="leave" class="leave">Leave stage</button>
+ </section>
+ <section id="resultScreen" class="screen result" hidden aria-label="Stage result">
+  <p class="stars" id="stars"></p>
+  <h2 id="resultTitle">Level up</h2>
+  <p class="result-text" id="resultText"></p>
+  <div class="pips" id="resultPips" aria-hidden="true"></div>
+  <button type="button" id="resultPlay" class="play-btn">Play stage 2</button>
+  <button type="button" id="resultRetry" class="ghost">Retry misses</button>
+  <button type="button" id="resultMap" class="ghost">Back to map</button>
+ </section>
 </div>
+<dialog id="setupDialog" class="stats-dialog" aria-labelledby="setupTitle">
+ <div class="dialog-head"><h3 id="setupTitle">Settings</h3><button type="button" id="closeSetup" class="dialog-close" aria-label="Close">×</button></div>
+ <div class="setup-body">
+  <label>Voice<select id="voice" aria-label="Voice"></select></label>
+  <label>Playback speed<select id="speed" aria-label="Playback speed"><option value="0.8">0.8×</option><option value="1" selected>1.0×</option><option value="1.2">1.2×</option></select></label>
+  <label>Time limit<select id="limit" aria-label="Time limit"><option value="12">12 sec</option><option value="15">15 sec</option><option value="20" selected>20 sec</option><option value="30">30 sec</option></select></label>
+ </div>
+</dialog>
 <dialog id="missDialog" class="stats-dialog" aria-labelledby="missTitle">
  <div class="dialog-head"><h3 id="missTitle">Missed</h3><button type="button" id="closeMiss" class="dialog-close" aria-label="Close">×</button></div>
  <div class="dialog-scroll"><table class="stats-table"><thead><tr><th>Number</th><th>Misses</th></tr></thead><tbody id="missBody"></tbody></table><p id="missEmpty" class="dialog-empty hide">No missed numbers yet.</p></div>
- <div class="dialog-actions"><button type="button" id="practiceMissedDialog" class="primary" disabled>Practice these</button></div>
+ <div class="dialog-actions"><button type="button" id="practiceMissedDialog" class="play-btn" disabled>Practice these</button></div>
 </dialog>
 <dialog id="slowDialog" class="stats-dialog" aria-labelledby="slowTitle">
  <div class="dialog-head"><h3 id="slowTitle">Slowest</h3><button type="button" id="closeSlow" class="dialog-close" aria-label="Close">×</button></div>
  <div class="dialog-scroll"><table class="stats-table"><thead><tr><th>Number</th><th>Time</th></tr></thead><tbody id="slowBody"></tbody></table><p id="slowEmpty" class="dialog-empty hide">No timed answers yet.</p></div>
- <div class="dialog-actions"><button type="button" id="practiceSlowDialog" class="primary" disabled>Practice these</button></div>
+ <div class="dialog-actions"><button type="button" id="practiceSlowDialog" class="play-btn" disabled>Practice these</button></div>
 </dialog>
 <script>
 (()=>{'use strict';
 const el=id=>document.getElementById(id);
-const ROUND=8;
-const PASS_NEED=6;
-const DROP_AT=3;
+const ROUND=8,PASS_NEED=6,DROP_AT=3;
 const DIGIT=['oh','one','two','three','four','five','six','seven','eight','nine'];
 const LEVELS=[
  {name:'4 digits',digits:4,groups:[4],kind:'four'},
@@ -103,12 +120,15 @@ const LEVELS=[
  {name:'8 digits',digits:8,groups:[4,4],kind:'phone'},
  {name:'10 digits',digits:10,groups:[3,3,4],kind:'phone'},
  {name:'11 digits',digits:11,groups:null,kind:'phone'},
- {name:'Card',digits:16,groups:[4,4,4,4],kind:'card'}
+ {name:'Card',digits:16,groups:[4,4,4,4],kind:'card',boss:true}
 ];
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
 const VOICE_KEY='ielts-dictation-voice';
+const SPEED_KEY='ielts-code-dictation-speed';
+const LIMIT_KEY='ielts-code-dictation-limit';
 const STATS_KEY='ielts-code-dictation-stats';
 const LEVEL_KEY='ielts-code-dictation-level';
+const theme=document.querySelector('meta[name="theme-color"]');
 function randomBelow(n){
  if(n<=1)return 0;
  if(globalThis.crypto?.getRandomValues){
@@ -131,7 +151,7 @@ function plantRepeat(text,groups){
  for(const size of groups){if(size>=2)spans.push([at,at+size]);at+=size}
  if(!spans.length)return text;
  const [start,end]=spans[randomBelow(spans.length)];
- const index=start+randomBelow(end-start-1);
+ const index=start+randomBelow(Math.max(1,end-start-1));
  const chars=text.split('');
  const triple=end-start>=3&&index+2<end&&Math.random()<0.25;
  chars[index+1]=chars[index];
@@ -139,8 +159,7 @@ function plantRepeat(text,groups){
  return chars.join('');
 }
 function makeItem(level){
- let groups=level.groups;
- let first;
+ let groups=level.groups,first;
  if(!groups){
   const lead=randomBelow(2)===0;
   groups=lead?[5,6]:[4,3,4];
@@ -177,12 +196,10 @@ function groupsFor(digits){
  return [digits.length];
 }
 function itemFromStat(key,row){
- const groups=Array.isArray(row.groups)&&row.groups.reduce((sum,n)=>sum+n,0)===key.length?row.groups:groupsFor(key);
+ const groups=Array.isArray(row.groups)&&row.groups.every(n=>Number.isInteger(n)&&n>0)&&row.groups.reduce((sum,n)=>sum+n,0)===key.length?row.groups:groupsFor(key);
  const level=LEVELS.find(entry=>entry.digits===key.length);
  return {kind:key.length===16?'card':level?level.kind:'phone',digits:key,groups};
 }
-function onlyDigits(value){return String(value||'').replace(/\D/g,'')}
-let items=[],answers=[],position=0,phase='idle',speechGeneration=0,speechEndTimer=null,tick=null,nextTimer=null,expiresAt=0,duration=20000,answerStartedAt=null,reviewMisses=[],countsRank=false;
 function loadLevel(){
  try{
   const raw=JSON.parse(localStorage.getItem(LEVEL_KEY)||'{}');
@@ -196,6 +213,13 @@ function loadLevel(){
 let {rank,best}=loadLevel();
 function saveLevel(){try{localStorage.setItem(LEVEL_KEY,JSON.stringify({rank,best}))}catch(_){}}
 function currentLevel(){return LEVELS[rank-1]}
+let items=[],answers=[],position=0,typed='',phase='idle',countsRank=false,speechGeneration=0,speechEndTimer=null,tick=null,nextTimer=null,expiresAt=0,duration=20000,answerStartedAt=null,reviewMisses=[];
+function showScreen(name){
+ el('mapScreen').hidden=name!=='map';
+ el('playScreen').hidden=name!=='play';
+ el('resultScreen').hidden=name!=='result';
+ if(theme)theme.content=name==='play'?'#1c2b4a':'#f6f8fb';
+}
 function loadStats(){try{const raw=JSON.parse(localStorage.getItem(STATS_KEY)||'{}');return raw&&typeof raw==='object'?raw:{}}catch(_){return{}}}
 let codeStats=loadStats();
 function saveStats(){try{localStorage.setItem(STATS_KEY,JSON.stringify(codeStats))}catch(_){}}
@@ -216,7 +240,6 @@ function statRows(pick){
 }
 function rankedMisses(){return statRows(row=>row.misses>0?row:null).sort((a,b)=>b.misses-a.misses||a.label.localeCompare(b.label)).slice(0,10)}
 function rankedSlow(){return statRows(row=>row.lastTime>0?row:null).sort((a,b)=>b.lastTime-a.lastTime||a.label.localeCompare(b.label)).slice(0,10)}
-function canStartRound(){return phase==='idle'||phase==='complete'}
 function fillStatTable(body,empty,rows,cells){
  body.replaceChildren();
  empty.classList.toggle('hide',rows.length>0);
@@ -229,18 +252,161 @@ function fillStatTable(body,empty,rows,cells){
 function renderMissDialog(){
  const rows=rankedMisses();
  fillStatTable(el('missBody'),el('missEmpty'),rows,row=>[row.label,String(row.misses)]);
- el('practiceMissedDialog').disabled=!rows.length||!canStartRound();
+ el('practiceMissedDialog').disabled=!rows.length||phase!=='idle';
 }
 function renderSlowDialog(){
  const rows=rankedSlow();
  fillStatTable(el('slowBody'),el('slowEmpty'),rows,row=>[row.label,row.lastTime.toFixed(1)+'s']);
- el('practiceSlowDialog').disabled=!rows.length||!canStartRound();
+ el('practiceSlowDialog').disabled=!rows.length||phase!=='idle';
 }
-function openStatsDialog(dialog,render){render();if(!dialog.open)dialog.showModal()}
+function openStatsDialog(dialog,render){if(phase!=='idle')return;render();if(!dialog.open)dialog.showModal()}
 function practiceGroup(rows){
- if(!canStartRound()||!rows.length)return;
+ if(phase!=='idle'||!rows.length)return;
  el('missDialog').close();el('slowDialog').close();
  startSet(rows.map(row=>row.item));
+}
+function renderMap(){
+ const host=el('path');
+ host.replaceChildren();
+ LEVELS.forEach((level,index)=>{
+  const n=index+1;
+  const button=document.createElement('button');
+  button.type='button';
+  button.className='stage'+(n===rank?' now':'')+(level.boss?' boss':'');
+  button.disabled=n>best;
+  button.dataset.stage=String(n);
+  button.setAttribute('aria-pressed',n===rank?'true':'false');
+  const badge=document.createElement('span');
+  badge.className='badge';
+  badge.textContent=String(n);
+  const label=document.createElement('span');
+  const strong=document.createElement('b');
+  strong.textContent=level.boss?'Card':level.name;
+  const small=document.createElement('small');
+  small.textContent=level.boss?'Boss stage · 16 digits':'Stage '+n;
+  label.append(strong,small);
+  const mark=document.createElement('span');
+  mark.className='mark';
+  mark.textContent=n>best?'Locked':n===rank?'Now':'Open';
+  button.append(badge,label,mark);
+  button.addEventListener('click',()=>chooseStage(n));
+  host.append(button);
+ });
+ const level=currentLevel();
+ el('playLevel').textContent='Play stage '+rank;
+ el('playLevel').disabled=false;
+}
+function chooseStage(n){
+ if(phase!=='idle'||n<1||n>best)return;
+ if(n===rank){startSet();return}
+ rank=n;saveLevel();renderMap();
+}
+function settleRank(correct){
+ let move='stay';
+ if(correct>=PASS_NEED){
+  if(rank<LEVELS.length){rank+=1;move='up'}
+  else move='top';
+ }else if(correct<=DROP_AT){
+  if(rank>1){rank-=1;move='down'}
+  else move='floor';
+ }
+ best=Math.max(best,rank);
+ saveLevel();
+ return move;
+}
+function rankSentence(move){
+ const level=currentLevel();
+ if(move==='up')return `Level up. Stage ${rank} is ${level.boss?'the card number':level.name}.`;
+ if(move==='down')return `Level down. Stage ${rank} is ${level.name}.`;
+ if(move==='top')return 'Summit held. The card number stays at stage 6.';
+ if(move==='floor')return 'Stay on stage 1. Clear 6 of 8 to climb.';
+ return 'Not yet. Clear 6 of 8 to climb.';
+}
+function resultTitle(move){
+ if(move==='up')return 'Level up';
+ if(move==='down')return 'Level down';
+ if(move==='top')return 'Summit';
+ if(move==='floor')return 'Stay';
+ if(move==='stay')return 'Not yet';
+ return 'Practice';
+}
+function renderStars(count){
+ const host=el('stars');
+ host.replaceChildren();
+ host.setAttribute('aria-label',count+' of 3 stars');
+ for(let i=0;i<3;i++){
+  const star=document.createElement('span');
+  star.className='star'+(i<count?' on':'');
+  star.textContent='★';
+  host.append(star);
+ }
+}
+function starCount(correct,total){
+ if(!total)return 0;
+ const ratio=correct/total;
+ if(ratio===1)return 3;
+ if(ratio>=0.75)return 2;
+ if(ratio>0.375)return 1;
+ return 0;
+}
+function pipRow(host,gate){
+ host.replaceChildren();
+ const total=items.length||ROUND;
+ for(let i=0;i<total;i++){
+  const pip=document.createElement('span');
+  const answer=answers[i];
+  pip.className='pip'+(answer?(answer.ok?' good':' bad'):(i===position&&(phase==='speaking'||phase==='answering'||phase==='transition')?' now':''));
+  if(gate&&i===PASS_NEED-1)pip.classList.add('gate');
+  host.append(pip);
+ }
+}
+function renderSlots(item,value,state){
+ const host=el('slots');
+ host.classList.toggle('shake',state==='bad');
+ host.replaceChildren();
+ let at=0;
+ item.groups.forEach(size=>{
+  const group=document.createElement('span');
+  group.className='slot-group';
+  for(let i=0;i<size;i++){
+   const slot=document.createElement('span');
+   slot.className='slot'+(value[at]?' filled':'')+(state?' '+state:'');
+   slot.textContent=value[at]||'';
+   group.append(slot);
+   at++;
+  }
+  host.append(group);
+ });
+}
+function syncKeys(){
+ const on=phase==='speaking'||phase==='answering';
+ const full=items[position]&&typed.length===items[position].digits.length;
+ document.querySelectorAll('.key').forEach(button=>{button.disabled=button.id==='go'?!(on&&full):!on});
+}
+function pressDigit(digit){
+ if(!(phase==='speaking'||phase==='answering'))return;
+ const item=items[position];
+ if(typed.length>=item.digits.length)return;
+ typed+=digit;
+ renderSlots(item,typed,'');
+ syncKeys();
+}
+function backspace(){
+ if(!(phase==='speaking'||phase==='answering')||!typed)return;
+ typed=typed.slice(0,-1);
+ renderSlots(items[position],typed,'');
+ syncKeys();
+}
+function paintPlay(){
+ const item=items[position];
+ const level=currentLevel();
+ const correct=answers.filter(answer=>answer.ok).length;
+ el('hudLevel').textContent=countsRank?(level.boss?'Boss stage':'Stage '+rank):'Practice';
+ el('hudName').textContent=item?item.digits.length+' digits':level.name;
+ el('hudQuestion').textContent=(phase==='complete'?items.length:Math.min(position+1,items.length))+' / '+items.length;
+ el('clearCount').textContent=countsRank?correct+' / '+PASS_NEED+' to climb':'Level stays';
+ pipRow(el('pips'),countsRank);
+ syncKeys();
 }
 const SoundContext=window.AudioContext||window.webkitAudioContext;
 let completionAudio=null;
@@ -251,12 +417,12 @@ function prepareDing(){
   if(completionAudio.state==='suspended')completionAudio.resume().catch(()=>{});
  }catch(_){completionAudio=null}
 }
-function playCompletionSound(perfect){
+function playCompletionSound(bright){
  if(!completionAudio||completionAudio.state==='closed')return;
  const play=()=>{
   try{
    const start=completionAudio.currentTime+0.015;
-   if(perfect){
+   if(bright){
     const envelope=completionAudio.createGain();
     envelope.gain.setValueAtTime(0.0001,start);
     envelope.gain.exponentialRampToValueAtTime(0.16,start+0.015);
@@ -286,7 +452,7 @@ function playCompletionSound(perfect){
   }catch(_){}
  };
  if(completionAudio.state==='running')play();
- else completionAudio.resume().then(()=>{if(completionAudio.state==='running'&&phase==='complete'&&answers.every(x=>x.ok)===perfect)play()}).catch(()=>{});
+ else completionAudio.resume().then(()=>{if(completionAudio.state==='running'&&phase==='complete')play()}).catch(()=>{});
 }
 const clearTick=()=>{if(tick!==null){clearInterval(tick);tick=null}};
 const clearNext=()=>{if(nextTimer!==null){clearTimeout(nextTimer);nextTimer=null}};
@@ -294,11 +460,11 @@ function cancelSpeech(){
  speechGeneration++;
  if(speechEndTimer!==null){clearTimeout(speechEndTimer);speechEndTimer=null}
  if(speechOK){try{window.speechSynthesis.cancel()}catch(_){}}
- el('play').classList.remove('playing');
+ el('replay').classList.remove('playing');
 }
 function systemVoices(){
  if(!speechOK)return [];
- return window.speechSynthesis.getVoices().filter(v=>/^en([-_]|$)/i.test(v.lang)).sort((a,b)=>(/^en-GB/i.test(a.lang)?0:1)-( /^en-GB/i.test(b.lang)?0:1)||a.name.localeCompare(b.name));
+ return window.speechSynthesis.getVoices().filter(voice=>/^en([-_]|$)/i.test(voice.lang)).sort((a,b)=>(/^en-GB/i.test(a.lang)?0:1)-( /^en-GB/i.test(b.lang)?0:1)||a.name.localeCompare(b.name));
 }
 function fillVoices(){
  const select=el('voice');
@@ -310,7 +476,7 @@ function fillVoices(){
   option.value='';option.textContent=speechOK?'English voice':'Speech unavailable';
   select.append(option);select.disabled=true;return;
  }
- select.disabled=phase==='speaking'||phase==='answering'||phase==='transition';
+ select.disabled=false;
  for(const voice of voices){
   const option=document.createElement('option');
   option.value=voice.voiceURI;option.textContent=voice.name;select.append(option);
@@ -318,106 +484,48 @@ function fillVoices(){
  const british=voices.find(voice=>/^en-GB/i.test(voice.lang));
  select.value=voices.some(voice=>voice.voiceURI===previous)?previous:(british||voices[0]).voiceURI;
 }
-function rememberVoice(){try{localStorage.setItem(VOICE_KEY,el('voice').value)}catch(_){}}
-function refreshRows(){
- const host=el('rows');host.replaceChildren();
- for(let i=0;i<(items.length||ROUND);i++){
-  const result=answers[i],active=position===i&&(phase==='speaking'||phase==='answering');
-  const row=document.createElement('div');row.className='res-row'+(active?' active':'');
-  const c1=document.createElement('span');c1.className='num';c1.textContent=String(i+1).padStart(2,'0');
-  const c2=document.createElement('span');c2.textContent=result?(result.input||'—'):'—';if(!result)c2.className='hidden-val';
-  const c3=document.createElement('span');c3.className=result?'truth':'hidden-val';c3.textContent=result?displayOf(result.item):'—';
-  const c4=document.createElement('span');const expiredEmpty=Boolean(result&&result.reason==='timeout'&&result.input==='—');
-  c4.className='status '+(result?'icon '+(expiredEmpty?'timeout':result.ok?'good':'bad'):(active?'current':'mute'));
-  c4.textContent=result?(expiredEmpty?'⏱':result.ok?'✓':'×'):(active?'NOW':'—');
-  if(result){const outcome=expiredEmpty?'Time expired without input':result.ok?'Correct':'Incorrect';c4.setAttribute('aria-label',outcome);c4.title=result.reason==='timeout'?outcome+' · Auto-submitted at time limit':outcome}
-  const c5=document.createElement('span');c5.className='time-used'+(result?'':' hidden-val');c5.textContent=result?result.elapsed.toFixed(1)+'s':'—';
-  row.append(c1,c2,c3,c4,c5);host.append(row);
- }
+function rememberSettings(){
+ try{
+  localStorage.setItem(VOICE_KEY,el('voice').value);
+  localStorage.setItem(SPEED_KEY,el('speed').value);
+  localStorage.setItem(LIMIT_KEY,el('limit').value);
+ }catch(_){}
 }
-function kindLabel(item){return item&&item.kind==='card'?'Card':item?item.digits.length+' digits':'4 digits'}
-function listenTitle(item){return item.kind==='card'?'Listen and type the card number':'Listen and type the '+item.digits.length+' digits'}
-function renderLevels(){
- const host=el('levelList');
- host.replaceChildren();
- const locked=phase!=='idle'&&phase!=='complete';
- LEVELS.forEach((level,index)=>{
-  const n=index+1;
-  const button=document.createElement('button');
-  button.type='button';
-  button.className='level'+(n===rank?' now':'')+(n<rank?' done':'');
-  button.disabled=locked||n>best;
-  button.setAttribute('aria-pressed',n===rank?'true':'false');
-  button.setAttribute('aria-label',`Level ${n}, ${level.name}`+(n>best?', locked':n===rank?', current':''));
-  const strong=document.createElement('b');
-  strong.textContent=String(level.digits);
-  const note=document.createElement('span');
-  note.textContent=n===rank?'Now':n>best?'Locked':`Level ${n}`;
-  button.append(strong,note);
-  button.addEventListener('click',()=>chooseLevel(n));
-  host.append(button);
- });
- el('levelName').textContent=`Level ${rank} of ${LEVELS.length} · ${currentLevel().name}`;
+function restoreSettings(){
+ const speed=localStorage.getItem(SPEED_KEY);
+ const limit=localStorage.getItem(LIMIT_KEY);
+ if(['0.8','1','1.2'].includes(speed))el('speed').value=speed;
+ if(['12','15','20','30'].includes(limit))el('limit').value=limit;
 }
-function chooseLevel(n){
- if((phase!=='idle'&&phase!=='complete')||n<1||n>best||n===rank)return;
- rank=n;saveLevel();
- el('start').textContent=`Start level ${rank}`;
- if(phase==='idle'){
-  el('activityTitle').textContent='Ready to begin?';
-  el('activityText').textContent=`Level ${rank} of ${LEVELS.length}. ${currentLevel().name}.`;
- }else{
-  el('activityTitle').textContent='Ready to begin?';
-  el('activityText').textContent=`Next round is level ${rank} · ${currentLevel().name}.`;
- }
- renderLevels();
+function displayTime(ms){
+ const remain=Math.max(0,ms);
+ el('timer').textContent=(remain/1000).toFixed(1);
+ el('timebar').classList.toggle('urgent',remain<=3000);
+ el('timerFill').style.width=(duration?Math.min(100,remain/duration*100):0)+'%';
 }
-function settleRank(correct){
- let move='stay';
- if(correct>=PASS_NEED){
-  if(rank<LEVELS.length){rank+=1;move='up'}
-  else move='top';
- }else if(correct<=DROP_AT){
-  if(rank>1){rank-=1;move='down'}
-  else move='floor';
- }
- best=Math.max(best,rank);
- saveLevel();
- return move;
+function beginCountdown(){
+ if(phase!=='speaking')return;
+ phase='answering';
+ duration=Number(el('limit').value)*1000;
+ answerStartedAt=performance.now();
+ expiresAt=answerStartedAt+duration;
+ displayTime(duration);
+ el('playStatus').textContent='Type the number, then Go';
+ el('playStatus').classList.remove('bad');
+ paintPlay();
+ clearTick();
+ tick=setInterval(()=>{const remain=expiresAt-performance.now();displayTime(remain);if(remain<=0)finish('timeout')},40);
 }
-function rankSentence(move){
- const level=currentLevel();
- if(move==='up')return `Level up to ${rank} · ${level.name}.`;
- if(move==='down')return `Level down to ${rank} · ${level.name}.`;
- if(move==='top')return 'Top level held. The card number stays at level 6.';
- if(move==='floor')return 'Stay on level 1. Clear 6 of 8 to move up.';
- return 'Same level. Clear 6 of 8 to move up.';
-}
-function refreshStats(){
- el('qIndex').textContent=phase==='idle'?'0':phase==='complete'?String(items.length):String(Math.min(position+1,items.length));
- const current=items[position];
- el('roundLabel').textContent=phase==='idle'?'Ready':phase==='complete'?'Round complete':`Question ${position+1} · ${kindLabel(current)} · ${phase==='speaking'?'Playing':phase==='answering'?'Your turn':'Next'}`;
- el('qTotal').textContent=String(items.length||ROUND);
- el('progress').style.width=(items.length?(answers.length/items.length*100):0)+'%';
- el('score').textContent=String(answers.filter(a=>a.ok).length);
- el('completed').textContent=String(answers.length);
- el('avgTime').textContent=answers.length?(answers.reduce((total,item)=>total+item.elapsed,0)/answers.length).toFixed(1)+'s':'—';
- refreshRows();
- renderLevels();
-}
-function displayTime(ms){const remain=Math.max(0,ms);el('timer').textContent=(remain/1000).toFixed(1);el('timer').classList.toggle('urgent',remain<=3000);el('timerTrack').classList.toggle('urgent',remain<=3000);el('timerFill').style.width=(duration?Math.min(100,remain/duration*100):0)+'%'}
-function beginCountdown(){if(phase!=='speaking')return;phase='answering';duration=Number(el('limit').value)*1000;answerStartedAt=performance.now();expiresAt=answerStartedAt+duration;displayTime(duration);el('activityText').textContent='Submit before time runs out';refreshStats();clearTick();tick=setInterval(()=>{const remain=expiresAt-performance.now();displayTime(remain);if(remain<=0)finish('timeout')},40)}
 function afterSpeech(token){
- if(token!==speechGeneration)return false;
+ if(token!==speechGeneration)return;
  if(speechEndTimer!==null){clearTimeout(speechEndTimer);speechEndTimer=null}
- el('play').classList.remove('playing');
+ el('replay').classList.remove('playing');
  if(phase==='speaking')beginCountdown();
- else if(phase==='answering')el('activityText').textContent='Submit before time runs out';
- return true;
+ else if(phase==='answering')el('playStatus').textContent='Type the number, then Go';
 }
 function talk(){
  if(!items.length||!(phase==='speaking'||phase==='answering'))return;
- if(!speechOK){el('activityText').textContent='Speech is unavailable in this browser.';return}
+ if(!speechOK){el('playStatus').textContent='Speech is unavailable in this browser.';return}
  cancelSpeech();
  const token=speechGeneration;
  const item=items[position];
@@ -431,8 +539,9 @@ function talk(){
  const markFinished=()=>{if(settled)return;settled=true;afterSpeech(token)};
  utterance.onstart=()=>{
   if(token!==speechGeneration)return;
-  el('play').classList.add('playing');
-  el('activityText').textContent=phase==='answering'?'Replaying · Timer continues':'Playing…';
+  el('replay').classList.add('playing');
+  el('playStatus').textContent=phase==='answering'?'Replaying. The timer keeps going.':'Listen…';
+  el('playStatus').classList.remove('bad');
   const seconds=Math.max(4,(text.length*0.12)/Math.max(0.5,utterance.rate)+1.4);
   if(speechEndTimer===null)speechEndTimer=setTimeout(markFinished,seconds*1000);
  };
@@ -440,25 +549,32 @@ function talk(){
  utterance.onerror=()=>{
   if(settled||token!==speechGeneration)return;
   settled=true;
-  el('play').classList.remove('playing');
-  el('activityText').textContent='Playback failed. Tap the speaker to retry.';
+  el('replay').classList.remove('playing');
+  el('playStatus').textContent='Playback failed. Tap the speaker to retry.';
  };
  setTimeout(()=>{
   if(token!==speechGeneration)return;
-  try{window.speechSynthesis.resume();window.speechSynthesis.speak(utterance)}catch(_){if(!settled){settled=true;el('activityText').textContent='Playback failed. Tap the speaker to retry.'}}
+  try{window.speechSynthesis.resume();window.speechSynthesis.speak(utterance)}catch(_){if(!settled){settled=true;el('playStatus').textContent='Playback failed. Tap the speaker to retry.'}}
  },40);
 }
 function setUpQuestion(){
  const item=items[position];
- phase='speaking';answerStartedAt=null;el('answer').value='';el('answer').maxLength=item.digits.length+Math.max(0,item.groups.length-1);el('answer').disabled=false;el('submit').disabled=false;el('play').disabled=false;
- el('activityTitle').textContent=listenTitle(item);
- el('activityText').textContent='Preparing audio…';el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerFill').style.width='0%';el('timerTrack').classList.remove('urgent');refreshStats();el('answer').focus({preventScroll:true});talk();
+ phase='speaking';
+ typed='';
+ answerStartedAt=null;
+ el('playStatus').classList.remove('bad');
+ el('playStatus').textContent='Listen…';
+ el('timer').textContent='--';
+ el('timebar').classList.remove('urgent');
+ el('timerFill').style.width='0%';
+ renderSlots(item,'','');
+ paintPlay();
+ el('playScreen').focus({preventScroll:true});
+ talk();
 }
-function showRoundControls(running){el('start').classList.toggle('hide',running);el('stop').classList.toggle('hide',!running);if(running)el('retry').classList.add('hide')}
 function drawRound(){
  const level=currentLevel();
- const made=[];
- const seen=new Set();
+ const made=[],seen=new Set();
  while(made.length<ROUND){
   const item=makeItem(level);
   if(seen.has(item.digits))continue;
@@ -471,63 +587,90 @@ function startSet(preset){
  prepareDing();clearTick();clearNext();cancelSpeech();
  countsRank=!(preset&&preset.length);
  items=preset&&preset.length?preset.slice(0,ROUND):drawRound();
- answers=[];position=0;phase='idle';showRoundControls(true);
- el('summary').textContent=countsRank?`Level ${rank} · ${currentLevel().name}. ${PASS_NEED} correct moves up. ${DROP_AT} or fewer moves down.`:'Practice round. Your level stays the same.';
+ answers=[];position=0;typed='';reviewMisses=[];
+ showScreen('play');
  setUpQuestion();
 }
-function stopRound(){
+function leaveStage(){
  if(phase==='idle'||phase==='complete')return;
+ if(answers.length===items.length)return;
  clearTick();clearNext();cancelSpeech();
- const answered=answers.length;
- el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';
- if(!answered){items=[];position=0;phase='idle';reviewMisses=[];countsRank=false;el('activityTitle').textContent='Ready to begin?';el('activityText').textContent=`Round stopped. Level ${rank} stays.`;el('start').textContent=`Start level ${rank}`;showRoundControls(false);el('retry').classList.add('hide');el('summary').textContent='Answers and response times appear after each question. Timing starts after the number is read.';refreshStats();return}
- phase='complete';reviewMisses=answers.filter(x=>!x.ok).map(x=>x.item);const correct=answers.filter(x=>x.ok).length;countsRank=false;
- el('activityTitle').textContent='Round stopped';el('activityText').textContent=`Stopped after ${answered} of ${items.length}. Level ${rank} stays.`;el('start').textContent=`Start level ${rank}`;showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);
- el('summary').innerHTML=`Stopped · Score: <strong>${correct} / ${answered}</strong>. Level ${rank} stays.`;refreshStats();
+ countsRank=false;items=[];answers=[];position=0;typed='';phase='idle';
+ showScreen('map');
+ el('mapNote').textContent='Left the stage. Stage '+rank+' stays.';
+ renderMap();
 }
 function finish(reason){
  if(!(phase==='speaking'||phase==='answering'))return;
  const item=items[position];
- const typed=el('answer').value.trim();
- const digits=onlyDigits(typed);
- if(reason==='submit'&&digits.length!==item.digits.length){
-  el('feedback').textContent=`Enter all ${item.digits.length} digits`;el('feedback').className='feedback no';el('answer').focus();return;
+ if(reason==='submit'&&typed.length!==item.digits.length){
+  el('playStatus').textContent='Enter all '+item.digits.length+' digits';
+  el('playStatus').classList.add('bad');
+  return;
  }
  clearTick();cancelSpeech();phase='transition';
- const ok=digits===item.digits;
+ const ok=typed===item.digits;
  const elapsed=answerStartedAt===null?0:Math.min(duration,Math.max(0,performance.now()-answerStartedAt))/1000;
  answers.push({item,input:typed||'—',ok,elapsed,reason:reason==='timeout'?'timeout':ok?'correct':'wrong'});
  noteAttempt(item,ok,elapsed);
- el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;
- const shown=displayOf(item);
- el('feedback').textContent=reason==='timeout'?(ok?"Time's Up! · ✓":typed?"Time's Up! · ×":"Time's Up! · ⏱"):(ok?'✓ Correct':`Answer: ${shown}`);
- el('feedback').className='feedback '+(ok?'ok':'no');
- el('activityText').textContent=reason==='timeout'?"Time's Up! · Next question…":ok?'Correct · Next question…':`Answer: ${shown} · Next question…`;
- el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';refreshStats();
+ renderSlots(item,ok?typed:item.digits,ok?'good':'bad');
+ el('playStatus').textContent=ok?'Correct':'Answer '+displayOf(item);
+ el('playStatus').classList.toggle('bad',!ok);
+ el('timer').textContent='--';el('timebar').classList.remove('urgent');el('timerFill').style.width='0%';
+ paintPlay();
+ syncKeys();
  nextTimer=setTimeout(()=>{nextTimer=null;position++;if(position<items.length)setUpQuestion();else endSet()},700);
 }
 function endSet(){
  if(phase==='complete')return;
  clearTick();cancelSpeech();phase='complete';
- const correct=answers.filter(x=>x.ok).length;
- const move=countsRank?settleRank(correct):'';
+ const correct=answers.filter(answer=>answer.ok).length;
+ const ranked=countsRank;
+ const move=ranked?settleRank(correct):'';
  playCompletionSound(move==='up'||move==='top'||correct===items.length);
- reviewMisses=answers.filter(x=>!x.ok).map(x=>x.item);
- const rankText=countsRank?rankSentence(move):'Practice round. Your level stays the same.';
+ reviewMisses=answers.filter(answer=>!answer.ok).map(answer=>answer.item);
  countsRank=false;
- el('activityTitle').textContent=move==='up'?'Level up':move==='down'?'Level down':move==='top'?'Top level':'Round complete';
- el('activityText').textContent=`${correct} of ${items.length} correct. ${rankText}`;
- el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';
- el('start').textContent=`Start level ${rank}`;showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);el('feedback').textContent='';
- el('summary').innerHTML=`Score: <strong>${correct} / ${items.length}</strong> · Accuracy: <strong>${Math.round(correct/items.length*100)}%</strong>. ${rankText}`;refreshStats();
+ const sentence=ranked?rankSentence(move):'Practice round. Your stage stays the same.';
+ renderStars(starCount(correct,items.length));
+ el('resultTitle').textContent=resultTitle(move);
+ el('resultText').textContent=correct+' of '+items.length+' correct. '+sentence;
+ el('resultScreen').classList.remove('up','down','top','stay','floor');
+ if(move)el('resultScreen').classList.add(move);
+ pipRow(el('resultPips'),ranked);
+ el('resultPlay').textContent='Play stage '+rank;
+ el('resultRetry').hidden=!reviewMisses.length;
+ showScreen('result');
 }
-el('answer').addEventListener('input',()=>{
- const cleaned=el('answer').value.replace(/[^\d\s-]/g,'');
- if(cleaned!==el('answer').value)el('answer').value=cleaned;
+function backToMap(){
+ phase='idle';
+ showScreen('map');
+ el('mapNote').textContent='';
+ renderMap();
+}
+el('playLevel').addEventListener('click',()=>{if(phase==='idle')startSet()});
+el('leave').addEventListener('click',leaveStage);
+el('replay').addEventListener('click',talk);
+el('keys').addEventListener('click',event=>{
+ const key=event.target.closest('button');
+ if(!key||key.disabled)return;
+ if(key.id==='del')backspace();
+ else if(key.id==='go')finish('submit');
+ else if(key.dataset.digit)pressDigit(key.dataset.digit);
 });
-el('start').addEventListener('click',()=>startSet());
-el('stop').addEventListener('click',stopRound);
-el('retry').addEventListener('click',()=>{if(reviewMisses.length)startSet(reviewMisses)});
+document.addEventListener('keydown',event=>{
+ if(el('setupDialog').open||el('missDialog').open||el('slowDialog').open)return;
+ if(!(phase==='speaking'||phase==='answering'))return;
+ if(/^[0-9]$/.test(event.key)){event.preventDefault();pressDigit(event.key)}
+ else if(event.key==='Backspace'){event.preventDefault();backspace()}
+ else if(event.key==='Enter'){event.preventDefault();finish('submit')}
+});
+el('resultPlay').addEventListener('click',()=>{phase='idle';startSet()});
+el('resultMap').addEventListener('click',backToMap);
+el('resultRetry').addEventListener('click',()=>{if(reviewMisses.length){phase='idle';startSet(reviewMisses)}});
+el('openSetup').addEventListener('click',()=>{if(!el('setupDialog').open)el('setupDialog').showModal()});
+el('closeSetup').addEventListener('click',()=>el('setupDialog').close());
+el('setupDialog').addEventListener('click',event=>{if(event.target===el('setupDialog'))el('setupDialog').close()});
+el('setupDialog').addEventListener('close',rememberSettings);
 el('openMissed').addEventListener('click',()=>openStatsDialog(el('missDialog'),renderMissDialog));
 el('openSlow').addEventListener('click',()=>openStatsDialog(el('slowDialog'),renderSlowDialog));
 el('closeMiss').addEventListener('click',()=>el('missDialog').close());
@@ -536,15 +679,14 @@ el('practiceMissedDialog').addEventListener('click',()=>practiceGroup(rankedMiss
 el('practiceSlowDialog').addEventListener('click',()=>practiceGroup(rankedSlow()));
 el('missDialog').addEventListener('click',event=>{if(event.target===el('missDialog'))el('missDialog').close()});
 el('slowDialog').addEventListener('click',event=>{if(event.target===el('slowDialog'))el('slowDialog').close()});
-el('play').addEventListener('click',talk);
-el('submit').addEventListener('click',()=>finish('submit'));
-el('answer').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();finish('submit')}});
+el('voice').addEventListener('change',rememberSettings);
+el('speed').addEventListener('change',rememberSettings);
+el('limit').addEventListener('change',rememberSettings);
 fillVoices();
-el('voice').addEventListener('change',rememberVoice);
+restoreSettings();
 if(speechOK)window.speechSynthesis.addEventListener('voiceschanged',fillVoices);
-el('activityText').textContent=`Level ${rank} of ${LEVELS.length}. ${currentLevel().name}.`;
-el('start').textContent=`Start level ${rank}`;
-refreshStats();
+renderMap();
+showScreen('map');
 })();
 </script>
 </body>
