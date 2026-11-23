@@ -45,7 +45,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 .sentence{border:1px solid var(--line);border-radius:14px;padding:12px}
 .sentence.prompt{background:#f7f8fb}
-.meta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px}
+.meta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.meta-actions{display:flex;align-items:center;gap:8px;margin-left:auto}.play{border:1px solid #d8e1f0;background:#fff;color:var(--blue);border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}.play.playing{background:var(--blue);color:#fff;border-color:var(--blue)}
 .meta b{font-size:13px;font-variant-numeric:tabular-nums}
 .meta span{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
 .flag{border:1px solid #d8e1f0;background:#fff;color:#455874;border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}
@@ -74,14 +74,13 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .diff mark.bad{background:#fde8e8;color:#9d2c2c}
 .diff mark.good{background:#e5f6ee;color:#0f6b48}
 .reveal{margin-top:12px;padding:12px 14px;border-radius:12px;background:#f4f7fb;line-height:1.55}
-.practice-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.setting{display:grid;gap:4px}.setting span{font-size:11px;color:var(--muted);font-weight:650}
-.setting select{appearance:none;border:1px solid var(--line);border-radius:10px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;padding:8px 28px 8px 10px;font-weight:700}
+.practice-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;width:100%;margin:12px 0 0}.practice-actions .primary,.practice-actions .secondary{min-height:42px}.practice-actions .ghost{display:inline-flex;align-items:center;min-height:42px}
+.setting{display:flex;align-items:center;gap:8px}.setting span{font-size:13px;color:var(--muted);font-weight:750}.setting select{appearance:none;border:1px solid var(--line);border-radius:12px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;min-height:42px;padding:0 28px 0 12px;font-weight:700}
 .note{margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.6}.note.warn{color:var(--red)}
 .name-field{display:flex;align-items:center;gap:8px;margin-top:10px}.name-field span{font-size:12px;color:var(--muted);font-weight:750}.name-field input{width:min(360px,100%);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-weight:700}
-.library{margin-top:22px}.library h2{margin:0 0 4px;font-size:16px;letter-spacing:-.02em}.library-empty{margin:8px 0 0;color:var(--muted);font-size:13px}.library-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--line)}.library-item .open{flex:1;min-width:0;border:0;background:none;padding:0;color:var(--text);font-weight:750;text-align:left}.library-item .open:hover{color:var(--blue)}.library-meta{margin-left:auto;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}.library-item .danger{border:0;background:none;padding:0;color:var(--red);font-size:12px;font-weight:750}
+.library{margin-top:22px}.library h2{margin:0 0 4px;font-size:16px;letter-spacing:-.02em}.library-empty{margin:8px 0 0;color:var(--muted);font-size:13px}.library-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.library-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.library-copy b{font-weight:750}.library-meta{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}.library-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}.library-actions button{border-radius:999px;min-height:34px;padding:0 12px;font-size:12px;font-weight:750}.library-actions .edit{border:1px solid #d8e1f0;background:#fff;color:#455874}.library-actions .practice{border:0;background:var(--blue);color:#fff}.library-actions .danger{border:0;background:none;padding:0 4px;color:var(--red)}
 .fine{margin:18px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
-@media(max-width:640px){.wrap{padding:22px 14px 40px}.panel{padding:18px 14px}.start-bar{align-items:stretch;flex-direction:column}.primary,.secondary{width:100%}}
+@media(max-width:640px){.wrap{padding:22px 14px 40px}.panel{padding:18px 14px}.start-bar{align-items:stretch;flex-direction:column}.start-bar .primary,.start-bar .secondary,.work-actions .secondary{width:100%}.library-item{align-items:flex-start;flex-direction:column}.library-actions{width:100%}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -119,7 +118,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
  </section>
  <section id="stageReview" class="panel" hidden aria-label="Check sentences">
   <div class="review-head"><div><h2>Check the sentences</h2><label id="nameField" class="name-field" hidden><span>Name</span><input id="recordName" type="text" maxlength="80" autocomplete="off" aria-label="Recording name"></label><p id="saveNote" class="note"></p></div><p id="reviewCount" class="count"></p></div>
-  <p class="note">Edit anything the transcription got wrong. This text is the answer. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined.</p>
+  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined.</p>
   <div id="sentences" class="list"></div>
   <div class="start-bar">
    <button type="button" id="another" class="secondary">Choose another file</button>
@@ -137,6 +136,14 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
    </button>
    <h2 id="practiceTitle">Listen and type</h2>
+   <div class="practice-actions">
+    <button type="button" id="check" class="primary">Check</button>
+    <button type="button" id="pause" class="secondary" aria-pressed="false">Pause</button>
+    <button type="button" id="show" class="secondary" hidden>Show sentence</button>
+    <button type="button" id="skipPrompt" class="secondary" hidden>Continue</button>
+    <label class="setting"><span>Speed</span><select id="speed" aria-label="Playback speed"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1" selected>1.0×</option><option value="1.15">1.15×</option></select></label>
+    <button type="button" id="backReview" class="ghost">Back to sentences</button>
+   </div>
    <p id="promptLine" class="prompt-line" hidden></p>
   </div>
   <div id="dictateBox">
@@ -145,14 +152,6 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
    <div class="below"><span class="note" style="margin:0">Enter checks · Shift+Enter adds a line</span><span id="feedback" class="feedback" role="status"></span></div>
    <div id="diff" class="diff" hidden aria-live="polite"></div>
    <p id="reveal" class="reveal" hidden></p>
-  </div>
-  <div class="practice-actions" style="margin-top:14px">
-   <button type="button" id="check" class="primary">Check</button>
-   <button type="button" id="pause" class="secondary" aria-pressed="false">Pause</button>
-   <button type="button" id="show" class="secondary" hidden>Show sentence</button>
-   <button type="button" id="skipPrompt" class="secondary" hidden>Continue</button>
-   <label class="setting"><span>Speed</span><select id="speed" aria-label="Playback speed"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1" selected>1.0×</option><option value="1.15">1.15×</option></select></label>
-   <button type="button" id="backReview" class="ghost">Back to sentences</button>
   </div>
  </section>
  <section id="stageDone" class="panel" hidden aria-label="Finished">
@@ -391,6 +390,7 @@ let loopFrom=0;
 let loopTo=0;
 let phase='upload';
 let navLock=false;
+let previewIndex=-1;
 let misses=0;
 let currentId=null;
 let saveTimer=0;
@@ -519,15 +519,27 @@ async function renderLibrary(){
  records.forEach(record=>{
   const row=document.createElement('div');
   row.className='library-item';
-  const open=document.createElement('button');
-  open.type='button';
-  open.className='open';
-  open.textContent=record.name||'Recording';
-  open.addEventListener('click',()=>openRecording(record.id));
+  const copy=document.createElement('div');
+  copy.className='library-copy';
+  const name=document.createElement('b');
+  name.textContent=record.name||'Recording';
   const meta=document.createElement('span');
   meta.className='library-meta';
   const count=Array.isArray(record.sentences)?record.sentences.length:0;
   meta.textContent=clock(record.duration)+' · '+count+' sentence'+(count===1?'':'s');
+  copy.append(name,meta);
+  const actions=document.createElement('div');
+  actions.className='library-actions';
+  const edit=document.createElement('button');
+  edit.type='button';
+  edit.className='edit';
+  edit.textContent='Edit';
+  edit.addEventListener('click',()=>openRecording(record.id));
+  const practice=document.createElement('button');
+  practice.type='button';
+  practice.className='practice';
+  practice.textContent='Practice';
+  practice.addEventListener('click',()=>openRecording(record.id,'practice'));
   const remove=document.createElement('button');
   remove.type='button';
   remove.className='danger';
@@ -539,11 +551,12 @@ async function renderLibrary(){
    if(currentId===record.id){currentId=null;sentences=[];syncPager()}
    renderLibrary();
   });
-  row.append(open,meta,remove);
+  actions.append(edit,practice,remove);
+  row.append(copy,actions);
   host.append(row);
  });
 }
-async function openRecording(id){
+async function openRecording(id,mode){
  const mine=++job;
  stopAudio();
  if(currentId&&currentId!==id)await flushRecording();
@@ -566,6 +579,7 @@ async function openRecording(id){
   el('saveNote').textContent='Saved in this browser.';
   renderReview();
   show('review');
+  if(mode==='practice')beginPractice(0);
  }catch(error){
   if(mine!==job)return;
   show('upload');
@@ -656,8 +670,10 @@ function goStep(step){
 function stopAudio(){
  loopToken++;
  clearTimeout(loopTimer);
+ previewIndex=-1;
  el('track').pause();
  el('speaker').classList.remove('playing');
+ paintPreview();
 }
 function rate(){return Number(el('speed').value)||1}
 function dictateSentences(){return sentences.filter(sentence=>!sentence.prompt&&sentence.text.trim())}
@@ -689,7 +705,18 @@ function renderReview(){
   flag.setAttribute('aria-pressed',sentence.prompt?'true':'false');
   flag.textContent=sentence.prompt?'Instruction':'Dictate';
   flag.addEventListener('click',()=>{sentence.prompt=!sentence.prompt;renderReview();remember()});
-  meta.append(title,flag);
+  const play=document.createElement('button');
+  play.type='button';
+  play.className='play';
+  play.dataset.index=String(index);
+  play.textContent='Play';
+  play.setAttribute('aria-pressed','false');
+  play.setAttribute('aria-label','Play sentence '+(index+1));
+  play.addEventListener('click',()=>previewSentence(index));
+  const actions=document.createElement('div');
+  actions.className='meta-actions';
+  actions.append(play,flag);
+  meta.append(title,actions);
   const area=document.createElement('textarea');
   area.value=sentence.text;
   area.spellcheck=true;
@@ -715,6 +742,50 @@ function renderReview(){
   host.append(row);
  });
  updateReviewCount();
+ paintPreview();
+}
+function paintPreview(){
+ document.querySelectorAll('.sentence .play').forEach(button=>{
+  const index=Number(button.dataset.index);
+  const on=index===previewIndex;
+  button.classList.toggle('playing',on);
+  button.setAttribute('aria-pressed',on?'true':'false');
+  button.textContent=on?'Stop':'Play';
+  button.setAttribute('aria-label',(on?'Stop':'Play')+' sentence '+(index+1));
+ });
+}
+function previewSentence(index){
+ const sentence=sentences[index];
+ if(!sentence)return;
+ if(previewIndex===index){stopAudio();return}
+ stopAudio();
+ previewIndex=index;
+ paintPreview();
+ const token=loopToken;
+ const audio=el('track');
+ const {from,to}=playbackBounds(sentence);
+ let armed=false;
+ let finished=false;
+ audio.pause();
+ audio.playbackRate=rate();
+ if('preservesPitch' in audio)audio.preservesPitch=true;
+ const start=()=>{
+  if(token!==loopToken)return;
+  audio.play().then(()=>{if(token!==loopToken)audio.pause();else armed=true}).catch(()=>{if(token===loopToken)stopAudio()});
+ };
+ if(Math.abs(audio.currentTime-from)<=0.05)start();
+ else{
+  const resume=()=>{audio.removeEventListener('seeked',resume);start()};
+  audio.addEventListener('seeked',resume);
+  audio.currentTime=from;
+ }
+ const watch=()=>{
+  if(token!==loopToken||finished)return;
+  if(!armed){loopTimer=setTimeout(watch,40);return}
+  if(audio.currentTime>=to-0.04||audio.ended){finished=true;stopAudio();return}
+  loopTimer=setTimeout(watch,40);
+ };
+ watch();
 }
 function splitAt(index,cursorAt){
  const sentence=sentences[index];
@@ -723,6 +794,7 @@ function splitAt(index,cursorAt){
  const left=text.slice(0,at).trim();
  const right=text.slice(at).trim();
  if(!left||!right)return;
+ stopAudio();
  const ratio=left.length/text.length;
  const mid=sentence.start+(sentence.end-sentence.start)*ratio;
  sentences.splice(index,1,markSentence({text:left,start:sentence.start,end:mid}),markSentence({text:right,start:mid,end:sentence.end}));
@@ -732,6 +804,7 @@ function splitAt(index,cursorAt){
 function mergeNext(index){
  const next=sentences[index+1];
  if(!next)return;
+ stopAudio();
  const current=sentences[index];
  const text=cleanText(current.text+' '+next.text);
  sentences.splice(index,2,[markSentence({text,start:current.start,end:next.end})]);
@@ -865,6 +938,7 @@ function enter(index){
  el('answer').focus();
 }
 function beginPractice(index){
+ stopAudio();
  sentences=sentences.map(sentence=>({...sentence,text:cleanText(sentence.text)})).filter(sentence=>sentence.text);
  if(!sentences.length)return;
  remember();
