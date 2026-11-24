@@ -45,7 +45,8 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .count{color:var(--muted);font-size:13px}
 .list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 .sentence{border:1px solid var(--line);border-radius:14px;padding:12px}
-.sentence.prompt{background:#f7f8fb}
+.sentence.prompt,.sentence.blank{background:#f7f8fb}
+.blank-label{margin:0;color:var(--muted);font-size:14px;font-weight:650}
 .meta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.meta-actions{display:flex;align-items:center;gap:8px;margin-left:auto}.play{border:1px solid #d8e1f0;background:#fff;color:var(--blue);border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}.play.playing{background:var(--blue);color:#fff;border-color:var(--blue)}
 .meta b{font-size:13px;font-variant-numeric:tabular-nums}
 .meta span{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
@@ -77,7 +78,9 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .reveal{margin-top:12px;padding:12px 14px;border-radius:12px;background:#f4f7fb;line-height:1.55}
 .practice-layout{display:flex;align-items:flex-start;gap:16px}.practice-main{flex:1;min-width:0}
 .sentence-nav{width:156px;flex:none;display:flex;flex-direction:column;gap:4px;max-height:min(70vh,640px);overflow:auto;padding-right:2px}
+.practice-name{margin:0 0 14px;font-size:18px;font-weight:750;letter-spacing:-.02em;line-height:1.35;overflow-wrap:anywhere}
 .jump{display:flex;align-items:center;gap:6px;width:100%;border:0;background:transparent;border-radius:10px;min-height:34px;padding:0 6px;color:var(--text);font-size:13px;font-weight:750;text-align:left;white-space:nowrap}
+.jump.blank{color:var(--muted)}
 .jump.now{background:var(--blue-soft);color:var(--blue)}.jump .kind{width:16px;height:16px;display:flex;flex:none}.jump .kind svg{width:16px;height:16px}.jump b{font-variant-numeric:tabular-nums}.jump .who{flex:none;width:16px;color:var(--text);font-size:12px;font-weight:800;text-align:center;line-height:16px}.jump.now .who{color:var(--text)}.nav-time{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;font-weight:700}.jump.now .nav-time{color:var(--blue)}
 .nav-head{margin:0;padding:0 6px 4px;color:var(--muted);font-size:10px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;flex:none}
 button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue);border-radius:999px;min-height:32px;min-width:32px;padding:0 8px;font-size:12px;font-weight:800}
@@ -133,14 +136,16 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
  </section>
  <section id="stageReview" class="panel" hidden aria-label="Check sentences">
   <div class="review-head"><div><h2>Check the sentences</h2><label id="nameField" class="name-field" hidden><span>Name</span><input id="recordName" type="text" maxlength="80" autocomplete="off" aria-label="Recording name"></label><p id="saveNote" class="note"></p></div><p id="reviewCount" class="count"></p></div>
-  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined. A, B, and C mark who is speaking on a dictated line. Click the letter to change it.</p>
+  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined. A, B, and C mark who is speaking on a dictated line. Click the letter to change it. A Blank line is a long silence. Dictation skips it.</p>
   <div id="sentences" class="list"></div>
   <div class="start-bar">
    <button type="button" id="another" class="secondary">Choose another file</button>
    <button type="button" id="begin" class="primary">Start dictation</button>
   </div>
  </section>
- <section id="stagePractice" class="panel practice-layout" hidden aria-label="Dictation">
+ <section id="stagePractice" class="panel" hidden aria-label="Dictation">
+  <h2 id="practiceName" class="practice-name"></h2>
+  <div class="practice-layout">
   <aside id="sentenceNav" class="sentence-nav" aria-label="Sentences"></aside>
   <div class="practice-main">
   <div class="top">
@@ -170,6 +175,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <div class="below"><span class="note" style="margin:0">Enter checks · Shift+Enter adds a line</span><span id="feedback" class="feedback" role="status"></span></div>
    <div id="diff" class="diff" hidden aria-live="polite"></div>
    <p id="reveal" class="reveal" hidden></p>
+  </div>
   </div>
   </div>
  </section>
@@ -376,7 +382,7 @@ function sentencesFromWords(chunks){
   if(endsSentence(word.text)||(gap>=0.9&&bucket.length>=5)||bucket.length>=30)flush();
  });
  flush();
- return closeShortGaps(refinePrompts(sentences.map(markSentence).filter(sentence=>sentence.text)));
+ return refinePrompts(sentences.map(markSentence).filter(sentence=>sentence.text));
 }
 function markSentence(sentence){
  const start=Math.max(0,Number(sentence.start)||0);
@@ -543,6 +549,7 @@ function assignSpeakers(list,samples,rate){
  const groups=[];
  const flush=()=>{if(group.length)groups.push(group);group=[]};
  list.forEach((sentence,index)=>{
+  if(sentence.blank){delete sentence.speaker;return}
   if(sentence.prompt||!String(sentence.text||'').trim()){delete sentence.speaker;flush();return}
   group.push(index);
  });
@@ -691,6 +698,7 @@ let transcriberPromise=null;
 let trackUrl='';
 let sentences=[];
 let analysisVersion=0;
+let blankPass=0;
 let job=0;
 let cursor=0;
 let draftCursor=-1;
@@ -751,6 +759,7 @@ function asSentence(sentence){
  const marked={text,start,end:Number.isFinite(end)?end:start,prompt:!!(source&&source.prompt)};
  if(!marked.prompt&&source&&/^[ABC]$/.test(source.speaker))marked.speaker=source.speaker;
  if(!marked.prompt&&source&&typeof source.draft==='string'&&source.draft)marked.draft=source.draft;
+ if(source&&source.blank){marked.blank=true;marked.prompt=false;marked.text='';delete marked.speaker}
  return marked;
 }
 function snapshot(){
@@ -776,7 +785,7 @@ function createRecording(file,name,duration){
  return queueWrite(async()=>{
   const db=await openDb();
   const tx=db.transaction(['recordings','audio'],'readwrite');
-  tx.objectStore('recordings').put({id,name,fileName:file.name||'recording',created:Date.now(),duration,sentences:snapshot(),analysis:ANALYSIS});
+  tx.objectStore('recordings').put({id,name,fileName:file.name||'recording',created:Date.now(),duration,sentences:snapshot(),analysis:ANALYSIS,blankPass:1});
   tx.objectStore('audio').put({id,blob:file,mimeType:file.type||'audio/mpeg'});
   await txDone(tx);
   return id;
@@ -825,6 +834,7 @@ function flushRecording(){
  if(!currentId)return Promise.resolve();
   const patch={name:currentName(),sentences:snapshot()};
   if(analysisVersion)patch.analysis=analysisVersion;
+  if(blankPass)patch.blankPass=blankPass;
   return updateRecording(currentId,patch);
 }
 async function renderLibrary(){
@@ -897,7 +907,18 @@ async function openRecording(id,mode){
   currentId=id;
   sentences=(record.sentences||[]).map(asSentence);
   clampSentences(duration||record.duration||0);
-  const gapsClosed=closeShortGaps(sentences);
+  blankPass=record.blankPass||0;
+  let blankChecked=false;
+  if(!blankPass&&sentences.some(sentence=>isBlankThanks(sentence.text))){
+   setWork('Checking quiet passages…',null);
+   try{
+    const samples=await audioTo16k(audio.blob);
+    if(mine!==job)return;
+    dropBlankThanks(sentences,samples,16000);
+    blankPass=1;
+    blankChecked=true;
+   }catch(_){}
+  }
   if(!sentences.length)throw new Error('That saved recording has no sentences.');
   el('recordName').value=record.name||'Recording';
   el('nameField').hidden=false;
@@ -924,7 +945,7 @@ async function openRecording(id,mode){
   }else if(stale){
    analysisVersion=ANALYSIS;
    remember();
-  }else if(gapsClosed)remember();
+  }else if(blankChecked)remember();
   if(mine!==job)return;
   renderReview();
   show('review');
@@ -1094,25 +1115,87 @@ function clampSentences(duration){
   sentence.end=Math.min(Math.max(sentence.end,sentence.start+0.25),duration||sentence.end);
  });
 }
-function closeShortGaps(list){
- let changed=false;
- for(let i=1;i<list.length;i++){
-  const prev=list[i-1];
-  const sentence=list[i];
-  const gap=sentence.start-prev.end;
-  if(gap>0.03&&gap<=0.5){
-   sentence.start=prev.end;
-   changed=true;
+function shareGaps(list){
+ const pad=0.5;
+ const out=[];
+ list.forEach(sentence=>{
+  const prev=out.length?out[out.length-1]:null;
+  const gap=prev?sentence.start-prev.end:0;
+  if(!prev||!(gap>0.03)){out.push(sentence);return}
+  if(gap<=pad*2){
+   const mid=roundTime(prev.end+gap/2);
+   prev.end=mid;
+   sentence.start=mid;
+   out.push(sentence);
+   return;
   }
+  const blankStart=roundTime(prev.end+pad);
+  const blankEnd=roundTime(sentence.start-pad);
+  if(blankEnd-blankStart<0.2){
+   const mid=roundTime(prev.end+gap/2);
+   prev.end=mid;
+   sentence.start=mid;
+   out.push(sentence);
+   return;
+  }
+  prev.end=blankStart;
+  sentence.start=blankEnd;
+  out.push({text:'',start:blankStart,end:blankEnd,blank:true,prompt:false});
+  out.push(sentence);
+ });
+ return out;
+}
+function isBlankThanks(text){
+ const line=String(text||'').toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim();
+ return line==='thank you'||line==='thank you very much'||line==='thanks'||line==='thanks a lot'||line==='thanks for watching'||line==='thank you for watching';
+}
+function dropBlankThanks(list,samples,rate){
+ const sampleRate=rate||16000;
+ if(!samples||samples.length<sampleRate*0.2)return false;
+ const hop=Math.max(1,Math.round(sampleRate*0.02));
+ const frameLevel=index=>{
+  let sum=0;
+  const end=Math.min(samples.length,index+hop);
+  for(let i=index;i<end;i++)sum+=samples[i]*samples[i];
+  return Math.sqrt(sum/Math.max(1,end-index));
+ };
+ const voiced=[];
+ list.forEach(sentence=>{
+  if(isBlankThanks(sentence.text))return;
+  const i0=Math.max(0,Math.floor(sentence.start*sampleRate));
+  const i1=Math.min(samples.length,Math.floor(sentence.end*sampleRate));
+  for(let i=i0;i+hop<=i1;i+=hop*3)voiced.push(frameLevel(i));
+ });
+ voiced.sort((a,b)=>a-b);
+ const reference=voiced.length?voiced[Math.floor(voiced.length*0.6)]:0;
+ if(reference<0.008)return false;
+ const floor=reference*0.22;
+ let changed=false;
+ for(let n=list.length-1;n>=0;n--){
+  if(!isBlankThanks(list[n].text))continue;
+  const i0=Math.max(0,Math.floor(list[n].start*sampleRate));
+  const i1=Math.min(samples.length,Math.floor(list[n].end*sampleRate));
+  let frames=0,quiet=0,sum=0;
+  for(let i=i0;i+hop<=i1;i+=hop){
+   const level=frameLevel(i);
+   sum+=level;
+   frames++;
+   if(level<floor)quiet++;
+  }
+  const mean=frames?sum/frames:0;
+  const blank=frames<3?mean<reference*0.18:quiet/frames>=0.7||mean<reference*0.18;
+  if(blank){list.splice(n,1);changed=true}
  }
  return changed;
 }
 function updateReviewCount(){
- const dictate=sentences.filter(sentence=>!sentence.prompt&&sentence.text.trim()).length;
+ const dictate=sentences.filter(sentence=>!sentence.blank&&!sentence.prompt&&sentence.text.trim()).length;
  const prompts=sentences.filter(sentence=>sentence.prompt&&sentence.text.trim()).length;
+ const blanks=sentences.filter(sentence=>sentence.blank).length;
  const people=speakerNames().length;
  const who=people?people+' speaker'+(people===1?'':'s')+' · ':'';
- el('reviewCount').textContent=who+dictate+' to dictate · '+prompts+' instruction'+(prompts===1?'':'s');
+ const quiet=blanks?' · '+blanks+' blank'+(blanks===1?'':'s'):'';
+ el('reviewCount').textContent=who+dictate+' to dictate · '+prompts+' instruction'+(prompts===1?'':'s')+quiet;
  el('begin').disabled=dictate===0;
 }
 function speakerNames(){
@@ -1129,6 +1212,43 @@ function renderReview(){
  const host=el('sentences');
  host.replaceChildren();
  sentences.forEach((sentence,index)=>{
+  if(sentence.blank){
+   const row=document.createElement('article');
+   row.className='sentence blank';
+   const meta=document.createElement('div');
+   meta.className='meta';
+   const title=document.createElement('b');
+   title.textContent=String(index+1).padStart(2,'0')+'  '+clockFine(sentence.start)+'–'+clockFine(sentence.end)+'  '+sentenceLength(sentence).toFixed(1)+'s';
+   const label=document.createElement('span');
+   label.className='flag';
+   label.textContent='Blank';
+   meta.append(title,label);
+   const note=document.createElement('p');
+   note.className='blank-label';
+   note.textContent='Blank';
+   const tools=document.createElement('div');
+   tools.className='tiny';
+   const edge=(sideLabel,side,delta)=>{
+    const button=document.createElement('button');
+    button.type='button';
+    button.textContent=sideLabel;
+    button.addEventListener('click',()=>nudgeBoundary(index,side,delta));
+    return button;
+   };
+   const merge=document.createElement('button');
+   merge.type='button';
+   merge.textContent='Merge with next';
+   merge.disabled=index===sentences.length-1;
+   merge.addEventListener('click',()=>mergeNext(index));
+   const startHere=document.createElement('button');
+   startHere.type='button';
+   startHere.textContent='Start here';
+   startHere.addEventListener('click',()=>beginPractice(index));
+   tools.append(edge('Start −0.1','start',-0.1),edge('Start +0.1','start',0.1),edge('End −0.1','end',-0.1),edge('End +0.1','end',0.1),merge,startHere);
+   row.append(meta,note,tools);
+   host.append(row);
+   return;
+  }
   const row=document.createElement('article');
   row.className='sentence'+(sentence.prompt?' prompt':'');
   const meta=document.createElement('div');
@@ -1398,6 +1518,7 @@ function playOnce(sentence,done,startAt){
  watch();
 }
 function showPracticeChrome(sentence,keepPause){
+ el('practiceName').textContent=currentName();
  const dictate=dictateSentences();
  const done=sentences.slice(0,cursor).filter(item=>!item.prompt&&item.text.trim()).length;
  el('doneCount').textContent=String(done);
@@ -1493,9 +1614,10 @@ function renderSentenceNav(){
   const length=sentenceLength(sentence);
   time.textContent=length.toFixed(1)+'s';
   const parts=['Sentence '+(index+1)];
-  if(!sentence.prompt&&sentence.speaker)parts.push('speaker '+sentence.speaker);
-  parts.push(length.toFixed(1)+' seconds',sentence.prompt?'instruction':'dictation');
+  if(!sentence.blank&&!sentence.prompt&&sentence.speaker)parts.push('speaker '+sentence.speaker);
+  parts.push(length.toFixed(1)+' seconds',sentence.blank?'blank':sentence.prompt?'instruction':'dictation');
   button.setAttribute('aria-label',parts.join(', '));
+  if(sentence.blank)button.classList.add('blank');
   if(sentence.prompt){
    const kind=document.createElement('span');
    kind.className='kind';
@@ -1504,11 +1626,11 @@ function renderSentenceNav(){
   }else{
    const who=document.createElement('span');
    who.className='who';
-   who.textContent=sentence.speaker||'';
+   who.textContent=sentence.blank?'':(sentence.speaker||'');
    button.append(who);
   }
   button.append(number,time);
-  button.addEventListener('click',()=>{if(phase==='practice')enter(index)});
+  button.addEventListener('click',()=>{if(phase==='practice')enter(index,undefined,sentence.blank?1:0)});
   nav.append(button);
  });
  highlightSentence(cursor);
@@ -1526,7 +1648,7 @@ function storeDraft(){
 function followPractice(time){
  if(phase!=='practice'||!sentences.length)return;
  const index=sentenceIndexAt(time);
- if(index<0)return;
+ if(index<0||sentences[index].blank)return;
  highlightSentence(index);
  if(index===cursor)return;
  storeDraft();
@@ -1539,15 +1661,21 @@ function followPractice(time){
   el('promptLine').textContent=sentence.text;
  }else el('practiceTitle').textContent=speakerTitle(sentence);
 }
-function enter(index,startAt){
+function enter(index,startAt,dir){
  storeDraft();
- moveTo(index,startAt);
+ moveTo(index,startAt,dir);
 }
-function moveTo(index,startAt){
+function moveTo(index,startAt,dir){
+ const step=dir<0?-1:1;
+ if(index>=sentences.length)return finish();
+ if(index<0)return;
+ const sentence=sentences[index];
+ if(!sentence||sentence.blank||!String(sentence.text||'').trim()){
+  const next=index+step;
+  if(next<0)return;
+  return moveTo(next,startAt,step);
+ }
  cursor=index;
- if(cursor>=sentences.length)return finish();
- const sentence=sentences[cursor];
- if(!sentence.text.trim())return moveTo(cursor+1,startAt);
  syncSentenceButtons();
  showPracticeChrome(sentence);
  highlightSentence(cursor);
@@ -1563,7 +1691,7 @@ function moveTo(index,startAt){
 }
 function beginPractice(index){
  stopAudio();
- sentences=sentences.map(sentence=>({...sentence,text:cleanText(sentence.text)})).filter(sentence=>sentence.text);
+ sentences=sentences.map(sentence=>sentence.blank?{text:'',start:sentence.start,end:sentence.end,blank:true,prompt:false}:{...sentence,text:cleanText(sentence.text)}).filter(sentence=>sentence.blank||sentence.text);
  if(!sentences.length)return;
  remember();
  renderReview();
@@ -1582,7 +1710,7 @@ function finish(){
 function checkAnswer(){
  if(moving||phase!=='practice')return;
  const sentence=sentences[cursor];
- if(!sentence||sentence.prompt)return;
+ if(!sentence||sentence.prompt||sentence.blank)return;
  if(answersMatch(el('answer').value,sentence.text)){
   moving=true;
   stopAudio();
@@ -1617,7 +1745,7 @@ function stepSentence(delta){
  if(phase!=='practice'||moving)return;
  const next=cursor+delta;
  if(next<0||next>=sentences.length)return;
- enter(next);
+ enter(next,undefined,delta);
 }
 function originalVisible(){
  const sentence=sentences[cursor];
@@ -1838,7 +1966,9 @@ async function startJob(file){
   sentences=built.length?built:(result&&result.text? [markSentence({text:cleanText(result.text),start:0,end:duration})] : []);
   if(!built.length)refinePrompts(sentences);
   clampSentences(duration);
-  closeShortGaps(sentences);
+  dropBlankThanks(sentences,samples,16000);
+  blankPass=1;
+  sentences=shareGaps(sentences);
   if(!sentences.length)throw new Error('No speech was found in this recording.');
   setWork('Marking speakers…',100);
   assignSpeakers(sentences,samples,16000);
