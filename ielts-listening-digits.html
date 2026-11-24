@@ -66,7 +66,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="input-area">
     <label class="answer-label" id="answerLabel" for="answer">Your 10 digits</label>
     <div class="answer-row"><input id="answer" type="text" inputmode="numeric" maxlength="10" autocomplete="off" spellcheck="false" disabled><button id="submit" class="primary" type="button" disabled>Check</button></div>
-    <div class="below"><p class="tip" id="tip">It checks itself after 10 digits.</p><span id="feedback" class="feedback" aria-live="polite"></span></div>
+    <div class="below"><p class="tip" id="tip">A full answer is checked in place. Enter starts the next question.</p><span id="feedback" class="feedback" aria-live="polite"></span></div>
    </div>
    <div class="actions"><button id="start" class="primary" type="button">Start round</button><button id="next" class="primary hide" type="button">Next</button><button id="stop" class="secondary stop hide" type="button">Stop</button></div>
   </section>
@@ -273,6 +273,8 @@ function showControls(){
  el('start').textContent=phase==='complete'?'Start another round':'Start round';
  el('stop').classList.toggle('hide',!running);
  el('next').classList.toggle('hide',phase!=='review');
+ el('next').textContent=position+1>=ROUND?'Finish':'Next';
+ el('answer').readOnly=phase==='review';
  el('play').disabled=!running;
  el('voice').disabled=running||!usableVoices().length;
 }
@@ -283,7 +285,7 @@ function openQuestion(){
  el('answer').disabled=false;
  el('submit').disabled=false;
  el('answerLabel').textContent='Your 10 digits';
- el('tip').textContent='It checks itself after 10 digits.';
+ el('tip').textContent='A full answer is checked in place. Enter starts the next question.';
  el('feedback').textContent='';
  el('feedback').className='feedback';
  el('activityTitle').textContent='Listen to 10 digits';
@@ -305,7 +307,7 @@ function startRound(){
 function stopRound(){
  cancelSpeech();
  items=[];answers=[];position=0;phase='idle';
- el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;
+ el('answer').value='';el('answer').disabled=true;el('answer').readOnly=false;el('submit').disabled=true;
  el('feedback').textContent='';el('feedback').className='feedback';
  el('activityTitle').textContent='Ready to begin?';
  el('activityText').textContent='Round stopped.';
@@ -321,25 +323,30 @@ function checkAnswer(){
  cancelSpeech();
  const ok=typed===digits;
  answers.push({digits,input:typed,ok});
- if(position+1>=ROUND){
+ phase='review';
+ el('submit').disabled=true;
+ el('feedback').textContent=ok?'Correct':'Check the marked digits';
+ el('feedback').className='feedback '+(ok?'ok':'no');
+ el('activityTitle').textContent=ok?'Matched':'Not the same sequence';
+ el('activityText').textContent=digits.split('').join(' ');
+ el('tip').textContent=position+1>=ROUND?'Press Enter to finish this round.':'Press Enter for the next question.';
+ refresh();
+ showControls();
+ el('answer').focus();
+}
+function nextQuestion(){
+ if(phase!=='review')return;
+ position++;
+ if(position>=ROUND){
   phase='complete';
-  el('answer').disabled=true;el('submit').disabled=true;
-  el('feedback').textContent=ok?'Correct':'Check the marked digits';
-  el('feedback').className='feedback '+(ok?'ok':'no');
-  el('activityTitle').textContent=ok?'Matched':'Not the same sequence';
-  el('activityText').textContent=digits.split('').join(' ');
+  el('answer').disabled=true;el('answer').readOnly=false;el('submit').disabled=true;
+  el('activityTitle').textContent='Round complete';
+  el('activityText').textContent='Start another round when you are ready.';
   el('summary').textContent='Round complete.';
   refresh();
   showControls();
   return;
  }
- position++;
- openQuestion();
-}
-function nextQuestion(){
- if(phase!=='review')return;
- position++;
- if(position>=ROUND){phase='complete';refresh();showControls();return}
  openQuestion();
 }
 el('voice').addEventListener('change',rememberVoice);
@@ -350,7 +357,11 @@ try{const savedGroup=localStorage.getItem(GROUP_KEY);if(savedGroup&&el('count').
 el('start').addEventListener('click',startRound);
 el('stop').addEventListener('click',stopRound);
 el('next').addEventListener('click',nextQuestion);
-el('play').addEventListener('click',()=>{if(phase==='speaking'||phase==='answering'||phase==='review')playDigits()});
+el('play').addEventListener('click',()=>{
+ if(!(phase==='speaking'||phase==='answering'||phase==='review'))return;
+ playDigits();
+ el('answer').focus();
+});
 el('submit').addEventListener('click',checkAnswer);
 el('answer').addEventListener('input',()=>{
  el('answer').value=el('answer').value.replace(/\D/g,'').slice(0,LENGTH);
