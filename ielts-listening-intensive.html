@@ -191,9 +191,12 @@ const el=id=>document.getElementById(id);
 const LIB='https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.2';
 const MODEL_TURBO='onnx-community/whisper-large-v3-turbo_timestamped';
 const MODEL_BASE='onnx-community/whisper-base.en_timestamped';
+const ANALYSIS=2;
 const PROMPT_PATTERNS=[
  /\byou will hear (?!from\b)/,
  /\byou'?ll hear (?!from\b)/,
+ /\byou are going to hear\b/,
+ /\byou will have to answer\b/,
  /\bnow turn to section\b/,
  /\bturn to section (one|two|three|four|[1-4])\b/,
  /^section (one|two|three|four|[1-4])[.!]?$/,
@@ -204,6 +207,8 @@ const PROMPT_PATTERNS=[
  /\b(first|now),? you have\b/,
  /\byou (now )?have (some|half|a|one|two) (minute|minutes|time)\b/,
  /\btime to (look at|read|check)\b/,
+ /\bthere will be time\b/,
+ /\bchance to check your work\b/,
  /\bnow listen (carefully|and|to the)\b/,
  /\bbefore you listen\b/,
  /\bthat is the end of\b/,
@@ -219,17 +224,38 @@ const PROMPT_PATTERNS=[
  /\blisten to (a|the|an) (conversation|monologue|talk|lecture|discussion)\b/,
  /\bonce only\b/,
  /\bplayed once only\b/,
+ /\brecordings will be played\b/,
  /\bat the end of the test\b/,
+ /\bgiven ten minutes\b/,
+ /\bthe test is in (four|4) sections\b/,
+ /\bdifferent recordings\b/,
  /\btransfer your answers\b/,
  /\bthis is the ielts\b/,
  /\bielts listening\b/,
+ /\bcambridge ielts\b/,
+ /\blistening (test|practice)\b/,
  /\bopen your (test )?booklet\b/,
  /\bnow we shall begin\b/,
  /\bread the instructions\b/,
  /\banswer questions on what you hear\b/,
  /\bso you write\b/,
- /\bexample\b.{0,40}\byou (write|hear)\b/
+ /\bexample\b.{0,40}\byou (write|hear)\b/,
+ /\bcopyright\b/,
+ /\ball rights reserved\b/,
+ /\brights reserved\b/,
+ /\bthis recording is\b/,
+ /\bunauthori[sz]ed (copying|recording|reproduction|reproduction of)\b/,
+ /\bbritish council\b/,
+ /\bcambridge (university press|assessment)\b/,
+ /\bfor practice only\b/,
+ /\bnot for (sale|commercial use)\b/
 ];
+const INSTRUCTION_CUES=[
+ /\b(copyright|all rights reserved|rights reserved|this recording|british council|cambridge university press|cambridge assessment|cambridge ielts|ielts)\b/,
+ /\b(you will|you'll|you are going to|there will be|you now have|now you have)\b/,
+ /\b(answer sheet|once only|four sections|check your work|different recordings|read the instructions|look at questions|turn to section|now listen|listening test)\b/
+];
+const DIALOGUE_CUES=/\b(hello|hi|good morning|good afternoon|good evening|excuse me|can i help|could i|i'd like|i would like|my name is|how are you|thank you|thanks|sorry|pardon|yes please|of course|certainly|i am|i'm|i have|i've|we are|we're)\b/;
 const CONTRACTIONS={"i'm":"i am","you're":"you are","we're":"we are","they're":"they are","he's":"he is","she's":"she is","it's":"it is","that's":"that is","there's":"there is","what's":"what is","who's":"who is","let's":"let us","don't":"do not","doesn't":"does not","didn't":"did not","can't":"cannot","won't":"will not","isn't":"is not","aren't":"are not","wasn't":"was not","weren't":"were not","haven't":"have not","hasn't":"has not","hadn't":"had not","wouldn't":"would not","shouldn't":"should not","couldn't":"could not","mustn't":"must not","i've":"i have","you've":"you have","we've":"we have","they've":"they have","i'll":"i will","you'll":"you will","he'll":"he will","she'll":"she will","we'll":"we will","they'll":"they will","i'd":"i would","you'd":"you would","he'd":"he would","she'd":"she would","we'd":"we would","they'd":"they would"};
 const CONTRACTION_RE=new RegExp('\\b('+Object.keys(CONTRACTIONS).sort((a,b)=>b.length-a.length).join('|')+')\\b','g');
 const SPELL={colour:'color',colours:'colors',favourite:'favorite',favourites:'favorites',honour:'honor',labour:'labor',centre:'center',theatre:'theater',metre:'meter',kilometre:'kilometer',practise:'practice',travelled:'traveled',travelling:'traveling',cancelled:'canceled',cancelling:'canceling',grey:'gray',defence:'defense',licence:'license',cheque:'check'};
@@ -237,10 +263,63 @@ const NUMBER={zero:0,oh:0,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:
 const FILLERS=new Set(['um','uh','er','ah','hmm','mm']);
 const ABBR=/^(Mr|Mrs|Ms|Miss|Dr|Prof|St|No)\.$/i;
 
+function promptText(text){
+ return String(text||'').toLowerCase().replace(/[’‘]/g,"'").replace(/\s+/g,' ').trim();
+}
+function isDialogue(text){
+ return DIALOGUE_CUES.test(promptText(text));
+}
 function isPrompt(text){
- const s=String(text||'').toLowerCase().replace(/\s+/g,' ').trim();
- if(!s||s.length>320)return false;
- return PROMPT_PATTERNS.some(pattern=>pattern.test(s));
+ const s=promptText(text);
+ if(!s)return false;
+ const head=s.slice(0,640);
+ if(PROMPT_PATTERNS.some(pattern=>pattern.test(head)))return true;
+ return false;
+}
+function isInstructionish(text){
+ const s=promptText(text);
+ if(!s||s.length>240||isDialogue(s))return false;
+ return INSTRUCTION_CUES.some(pattern=>pattern.test(s));
+}
+function shortBridge(text){
+ const s=promptText(text);
+ if(!s||isDialogue(s))return false;
+ return s.split(' ').filter(Boolean).length<=3;
+}
+function refinePrompts(list){
+ list.forEach(sentence=>{sentence.prompt=isPrompt(sentence.text)});
+ let opening=true;
+ for(let i=0;i<list.length;i++){
+  const sentence=list[i];
+  if((Number(sentence.start)||0)>95)break;
+  if(sentence.prompt){opening=true;continue};
+  if(i===0){opening=false;continue}
+  const previous=list[i-1];
+  const gap=previous?sentence.start-previous.end:0;
+  const follows=previous&&previous.prompt&&gap<1.5;
+  if(opening&&follows&&isInstructionish(sentence.text)){
+   sentence.prompt=true;
+   continue;
+  }
+  if(opening&&follows&&shortBridge(sentence.text)&&(Number(sentence.start)||0)<70){
+   sentence.prompt=true;
+   continue;
+  }
+  opening=false;
+ }
+ let changed=true;
+ while(changed){
+  changed=false;
+  for(let i=0;i<list.length;i++){
+   if(list[i].prompt||isDialogue(list[i].text)||!isInstructionish(list[i].text))continue;
+   const previous=list[i-1],next=list[i+1];
+   const nearPrevious=previous&&previous.prompt&&list[i].start-previous.end<1.05;
+   const nearNext=next&&next.prompt&&next.start-list[i].end<1.05;
+   if(nearPrevious||nearNext){list[i].prompt=true;changed=true}
+  }
+ }
+ list.forEach(sentence=>{if(sentence.prompt)delete sentence.speaker});
+ return list;
 }
 function endsSentence(token){
  return /[.!?]["']?$/.test(token)&&!ABBR.test(token);
@@ -298,7 +377,7 @@ function sentencesFromWords(chunks){
   if(endsSentence(word.text)||(gap>=0.9&&bucket.length>=5)||bucket.length>=30)flush();
  });
  flush();
- return sentences.map(markSentence).filter(sentence=>sentence.text);
+ return refinePrompts(sentences.map(markSentence).filter(sentence=>sentence.text));
 }
 function markSentence(sentence){
  const start=Math.max(0,Number(sentence.start)||0);
@@ -340,27 +419,79 @@ function framePitch(samples,offset,length,rate){
  if(lower<=maxLag&&scores[lower]>best*0.82)bestLag=lower;
  return rate/bestLag;
 }
+const VOICE_BANDS=[150,300,500,800,1200,1800,2600,3800];
+function bandShape(windowed,rate){
+ const shape=new Array(VOICE_BANDS.length-1);
+ for(let band=0;band<shape.length;band++){
+  const low=Math.max(1,Math.round(VOICE_BANDS[band]*windowed.length/rate));
+  const high=Math.max(low,Math.round(VOICE_BANDS[band+1]*windowed.length/rate));
+  let energy=0,bins=0;
+  const step=Math.max(1,Math.floor((high-low)/3));
+  for(let k=low;k<=high;k+=step){
+   const omega=2*Math.PI*k/windowed.length;
+   let re=0,im=0;
+   for(let n=0;n<windowed.length;n++){
+    re+=windowed[n]*Math.cos(omega*n);
+    im-=windowed[n]*Math.sin(omega*n);
+   }
+   energy+=re*re+im*im;
+   bins++;
+  }
+  shape[band]=Math.log(energy/bins+1e-8);
+ }
+ const mean=shape.reduce((sum,value)=>sum+value,0)/shape.length;
+ return shape.map(value=>value-mean);
+}
 function voiceprint(samples,rate,start,end){
- const i0=Math.max(0,Math.floor((start+0.04)*rate));
- const i1=Math.min(samples.length,Math.floor((end-0.04)*rate));
+ const i0=Math.max(0,Math.floor((start+0.05)*rate));
+ const i1=Math.min(samples.length,Math.floor((end-0.05)*rate));
  const length=400;
  if(!samples||i1-i0<length)return null;
  const pitches=[];
- for(let n=0;n<10;n++){
-  const at=Math.round(i0+(i1-i0-length)*(n+0.5)/10);
+ const shapes=[];
+ for(let n=0;n<12;n++){
+  const at=Math.round(i0+(i1-i0-length)*(n+0.5)/12);
   const pitch=framePitch(samples,at,length,rate);
-  if(pitch>=70&&pitch<=420)pitches.push(Math.log2(pitch));
+  if(pitch<70||pitch>420)continue;
+  pitches.push(Math.log2(pitch));
+  let mean=0;
+  for(let i=0;i<length;i++)mean+=samples[at+i];
+  mean/=length;
+  const windowed=new Float32Array(length);
+  for(let i=0;i<length;i++){
+   const w=0.54-0.46*Math.cos(2*Math.PI*i/(length-1));
+   windowed[i]=(samples[at+i]-mean)*w;
+  }
+  shapes.push(bandShape(windowed,rate));
  }
- if(pitches.length<3)return null;
- pitches.sort((a,b)=>a-b);
- return [pitches[Math.floor(pitches.length/2)]];
+ if(pitches.length<4)return null;
+ const frames=pitches.map((pitch,index)=>({pitch,shape:shapes[index]})).sort((a,b)=>a.pitch-b.pitch);
+ const mid=frames[Math.floor(frames.length/2)].pitch;
+ const close=frames.filter(frame=>Math.abs(frame.pitch-mid)<=0.4);
+ const use=close.length>=3?close:frames;
+ const pitch=use[Math.floor(use.length/2)].pitch;
+ const shape=new Array(VOICE_BANDS.length-1).fill(0);
+ use.forEach(frame=>frame.shape.forEach((value,band)=>{shape[band]+=value}));
+ return [pitch].concat(shape.map(value=>value/use.length));
+}
+function voiceDistance(a,b){
+ const pitch=Math.abs(a[0]-b[0]);
+ if(pitch>=0.62)return 3;
+ let dot=0,left=0,right=0;
+ for(let i=1;i<a.length&&i<b.length;i++){
+  dot+=a[i]*b[i];
+  left+=a[i]*a[i];
+  right+=b[i]*b[i];
+ }
+ const spec=left>1e-6&&right>1e-6?1-dot/Math.sqrt(left*right):0;
+ return pitch/0.5+Math.max(0,spec)/0.16;
 }
 function clusterVoices(voices){
  const n=voices.length;
  if(!n)return [];
  const pair=Array.from({length:n},()=>new Float64Array(n));
  for(let i=0;i<n;i++){
-  for(let j=i+1;j<n;j++)pair[i][j]=pair[j][i]=Math.abs(voices[i][0]-voices[j][0])/0.42;
+  for(let j=i+1;j<n;j++)pair[i][j]=pair[j][i]=voiceDistance(voices[i],voices[j]);
  }
  let groups=voices.map((_,index)=>[index]);
  while(groups.length>1){
@@ -382,32 +513,43 @@ function clusterVoices(voices){
  groups.forEach((group,id)=>group.forEach(index=>{labels[index]=id}));
  return labels;
 }
-function assignSpeakers(list,samples,rate){
+function labelGroup(list,indexes,samples,rate){
  const body=[];
- list.forEach((sentence,index)=>{
-  if(sentence.prompt||!String(sentence.text||'').trim()){delete sentence.speaker;return}
-  const voice=voiceprint(samples,rate||16000,sentence.start,sentence.end);
+ indexes.forEach(index=>{
+  const sentence=list[index];
+  const voice=voiceprint(samples,rate,sentence.start,sentence.end);
   if(voice)body.push({index,voice,mid:(sentence.start+sentence.end)/2});
   else delete sentence.speaker;
  });
- if(!body.length)return 0;
+ if(!body.length)return;
  const ids=clusterVoices(body.map(item=>item.voice));
  const order=[];
  ids.forEach(id=>{if(!order.includes(id))order.push(id)});
- const letter=new Map(order.map((id,index)=>[id,'ABC'[index]]));
+ const letter=new Map(order.map((id,index)=>[id,'ABC'[index]||'C']));
  const labeled=body.map((item,index)=>({index:item.index,mid:item.mid,speaker:letter.get(ids[index])}));
- list.forEach((sentence,index)=>{
-  if(sentence.prompt||!String(sentence.text||'').trim())return;
+ indexes.forEach(index=>{
   const own=labeled.find(item=>item.index===index);
-  if(own){sentence.speaker=own.speaker;return}
+  if(own){list[index].speaker=own.speaker;return}
   let best=null,dist=Infinity;
   labeled.forEach(item=>{
-   const gap=Math.abs(item.mid-(sentence.start+sentence.end)/2);
+   const gap=Math.abs(item.mid-(list[index].start+list[index].end)/2);
    if(gap<dist){dist=gap;best=item}
   });
-  if(best)sentence.speaker=best.speaker;
+  if(best)list[index].speaker=best.speaker;
  });
- return order.length;
+}
+function assignSpeakers(list,samples,rate){
+ const sampleRate=rate||16000;
+ let group=[];
+ const groups=[];
+ const flush=()=>{if(group.length)groups.push(group);group=[]};
+ list.forEach((sentence,index)=>{
+  if(sentence.prompt||!String(sentence.text||'').trim()){delete sentence.speaker;flush();return}
+  group.push(index);
+ });
+ flush();
+ groups.forEach(indexes=>labelGroup(list,indexes,samples,sampleRate));
+ return groups.reduce((count,indexes)=>Math.max(count,new Set(indexes.map(index=>list[index].speaker).filter(Boolean)).size),0);
 }
 function foldNumbers(words){
  const out=[];
@@ -549,6 +691,7 @@ let libraryPromise=null;
 let transcriberPromise=null;
 let trackUrl='';
 let sentences=[];
+let analysisVersion=0;
 let job=0;
 let cursor=0;
 let draftCursor=-1;
@@ -634,7 +777,7 @@ function createRecording(file,name,duration){
  return queueWrite(async()=>{
   const db=await openDb();
   const tx=db.transaction(['recordings','audio'],'readwrite');
-  tx.objectStore('recordings').put({id,name,fileName:file.name||'recording',created:Date.now(),duration,sentences:snapshot()});
+  tx.objectStore('recordings').put({id,name,fileName:file.name||'recording',created:Date.now(),duration,sentences:snapshot(),analysis:ANALYSIS});
   tx.objectStore('audio').put({id,blob:file,mimeType:file.type||'audio/mpeg'});
   await txDone(tx);
   return id;
@@ -681,7 +824,9 @@ function remember(){
 function flushRecording(){
  clearTimeout(saveTimer);
  if(!currentId)return Promise.resolve();
- return updateRecording(currentId,{name:currentName(),sentences:snapshot()});
+  const patch={name:currentName(),sentences:snapshot()};
+  if(analysisVersion)patch.analysis=analysisVersion;
+  return updateRecording(currentId,patch);
 }
 async function renderLibrary(){
  const host=el('libraryList');
@@ -758,14 +903,27 @@ async function openRecording(id,mode){
   el('nameField').hidden=false;
   el('saveNote').className='note';
   el('saveNote').textContent='Saved in this browser.';
-  if(sentences.some(sentence=>!sentence.prompt&&sentence.text.trim())&&sentences.filter(sentence=>!sentence.prompt&&sentence.text.trim()).every(sentence=>!sentence.speaker)){
+  const stale=record.analysis!==ANALYSIS;
+  if(stale){
+   refinePrompts(sentences);
+   sentences.forEach(sentence=>{delete sentence.speaker});
+  }
+  analysisVersion=stale?0:(record.analysis||0);
+  const bodies=sentences.filter(sentence=>!sentence.prompt&&String(sentence.text||'').trim());
+  if(bodies.length&&bodies.every(sentence=>!sentence.speaker)){
    setWork('Listening for different speakers…',null);
    try{
     const samples=await audioTo16k(audio.blob);
     if(mine!==job)return;
     assignSpeakers(sentences,samples,16000);
+    analysisVersion=ANALYSIS;
     remember();
-   }catch(_){}
+   }catch(_){
+    if(stale){analysisVersion=ANALYSIS;remember()}
+   }
+  }else if(stale){
+   analysisVersion=ANALYSIS;
+   remember();
   }
   if(mine!==job)return;
   renderReview();
@@ -1653,6 +1811,7 @@ async function startJob(file){
   setWork('Splitting into sentences…',100);
   const built=sentencesFromWords(result&&result.chunks);
   sentences=built.length?built:(result&&result.text? [markSentence({text:cleanText(result.text),start:0,end:duration})] : []);
+  if(!built.length)refinePrompts(sentences);
   clampSentences(duration);
   if(!sentences.length)throw new Error('No speech was found in this recording.');
   setWork('Marking speakers…',100);
@@ -1660,6 +1819,7 @@ async function startJob(file){
   try{
    const name=stem(file);
    currentId=await createRecording(file,name,duration);
+   analysisVersion=ANALYSIS;
    if(mine!==job)return;
    el('recordName').value=name;
    el('nameField').hidden=false;
