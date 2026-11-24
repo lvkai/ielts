@@ -28,6 +28,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:22px}
 .toolbar select{appearance:none;border:1px solid var(--line);border-radius:12px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;min-height:42px;min-width:min(280px,100%);padding:0 32px 0 12px;font-weight:700}
 .primary{border:0;background:var(--blue);color:#fff;font-size:14px;font-weight:750;border-radius:12px;min-height:42px;padding:0 16px}.primary:hover:not(:disabled){background:#264fd0}
+.folder-pick{position:relative;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer}.folder-pick input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:48px}.folder-pick.busy{opacity:.45;pointer-events:none}
 .secondary{border:1px solid #d8e1f0;background:#fff;color:#455874;font-size:13px;font-weight:730;border-radius:12px;min-height:42px;padding:0 14px}.secondary:hover:not(:disabled){background:#f6f8fc}
 .note{margin:12px 0 0;color:var(--muted);font-size:12px;line-height:1.6}.note.warn{color:#c54d4d}
 .board{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;margin-top:16px;align-items:start}
@@ -57,9 +58,8 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
  <p class="sub">Choose a folder of MP3 and LRC files. The folder becomes a playlist. The player loops the current line. Left and right arrows move between lines. Shift shows or hides the lyrics.</p>
  <div class="toolbar">
   <select id="playlist" aria-label="Playlist"></select>
-  <button type="button" id="add" class="primary">Add folder</button>
+  <label id="add" class="primary folder-pick">Add folder<input id="folder" type="file" webkitdirectory directory multiple aria-label="Add folder"></label>
   <button type="button" id="remove" class="secondary">Remove</button>
-  <input id="folder" type="file" webkitdirectory directory multiple hidden>
  </div>
  <p id="status" class="note" role="status"></p>
  <div id="board" class="board" hidden>
@@ -371,7 +371,8 @@ async function addFolder(fileList){
  const found=[...groups.values()].filter(group=>group.mp3);
  if(!found.length){setStatus('This folder has no MP3 files.',true);return}
  found.sort((a,b)=>a.rel.localeCompare(b.rel,undefined,{numeric:true}));
- el('add').disabled=true;
+ el('add').classList.add('busy');
+ el('folder').disabled=true;
  setStatus('Reading '+found.length+' songs…');
  try{
   const songs=[];
@@ -408,7 +409,8 @@ async function addFolder(fileList){
  }catch(error){
   setStatus(error&&error.message?error.message:'That folder could not be saved.',true);
  }finally{
-  el('add').disabled=false;
+  el('folder').disabled=false;
+  el('add').classList.remove('busy');
  }
 }
 function toggleLyrics(){
@@ -417,11 +419,12 @@ function toggleLyrics(){
  renderLyrics();
 }
 
-el('add').addEventListener('click',()=>el('folder').click());
 el('folder').addEventListener('change',()=>{
- const files=el('folder').files;
+ const files=[...el('folder').files];
  el('folder').value='';
- if(files&&files.length)addFolder(files);
+ if(!files.length)return;
+ setStatus('Reading the folder…');
+ addFolder(files);
 });
 el('playlist').addEventListener('change',()=>{
  audio.pause();
