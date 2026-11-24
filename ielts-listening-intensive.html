@@ -83,7 +83,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .practice-name{margin:0 0 14px;font-size:18px;font-weight:750;letter-spacing:-.02em;line-height:1.35;overflow-wrap:anywhere}
 .jump{display:flex;align-items:center;gap:6px;width:100%;border:0;background:transparent;border-radius:10px;min-height:34px;padding:0 6px;color:var(--text);font-size:13px;font-weight:750;text-align:left;white-space:nowrap}
 .jump.blank{color:var(--muted)}
-.jump.now{background:var(--blue-soft);color:var(--blue)}.jump .kind{width:16px;height:16px;display:flex;flex:none}.jump .kind svg{width:16px;height:16px}.jump b{font-variant-numeric:tabular-nums}.jump .who{flex:none;width:16px;color:var(--text);font-size:12px;font-weight:800;text-align:center;line-height:16px}.jump.now .who{color:var(--text)}.nav-time{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;font-weight:700}.jump.now .nav-time{color:var(--blue)}
+.jump.now{background:var(--blue-soft);color:var(--blue)}.jump .kind{width:16px;height:16px;display:flex;flex:none}.jump .kind svg{width:16px;height:16px}.jump b{font-variant-numeric:tabular-nums}.nav-time{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;font-weight:700}.jump.now .nav-time{color:var(--blue)}
 .nav-head{margin:0;padding:0 6px 4px;color:var(--muted);font-size:10px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;flex:none}
 button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue);border-radius:999px;min-height:32px;min-width:32px;padding:0 8px;font-size:12px;font-weight:800}
 .practice-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;width:100%;margin:12px 0 0;padding-top:16px}.practice-actions .primary,.practice-actions .secondary{min-height:42px}
@@ -1670,9 +1670,7 @@ function renderSentenceNav(){
   time.className='nav-time';
   const length=sentenceLength(sentence);
   time.textContent=length.toFixed(1)+'s';
-  const parts=['Sentence '+(index+1)];
-  if(!sentence.blank&&!sentence.prompt&&sentence.speaker)parts.push('speaker '+sentence.speaker);
-  parts.push(length.toFixed(1)+' seconds',sentence.blank?'blank':sentence.prompt?'instruction':'dictation');
+  const parts=['Sentence '+(index+1),length.toFixed(1)+' seconds',sentence.blank?'blank':sentence.prompt?'instruction':'dictation'];
   button.setAttribute('aria-label',parts.join(', '));
   if(sentence.blank)button.classList.add('blank');
   if(sentence.prompt){
@@ -1680,11 +1678,6 @@ function renderSentenceNav(){
    kind.className='kind';
    kind.append(kindIcon(true));
    button.append(kind);
-  }else{
-   const who=document.createElement('span');
-   who.className='who';
-   who.textContent=sentence.blank?'':(sentence.speaker||'');
-   button.append(who);
   }
   button.append(number,time);
   button.addEventListener('click',()=>{if(phase==='practice')enter(index,undefined,sentence.blank?1:0)});
