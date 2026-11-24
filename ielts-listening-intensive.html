@@ -463,26 +463,65 @@ function wordDiff(typed,target){
  while(j<m)ops.push({type:'missing',want:want[j++]});
  return ops;
 }
-function diffLine(label,ops,key){
- const line=document.createElement('p');
- const name=document.createElement('span');
- name.className='diff-label';
- name.textContent=label;
- line.append(name);
- ops.forEach(op=>{
-  const word=op[key];
-  if(!word)return;
-  const piece=document.createElement(op.type==='same'?'span':'mark');
-  if(op.type!=='same')piece.className=key==='got'?'bad':'good';
-  piece.textContent=word+' ';
-  line.append(piece);
- });
- return line;
+function visibleWords(text){
+ return String(text||'').split(/\s+/).map(raw=>{
+  const cleaned=raw.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g,'');
+  return {text:cleaned||raw,norms:normalizeWords(raw)};
+ }).filter(word=>word.norms.length);
+}
+function markedAnswer(typed,target){
+ const words=visibleWords(typed);
+ const got=[],owner=[];
+ words.forEach((word,index)=>word.norms.forEach(norm=>{got.push(norm);owner.push(index)}));
+ const want=normalizeWords(target);
+ const n=got.length,m=want.length;
+ const dp=Array.from({length:n+1},()=>new Uint16Array(m+1));
+ for(let i=n-1;i>=0;i--){
+  for(let j=m-1;j>=0;j--)dp[i][j]=got[i]===want[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+ }
+ const ops=[];
+ let a=0,b=0;
+ while(a<n&&b<m){
+  if(got[a]===want[b]){ops.push({type:'same',i:a});a++;b++}
+  else if(dp[a+1][b]>=dp[a][b+1]){ops.push({type:'extra',i:a});a++}
+  else{ops.push({type:'missing'});b++}
+ }
+ while(a<n)ops.push({type:'extra',i:a++});
+ while(b<m)ops.push({type:'missing'});
+ const bad=words.map(()=>false);
+ ops.forEach(op=>{if(op.type==='extra')bad[owner[op.i]]=true});
+ const pieces=[];
+ let i=0;
+ while(i<ops.length){
+  if(ops[i].type==='missing'){
+   let count=0;
+   while(i<ops.length&&ops[i].type==='missing'){count++;i++}
+   for(let gap=0;gap<count;gap++)pieces.push({bad:true,gap:true});
+   continue;
+  }
+  const wordIndex=owner[ops[i].i];
+  while(i<ops.length&&ops[i].type!=='missing'&&owner[ops[i].i]===wordIndex)i++;
+  let missing=0;
+  while(i<ops.length&&ops[i].type==='missing'){missing++;i++}
+  pieces.push({bad:bad[wordIndex],text:words[wordIndex].text});
+  const hidden=bad[wordIndex]?Math.min(missing,words[wordIndex].norms.length):0;
+  for(let gap=hidden;gap<missing;gap++)pieces.push({bad:true,gap:true});
+ }
+ return pieces;
 }
 function renderDiff(typed,target){
  const host=el('diff');
- const ops=wordDiff(typed,target);
- host.replaceChildren(diffLine('You',ops,'got'),diffLine('Sentence',ops,'want'));
+ const line=document.createElement('p');
+ markedAnswer(typed,target).forEach(piece=>{
+  const node=document.createElement(piece.bad?'mark':'span');
+  if(piece.bad)node.className='bad';
+  if(piece.gap){
+   node.textContent='___ ';
+   node.setAttribute('aria-label','A word is missing');
+  }else node.textContent=piece.text+' ';
+  line.append(node);
+ });
+ host.replaceChildren(line);
  host.hidden=false;
 }
 function clock(seconds){
@@ -1354,7 +1393,7 @@ function checkAnswer(){
  }
  misses++;
  el('feedback').className='feedback no';
- el('feedback').textContent=normalizeWords(el('answer').value).length?'Different words are marked.':answerHint(el('answer').value,sentence.text);
+ el('feedback').textContent=normalizeWords(el('answer').value).length?'Wrong places are marked.':answerHint(el('answer').value,sentence.text);
  el('show').hidden=false;
  if(normalizeWords(el('answer').value).length)renderDiff(el('answer').value,sentence.text);
  else{el('diff').hidden=true;el('diff').replaceChildren()}
