@@ -33,7 +33,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .secondary{border:1px solid #d8e1f0;background:#fff;color:#455874;font-size:13px;font-weight:730;border-radius:12px;min-height:42px;padding:0 14px}.secondary:hover:not(:disabled){background:#f6f8fc}
 .ghost{border:0;background:transparent;color:var(--blue);font-size:13px;font-weight:750;text-decoration:underline;text-underline-offset:3px;padding:0}
 .row-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.filebar{display:flex;align-items:center;gap:10px;margin:16px 0 0}.file-toggle{width:36px;height:36px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #dbe4ff;border-radius:50%;background:var(--blue-soft);color:var(--blue)}.file-toggle svg,.icon-btn svg{width:16px;height:16px;display:block}.icon-btn{width:42px;min-width:42px;padding:0;display:inline-flex;align-items:center;justify-content:center}.file-time{min-width:3.2em;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;font-weight:700}.file-time.end{text-align:right}.scrub{position:relative;flex:1;height:28px;display:flex;align-items:center;touch-action:none;cursor:pointer}.scrub-rail{position:relative;width:100%;height:6px;border-radius:100px;background:#eef1f6;overflow:hidden}.scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:100px;background:var(--blue)}.scrub-knob{position:absolute;top:50%;left:0;width:16px;height:16px;border:2px solid var(--blue);border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(24,35,57,.18);transform:translate(-50%,-50%)}.scrub:focus-visible{outline:3px solid #adc0ff;outline-offset:2px;border-radius:999px}
+.filebar{display:flex;align-items:center;gap:10px;margin:16px 0 0}.icon-btn svg{width:16px;height:16px;display:block}.icon-btn{width:42px;min-width:42px;padding:0;display:inline-flex;align-items:center;justify-content:center}.file-time{min-width:3.2em;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;font-weight:700}.file-time.end{text-align:right}.scrub{position:relative;flex:1;height:28px;display:flex;align-items:center;touch-action:none;cursor:pointer}.scrub-rail{position:relative;width:100%;height:6px;border-radius:100px;background:#eef1f6;overflow:hidden}.scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:100px;background:var(--blue)}.scrub-knob{position:absolute;top:50%;left:0;width:16px;height:16px;border:2px solid var(--blue);border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(24,35,57,.18);transform:translate(-50%,-50%)}.scrub:focus-visible{outline:3px solid #adc0ff;outline-offset:2px;border-radius:999px}
 .track{height:6px;margin:18px 0 12px;border-radius:100px;background:#eef1f6;overflow:hidden}
 .track-fill{width:0;height:100%;border-radius:100px;background:var(--blue)}
 .track-fill.busy{width:36%;animation:slide 1.1s ease-in-out infinite}
@@ -105,7 +105,6 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
  <h1>Intensive Listening</h1>
  <p class="sub">Upload an MP3. This page transcribes it in the browser, splits it into sentences, and repeats one sentence until your dictation matches.</p>
  <div id="fileBar" class="filebar" hidden>
-  <button type="button" id="fileToggle" class="file-toggle" aria-label="Play recording"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></button>
   <span id="fileNow" class="file-time">0:00</span>
   <div id="fileScrub" class="scrub" role="slider" tabindex="0" aria-label="Recording position" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
    <div class="scrub-rail"><div id="fileFill" class="scrub-fill"></div></div>
@@ -1046,8 +1045,6 @@ function paintFileBar(time){
  scrub.setAttribute('aria-valuemax',String(Math.round(duration)));
  scrub.setAttribute('aria-valuenow',String(Math.round(now)));
  scrub.setAttribute('aria-valuetext',clock(now)+' of '+clock(duration));
- const playing=!!audio.src&&!audio.paused&&!audio.ended;
- setButtonIcon(el('fileToggle'),playing?'pause':'play',playing?'Pause recording':'Play recording');
 }
 function fileTimeAt(event){
  const point=event.touches?event.touches[0]:event;
@@ -1660,9 +1657,16 @@ function togglePause(){
  if(audio.currentTime<loopFrom-0.05||audio.currentTime>loopTo-0.04){
   if(sentence.prompt)playOnce(sentence,()=>{if(phase==='practice')enter(cursor+1)});
   else loopSentence(sentence);
+  focusAnswer();
   return;
  }
  audio.play().then(()=>el('speaker').classList.add('playing')).catch(()=>{});
+ focusAnswer();
+}
+function focusAnswer(){
+ if(phase!=='practice'||el('dictateBox').hidden)return;
+ const box=el('answer');
+ box.focus();
 }
 function reveal(){
  const sentence=sentences[cursor];
@@ -1903,6 +1907,7 @@ el('speaker').addEventListener('click',()=>{
  if(!sentence)return;
  if(sentence.prompt)playOnce(sentence,()=>{if(phase==='practice')enter(cursor+1)});
  else loopSentence(sentence);
+ focusAnswer();
 });
 el('answer').addEventListener('input',()=>{
  storeDraft();
@@ -1918,20 +1923,6 @@ el('recordName').addEventListener('input',remember);
 el('recordName').addEventListener('blur',()=>{
  if(!el('recordName').value.trim())el('recordName').value='Recording';
  flushRecording();
-});
-el('fileToggle').addEventListener('click',()=>{
- const audio=el('track');
- if(!audio.src)return;
- if(!audio.paused&&!audio.ended){
-  if(phase==='practice'){paused=true;setButtonIcon(el('pause'),'play','Resume');el('pause').setAttribute('aria-pressed','true')}
-  audio.pause();
-  el('speaker').classList.remove('playing');
-  paintFileBar();
-  return;
- }
- if(phase==='practice'){paused=false;setButtonIcon(el('pause'),'pause','Pause');el('pause').setAttribute('aria-pressed','false')}
- audio.playbackRate=rate();
- audio.play().then(()=>paintFileBar()).catch(()=>paintFileBar());
 });
 el('fileScrub').addEventListener('pointerdown',event=>{
  if(!el('track').src)return;
