@@ -36,18 +36,18 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .pane h2{margin:2px 8px 10px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:750}
 .song-list,.lyric-list{display:flex;flex-direction:column;gap:2px;max-height:min(68vh,640px);overflow:auto}
 .song,.lyric{display:block;width:100%;border:0;background:transparent;border-radius:10px;min-height:38px;padding:8px 10px;text-align:left;line-height:1.4;color:var(--text)}
-.song{font-weight:700}.lyric{color:#31425c}
-.song.now,.lyric.now{background:var(--blue-soft);color:var(--blue);font-weight:750}
+.song{font-weight:700}.lyric{color:var(--muted);font-size:16px}
+.lyric.now{color:var(--text);font-size:26px;font-weight:750;letter-spacing:-.02em}
+.song.now{background:var(--blue-soft);color:var(--blue);font-weight:750}
 .song-list:empty:before,.lyric-list:empty:before{content:attr(data-empty);display:block;padding:18px 10px;color:var(--muted);line-height:1.5}
 .player-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:2px 8px 0}
 .player-head h2{margin:0;font-size:18px;letter-spacing:-.02em;text-transform:none;color:var(--text);font-weight:750;overflow-wrap:anywhere}
 .count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .track{height:6px;margin:14px 8px;border-radius:100px;background:#eef1f6;overflow:hidden}.track-fill{width:0;height:100%;border-radius:100px;background:var(--blue)}
 .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:0 8px}
-.current{margin:16px 8px 8px;min-height:1.4em;font-size:26px;line-height:1.4;font-weight:700;letter-spacing:-.02em}
 .hidden-note{margin:16px 8px;color:var(--muted)}
 .fine{margin:18px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
-@media(max-width:800px){.wrap{padding:22px 14px 40px}.board{grid-template-columns:1fr}.pane{min-height:0}.song-list{max-height:220px}.current{font-size:22px}}
+@media(max-width:800px){.wrap{padding:22px 14px 40px}.board{grid-template-columns:1fr}.pane{min-height:0}.song-list{max-height:220px}.lyric.now{font-size:22px}}
 </style>
 </head>
 <body>
@@ -77,8 +77,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
     <button type="button" id="lyrics" class="secondary" aria-pressed="true">Lyrics</button>
    </div>
    <div id="lyricPane">
-    <p id="currentLine" class="current" aria-live="polite"></p>
-    <div id="lyricList" class="lyric-list" data-empty="This song has no lyrics."></div>
+    <div id="lyricList" class="lyric-list" data-empty="This song has no lyrics." aria-live="polite"></div>
    </div>
    <p id="lyricHidden" class="hidden-note" hidden>Lyrics hidden</p>
   </section>
@@ -185,23 +184,16 @@ function renderLyrics(){
  el('lyricHidden').hidden=lyricsOn||!currentSong;
  el('lyrics').setAttribute('aria-pressed',lyricsOn?'true':'false');
  el('lyrics').textContent=lyricsOn?'Hide lyrics':'Show lyrics';
- const line=lines[lineIndex];
- el('currentLine').textContent=line?(line.text||'·'):'';
  el('lineCount').textContent=currentSong&&lines.length?(lineIndex+1)+' / '+lines.length:'';
  const host=el('lyricList');
  host.replaceChildren();
- lines.forEach((item,index)=>{
+ for(let index=Math.max(0,lineIndex-1);index<=Math.min(lines.length-1,lineIndex+1);index++){
   const button=document.createElement('button');
   button.type='button';
   button.className='lyric'+(index===lineIndex?' now':'');
-  button.textContent=item.text||'·';
+  button.textContent=lines[index].text||'·';
   button.addEventListener('click',()=>startLine(index));
   host.append(button);
- });
- const current=host.querySelector('.now');
- if(current){
-  const top=current.offsetTop-host.offsetTop;
-  if(top<host.scrollTop||top+current.offsetHeight>host.scrollTop+host.clientHeight)host.scrollTop=Math.max(0,top-host.clientHeight/3);
  }
  el('prev').disabled=!currentSong||lineIndex<=0;
  el('next').disabled=!currentSong||lineIndex>=lines.length-1;
