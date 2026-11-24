@@ -44,11 +44,11 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
   <div>
    <div class="eyebrow">IELTS LISTENING TRAINER</div>
    <h1 class="heading">Digit Dictation</h1>
-   <p class="sub">Each round has 10 questions. Choose how many digits are read each time, and the gap after each digit. Type while they play. 0 is spoken as oh.</p>
+   <p class="sub">Each round has 10 questions, and each question is 10 digits. Choose how many digits are spoken together before the gap. Type while they play. 0 is spoken as oh.</p>
   </div>
-  <div class="settings" aria-label="Voice, length, and gap">
+  <div class="settings" aria-label="Voice, grouping, and gap">
    <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
-   <label class="setting compact"><span>Digits</span><select id="count" aria-label="Digits read each time"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10" selected>10</option></select></label>
+   <label class="setting compact"><span>At a time</span><select id="count" aria-label="Digits spoken before each gap"><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label>
    <label class="setting"><span>Gap</span><select id="gap" aria-label="Gap between digits"><option value="0">0 s</option><option value="100">0.1 s</option><option value="200">0.2 s</option><option value="300">0.3 s</option><option value="500" selected>0.5 s</option></select></label>
   </div>
  </header>
@@ -77,13 +77,13 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <p class="footnote" id="summary">The answer stays hidden until you check.</p>
   </aside>
  </main>
- <p class="bottom">Each digit is spoken separately. You can type during playback. The next digit starts after the gap you chose.</p>
+ <p class="bottom">Each question is 10 digits. The chosen number is spoken together, then the gap runs before the next group.</p>
 </div>
 <script>
 (()=>{'use strict';
 const el=id=>document.getElementById(id);
 const DIGIT=['oh','one','two','three','four','five','six','seven','eight','nine'];
-const ROUND=10,VOICE_KEY='ielts-digit-voice',GAP_KEY='ielts-digit-gap',COUNT_KEY='ielts-digit-count';
+const ROUND=10,LENGTH=10,VOICE_KEY='ielts-digit-voice',GAP_KEY='ielts-digit-gap',GROUP_KEY='ielts-digit-group';
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
 let items=[],answers=[],position=0,phase='idle',speechGeneration=0,gapTimer=null,held=null;
 function randomBelow(n){
@@ -96,17 +96,21 @@ function randomBelow(n){
  }
  return Math.floor(Math.random()*n);
 }
-function count(){
+function groupSize(){
  const value=Number(el('count').value);
- return value>=1&&value<=10?value:10;
+ return value>=1&&value<=LENGTH?value:1;
 }
-function rememberCount(){try{localStorage.setItem(COUNT_KEY,el('count').value)}catch(_){}}
-function digitPhrase(n){return n===1?'1 digit':n+' digits'}
+function rememberGroup(){try{localStorage.setItem(GROUP_KEY,el('count').value)}catch(_){}}
 function randomDigits(){
- const total=count();
  let text='';
- while(text.length<total)text+=String(randomBelow(10));
+ while(text.length<LENGTH)text+=String(randomBelow(10));
  return text;
+}
+function spokenGroups(digits){
+ const size=groupSize();
+ const groups=[];
+ for(let i=0;i<digits.length;i+=size)groups.push([...digits.slice(i,i+size)].map(digit=>DIGIT[Number(digit)]).join(' '));
+ return groups;
 }
 function mechanical(voice){
  const name=voice&&voice.name||'';
@@ -172,6 +176,7 @@ function playDigits(){
  cancelSpeech();
  const token=speechGeneration;
  const digits=items[position];
+ const groups=spokenGroups(digits);
  const voice=chosenVoice();
  const rate=1;
  let settled=false;
@@ -179,9 +184,8 @@ function playDigits(){
   if(settled||token!==speechGeneration)return;
   settled=true;
   el('play').classList.remove('playing');
-  const prompt=digits.length===1?'Type the digit.':'Type the '+digits.length+' digits.';
-  if(phase==='speaking'){phase='answering';el('activityText').textContent=prompt;el('answer').disabled=false;el('submit').disabled=false}
-  else if(phase==='answering')el('activityText').textContent=prompt;
+  if(phase==='speaking'){phase='answering';el('activityText').textContent='Type the 10 digits.';el('answer').disabled=false;el('submit').disabled=false}
+  else if(phase==='answering')el('activityText').textContent='Type the 10 digits.';
  };
  const fail=()=>{
   if(settled||token!==speechGeneration)return;
@@ -191,8 +195,8 @@ function playDigits(){
  };
  const speakAt=index=>{
   if(settled||token!==speechGeneration)return;
-  if(index>=digits.length){finish();return}
-  const utterance=new SpeechSynthesisUtterance(DIGIT[Number(digits[index])]);
+  if(index>=groups.length){finish();return}
+  const utterance=new SpeechSynthesisUtterance(groups[index]);
   held=utterance;
   if(voice){
    try{utterance.voice=voice}catch(_){}
@@ -205,7 +209,7 @@ function playDigits(){
    if(moved||settled||token!==speechGeneration)return;
    moved=true;
    clearTimeout(watch);
-   if(index+1>=digits.length){finish();return}
+   if(index+1>=groups.length){finish();return}
    const gap=gapMs();
    if(!gap){speakAt(index+1);return}
    gapTimer=setTimeout(()=>speakAt(index+1),gap);
@@ -217,7 +221,7 @@ function playDigits(){
   };
   utterance.onend=advance;
   utterance.onerror=()=>{if(!moved)fail()};
-  watch=setTimeout(advance,1200);
+  watch=setTimeout(advance,400+groups[index].split(' ').length*800);
   try{window.speechSynthesis.resume();window.speechSynthesis.speak(utterance)}catch(_){fail()}
  };
  setTimeout(()=>{if(token===speechGeneration)speakAt(0)},40);
@@ -273,18 +277,16 @@ function showControls(){
  el('voice').disabled=running||!usableVoices().length;
 }
 function openQuestion(){
- if(!items[position])items[position]=randomDigits();
- const n=items[position].length;
  phase='speaking';
  el('answer').value='';
- el('answer').maxLength=n;
+ el('answer').maxLength=LENGTH;
  el('answer').disabled=false;
  el('submit').disabled=false;
- el('answerLabel').textContent='Your '+digitPhrase(n);
- el('tip').textContent='It checks itself after '+digitPhrase(n)+'.';
+ el('answerLabel').textContent='Your 10 digits';
+ el('tip').textContent='It checks itself after 10 digits.';
  el('feedback').textContent='';
  el('feedback').className='feedback';
- el('activityTitle').textContent='Listen to '+digitPhrase(n);
+ el('activityTitle').textContent='Listen to 10 digits';
  el('activityText').textContent='Preparing audio…';
  refresh();
  showControls();
@@ -294,7 +296,7 @@ function openQuestion(){
 function startRound(){
  if(!usableVoices().length){el('activityText').textContent='Add a Google voice in Chrome, or a Windows Natural voice such as Sonia or Ryan.';return}
  cancelSpeech();
- items=Array.from({length:ROUND},()=>'');
+ items=Array.from({length:ROUND},randomDigits);
  answers=[];
  position=0;
  el('summary').textContent='The answer stays hidden until you check.';
@@ -315,7 +317,7 @@ function checkAnswer(){
  if(phase!=='answering'&&phase!=='speaking')return;
  const digits=items[position];
  const typed=el('answer').value.replace(/\D/g,'');
- if(typed.length!==digits.length){el('feedback').textContent=digits.length===1?'Enter the digit':'Enter all '+digits.length+' digits';el('feedback').className='feedback no';el('answer').focus();return}
+ if(typed.length!==LENGTH){el('feedback').textContent='Enter all 10 digits';el('feedback').className='feedback no';el('answer').focus();return}
  cancelSpeech();
  const ok=typed===digits;
  answers.push({digits,input:typed,ok});
@@ -342,18 +344,17 @@ function nextQuestion(){
 }
 el('voice').addEventListener('change',rememberVoice);
 el('gap').addEventListener('change',rememberGap);
-el('count').addEventListener('change',rememberCount);
+el('count').addEventListener('change',rememberGroup);
 try{const savedGap=localStorage.getItem(GAP_KEY);if(savedGap&&el('gap').querySelector(`option[value="${savedGap}"]`))el('gap').value=savedGap}catch(_){}
-try{const savedCount=localStorage.getItem(COUNT_KEY);if(savedCount&&el('count').querySelector(`option[value="${savedCount}"]`))el('count').value=savedCount}catch(_){}
+try{const savedGroup=localStorage.getItem(GROUP_KEY);if(savedGroup&&el('count').querySelector(`option[value="${savedGroup}"]`))el('count').value=savedGroup}catch(_){}
 el('start').addEventListener('click',startRound);
 el('stop').addEventListener('click',stopRound);
 el('next').addEventListener('click',nextQuestion);
 el('play').addEventListener('click',()=>{if(phase==='speaking'||phase==='answering'||phase==='review')playDigits()});
 el('submit').addEventListener('click',checkAnswer);
 el('answer').addEventListener('input',()=>{
- const need=items[position]?items[position].length:count();
- el('answer').value=el('answer').value.replace(/\D/g,'').slice(0,need);
- if((phase==='speaking'||phase==='answering')&&need&&el('answer').value.length===need)checkAnswer();
+ el('answer').value=el('answer').value.replace(/\D/g,'').slice(0,LENGTH);
+ if((phase==='speaking'||phase==='answering')&&el('answer').value.length===LENGTH)checkAnswer();
 });
 el('answer').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();if(phase==='review')nextQuestion();else checkAnswer()}});
 fillVoices();
