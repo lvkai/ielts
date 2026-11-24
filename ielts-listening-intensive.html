@@ -1815,6 +1815,10 @@ function reveal(){
 }
 function setWork(message,ratio){
  el('workStatus').textContent=message;
+ if(phase==='review'){
+  el('saveNote').className='note';
+  el('saveNote').textContent=message;
+ }
  const fill=el('workFill');
  const track=el('workTrack');
  if(ratio==null){
@@ -1929,10 +1933,9 @@ async function retranscribeSpan(index){
  const from=sentence.start;
  const to=Math.max(sentence.end,sentence.start+0.3);
  const speaker=sentence.speaker;
- workReturn='review';
  stopAudio();
- show('work');
  setWork('Reading this stretch…',null);
+ document.querySelectorAll('#sentences .play:not([data-index])').forEach(button=>{button.disabled=true});
  try{
   const samples=await samplesForCurrent();
   if(mine!==job)return;
@@ -1951,7 +1954,6 @@ async function retranscribeSpan(index){
   if(mine!==job)return;
   const built=clipSentences(result&&result.chunks,origin,from,to);
   if(!built.length){
-   show('review');
    el('saveNote').className='note warn';
    el('saveNote').textContent='No speech was found in that stretch.';
    return;
@@ -1961,15 +1963,17 @@ async function retranscribeSpan(index){
   });
   sentences.splice(index,1,...built);
   remember();
+  const top=window.scrollY;
   renderReview();
-  show('review');
+  window.scrollTo(0,top);
   el('saveNote').className='note';
   el('saveNote').textContent='That stretch was transcribed again.';
  }catch(error){
   if(mine!==job)return;
-  show('review');
   el('saveNote').className='note warn';
   el('saveNote').textContent=(error&&error.message?error.message:'That stretch could not be transcribed.');
+ }finally{
+  if(mine===job)document.querySelectorAll('#sentences .play:not([data-index])').forEach(button=>{button.disabled=false});
  }
 }
 function attachTrack(file){
