@@ -920,9 +920,6 @@ async function openRecording(id,mode){
    }catch(_){}
   }
   if(!sentences.length)throw new Error('That saved recording has no sentences.');
-  const beforeBounds=sentences.map(sentence=>sentence.start+','+sentence.end+','+(sentence.blank?1:0)).join(';');
-  sentences=shareGaps(sentences);
-  const gapsShared=beforeBounds!==sentences.map(sentence=>sentence.start+','+sentence.end+','+(sentence.blank?1:0)).join(';');
   el('recordName').value=record.name||'Recording';
   el('nameField').hidden=false;
   el('saveNote').className='note';
@@ -943,13 +940,12 @@ async function openRecording(id,mode){
     analysisVersion=ANALYSIS;
     remember();
    }catch(_){
-    if(stale)analysisVersion=ANALYSIS;
-    if(stale||gapsShared)remember();
+    if(stale){analysisVersion=ANALYSIS;remember()}
    }
   }else if(stale){
    analysisVersion=ANALYSIS;
    remember();
-  }else if(blankChecked||gapsShared)remember();
+  }else if(blankChecked)remember();
   if(mine!==job)return;
   renderReview();
   show('review');
@@ -1109,31 +1105,22 @@ function clampSentences(duration){
  });
 }
 function shareGaps(list){
- const pad=0.5;
  const out=[];
  list.forEach(sentence=>{
   const prev=out.length?out[out.length-1]:null;
   const gap=prev?sentence.start-prev.end:0;
-  if(!prev||!(gap>0.03)){out.push(sentence);return}
-  if(gap<=pad*2){
+  if(!prev||gap<=0.03){out.push(sentence);return}
+  if(gap<1.2){
    const mid=roundTime(prev.end+gap/2);
    prev.end=mid;
    sentence.start=mid;
-   out.push(sentence);
-   return;
+  }else{
+   const blankStart=roundTime(prev.end+0.5);
+   const blankEnd=roundTime(sentence.start-0.5);
+   prev.end=blankStart;
+   sentence.start=blankEnd;
+   out.push({text:'',start:blankStart,end:blankEnd,blank:true,prompt:false});
   }
-  const blankStart=roundTime(prev.end+pad);
-  const blankEnd=roundTime(sentence.start-pad);
-  if(blankEnd-blankStart<0.2){
-   const mid=roundTime(prev.end+gap/2);
-   prev.end=mid;
-   sentence.start=mid;
-   out.push(sentence);
-   return;
-  }
-  prev.end=blankStart;
-  sentence.start=blankEnd;
-  out.push({text:'',start:blankStart,end:blankEnd,blank:true,prompt:false});
   out.push(sentence);
  });
  return out;
@@ -1408,26 +1395,9 @@ function nudgeBoundary(index,edge,delta){
  remember();
 }
 function playbackBounds(sentence){
- const audio=el('track');
- const duration=Number.isFinite(audio.duration)?audio.duration:sentence.end+0.2;
- const index=sentences.indexOf(sentence);
- const prev=index>0?sentences[index-1]:null;
- const next=index>=0&&index<sentences.length-1?sentences[index+1]:null;
- let from=Math.max(0,sentence.start);
- let to=Math.max(from,sentence.end);
- if(!sentence.blank&&prev&&!prev.blank){
-  const gap=sentence.start-prev.end;
-  if(gap>0.03&&gap<=1)from=prev.end+gap/2;
-  else if(gap>1)from=Math.max(prev.end,sentence.start-0.5);
- }
- if(!sentence.blank&&next&&!next.blank){
-  const gap=next.start-sentence.end;
-  if(gap>0.03&&gap<=1)to=sentence.end+gap/2;
-  else if(gap>1)to=Math.min(next.start,sentence.end+0.5);
- }
- from=Math.max(0,from);
- to=Math.min(duration,Math.max(from,to));
- return {from,to};
+ const duration=Number.isFinite(el('track').duration)?el('track').duration:sentence.end;
+ const from=Math.max(0,sentence.start);
+ return {from,to:Math.min(duration,Math.max(from,sentence.end))};
 }
 function paintLoop(from,to){
  const audio=el('track');
