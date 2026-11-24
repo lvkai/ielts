@@ -1109,20 +1109,30 @@ function shareGaps(list){
  list.forEach(sentence=>{
   const prev=out.length?out[out.length-1]:null;
   const gap=prev?sentence.start-prev.end:0;
-  if(!prev||gap<=0.03){out.push(sentence);return}
-  if(gap<1.2){
-   const mid=roundTime(prev.end+gap/2);
-   prev.end=mid;
-   sentence.start=mid;
-  }else{
-   const blankStart=roundTime(prev.end+0.5);
-   const blankEnd=roundTime(sentence.start-0.5);
-   prev.end=blankStart;
-   sentence.start=blankEnd;
-   out.push({text:'',start:blankStart,end:blankEnd,blank:true,prompt:false});
+  if(prev&&gap>0.03){
+   if(gap<3){
+    const mid=roundTime(prev.end+gap/2);
+    prev.end=mid;
+    sentence.start=mid;
+   }else{
+    const blankStart=roundTime(prev.end+0.5);
+    const blankEnd=roundTime(sentence.start-0.5);
+    prev.end=blankStart;
+    sentence.start=blankEnd;
+    out.push({text:'',start:blankStart,end:blankEnd,blank:true,prompt:false});
+   }
   }
   out.push(sentence);
  });
+ const first=out[0];
+ if(first&&!first.blank&&first.start>0.03){
+  if(first.start<3)first.start=0;
+  else{
+   const blankEnd=roundTime(first.start-0.5);
+   first.start=blankEnd;
+   if(blankEnd>0.03)out.unshift({text:'',start:0,end:blankEnd,blank:true,prompt:false});
+  }
+ }
  return out;
 }
 function isBlankThanks(text){
@@ -1188,6 +1198,17 @@ function speakerNames(){
 function sentenceLength(sentence){
  return Math.max(0,(Number(sentence.end)||0)-(Number(sentence.start)||0));
 }
+function playButton(index){
+ const play=document.createElement('button');
+ play.type='button';
+ play.className='play';
+ play.dataset.index=String(index);
+ play.textContent='Play';
+ play.setAttribute('aria-pressed','false');
+ play.setAttribute('aria-label','Play sentence '+(index+1));
+ play.addEventListener('click',()=>previewSentence(index));
+ return play;
+}
 function renderReview(){
  const host=el('sentences');
  host.replaceChildren();
@@ -1202,7 +1223,10 @@ function renderReview(){
    const label=document.createElement('span');
    label.className='flag';
    label.textContent='Blank';
-   meta.append(title,label);
+   const actions=document.createElement('div');
+   actions.className='meta-actions';
+   actions.append(playButton(index));
+   meta.append(title,label,actions);
    const note=document.createElement('p');
    note.className='blank-label';
    note.textContent='Blank';
@@ -1241,14 +1265,6 @@ function renderReview(){
   flag.setAttribute('aria-pressed',sentence.prompt?'true':'false');
   flag.textContent=sentence.prompt?'Instruction':'Dictate';
   flag.addEventListener('click',()=>{sentence.prompt=!sentence.prompt;if(sentence.prompt)delete sentence.speaker;renderReview();remember()});
-  const play=document.createElement('button');
-  play.type='button';
-  play.className='play';
-  play.dataset.index=String(index);
-  play.textContent='Play';
-  play.setAttribute('aria-pressed','false');
-  play.setAttribute('aria-label','Play sentence '+(index+1));
-  play.addEventListener('click',()=>previewSentence(index));
   const actions=document.createElement('div');
   actions.className='meta-actions';
   if(!sentence.prompt){
@@ -1266,7 +1282,7 @@ function renderReview(){
    });
    actions.append(who);
   }
-  actions.append(play,flag);
+  actions.append(playButton(index),flag);
   meta.append(title,actions);
   const area=document.createElement('textarea');
   area.value=sentence.text||'';
