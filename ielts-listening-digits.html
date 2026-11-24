@@ -303,16 +303,20 @@ function checkAnswer(){
  const digits=items[position];
  const ok=typed===digits;
  answers.push({digits,input:typed,ok});
- phase='review';
- el('answer').disabled=true;el('submit').disabled=true;
- el('feedback').textContent=ok?'Correct':'Check the marked digits';
- el('feedback').className='feedback '+(ok?'ok':'no');
- el('activityTitle').textContent=ok?'Matched':'Not the same sequence';
- el('activityText').textContent=digits.split('').join(' ');
- el('summary').textContent=position+1===ROUND?'Round complete.':'The answer stays hidden until you check.';
- refresh();
- showControls();
- if(position+1===ROUND){phase='complete';el('next').classList.add('hide');el('stop').classList.add('hide');el('start').classList.remove('hide');el('play').disabled=true;refresh();showControls()}
+ if(position+1>=ROUND){
+  phase='complete';
+  el('answer').disabled=true;el('submit').disabled=true;
+  el('feedback').textContent=ok?'Correct':'Check the marked digits';
+  el('feedback').className='feedback '+(ok?'ok':'no');
+  el('activityTitle').textContent=ok?'Matched':'Not the same sequence';
+  el('activityText').textContent=digits.split('').join(' ');
+  el('summary').textContent='Round complete.';
+  refresh();
+  showControls();
+  return;
+ }
+ position++;
+ openQuestion();
 }
 function nextQuestion(){
  if(phase!=='review')return;
