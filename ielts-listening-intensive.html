@@ -40,6 +40,9 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 @keyframes slide{from{margin-left:0}to{margin-left:64%}}
 .status{margin:0;color:var(--muted);line-height:1.55;min-height:22px}
 .work-actions{margin-top:16px}
+.toast{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(24,35,57,.38)}
+.toast-card{width:min(420px,100%);background:#fff;border-radius:19px;padding:22px 22px 18px;box-shadow:0 18px 50px rgba(24,35,57,.2)}
+.toast-card h2{margin:0;font-size:18px;letter-spacing:-.02em}
 .review-head{display:flex;justify-content:space-between;gap:12px;align-items:end}
 .review-head h2{margin:0;font-size:18px;letter-spacing:-.02em}
 .count{color:var(--muted);font-size:13px}
@@ -187,6 +190,14 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
   </div>
  </section>
  <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. A correct sentence, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play.</p>
+ <div id="toast" class="toast" hidden role="dialog" aria-modal="true" aria-labelledby="toastTitle">
+  <div class="toast-card">
+   <h2 id="toastTitle">Transcribing</h2>
+   <div class="track" id="toastTrack" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="toastStatus"><div id="toastFill" class="track-fill busy"></div></div>
+   <p id="toastStatus" class="status">Preparing…</p>
+   <div class="work-actions"><button type="button" id="toastCancel" class="secondary">Cancel</button></div>
+  </div>
+ </div>
 </div>
 <audio id="track" preload="auto" playsinline></audio>
 <script>
@@ -1813,14 +1824,7 @@ function reveal(){
  el('reveal').hidden=false;
  el('reveal').textContent=sentence.text;
 }
-function setWork(message,ratio){
- el('workStatus').textContent=message;
- if(phase==='review'){
-  el('saveNote').className='note';
-  el('saveNote').textContent=message;
- }
- const fill=el('workFill');
- const track=el('workTrack');
+function paintTrack(fill,track,ratio){
  if(ratio==null){
   fill.classList.add('busy');
   fill.style.width='';
@@ -1831,6 +1835,21 @@ function setWork(message,ratio){
   fill.style.width=width+'%';
   track.setAttribute('aria-valuenow',String(Math.round(width)));
  }
+}
+function setWork(message,ratio){
+ el('workStatus').textContent=message;
+ paintTrack(el('workFill'),el('workTrack'),ratio);
+ if(!el('toast').hidden){
+  el('toastStatus').textContent=message;
+  paintTrack(el('toastFill'),el('toastTrack'),ratio);
+ }
+}
+function showToast(){
+ el('toast').hidden=false;
+ el('toastCancel').focus();
+}
+function hideToast(){
+ el('toast').hidden=true;
 }
 async function loadLibrary(){
  if(!libraryPromise){
@@ -1934,6 +1953,7 @@ async function retranscribeSpan(index){
  const to=Math.max(sentence.end,sentence.start+0.3);
  const speaker=sentence.speaker;
  stopAudio();
+ showToast();
  setWork('Reading this stretch…',null);
  document.querySelectorAll('#sentences .play:not([data-index])').forEach(button=>{button.disabled=true});
  try{
@@ -1973,7 +1993,10 @@ async function retranscribeSpan(index){
   el('saveNote').className='note warn';
   el('saveNote').textContent=(error&&error.message?error.message:'That stretch could not be transcribed.');
  }finally{
-  if(mine===job)document.querySelectorAll('#sentences .play:not([data-index])').forEach(button=>{button.disabled=false});
+  if(mine===job){
+   hideToast();
+   document.querySelectorAll('#sentences .play:not([data-index])').forEach(button=>{button.disabled=false});
+  }
  }
 }
 function attachTrack(file){
@@ -2114,6 +2137,14 @@ el('file').addEventListener('change',()=>{
 el('drop').addEventListener('drop',event=>{
  const file=event.dataTransfer.files&&event.dataTransfer.files[0];
  if(file)startJob(file);
+});
+el('toastCancel').addEventListener('click',()=>{
+ job++;
+ stopAudio();
+ hideToast();
+ document.querySelectorAll('#sentences .play:not([data-index])').forEach(button=>{button.disabled=false});
+ el('saveNote').className='note';
+ el('saveNote').textContent='Transcription cancelled.';
 });
 el('cancel').addEventListener('click',()=>{
  if(workReturn==='review'&&sentences.length){job++;stopAudio();show('review');return}
