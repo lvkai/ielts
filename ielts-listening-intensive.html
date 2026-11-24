@@ -165,7 +165,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    </div>
    <p id="promptLine" class="prompt-line" hidden></p>
   </div>
-  <div id="dictateBox">
+  <div id="dictateBox" hidden>
    <label class="answer-label" for="answer">Your dictation</label>
    <textarea id="answer" class="answer" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="Type the sentence"></textarea>
    <div class="below"><span class="note" style="margin:0">Enter checks · Shift+Enter adds a line</span><span id="feedback" class="feedback" role="status"></span></div>
@@ -487,7 +487,7 @@ function markedAnswer(typed,target){
   else{ops.push({type:'missing'});b++}
  }
  while(a<n)ops.push({type:'extra',i:a++});
- while(b<m)ops.push({type:'missing'});
+ while(b<m){ops.push({type:'missing'});b++}
  const bad=words.map(()=>false);
  ops.forEach(op=>{if(op.type==='extra')bad[owner[op.i]]=true});
  const pieces=[];
@@ -551,6 +551,7 @@ let trackUrl='';
 let sentences=[];
 let job=0;
 let cursor=0;
+let draftCursor=-1;
 let loopToken=0;
 let loopTimer=0;
 let moving=false;
@@ -607,6 +608,7 @@ function asSentence(sentence){
  const end=Number(source&&source.end);
  const marked={text,start,end:Number.isFinite(end)?end:start,prompt:!!(source&&source.prompt)};
  if(!marked.prompt&&source&&/^[ABC]$/.test(source.speaker))marked.speaker=source.speaker;
+ if(!marked.prompt&&source&&typeof source.draft==='string'&&source.draft)marked.draft=source.draft;
  return marked;
 }
 function snapshot(){
@@ -801,6 +803,7 @@ function syncPager(){
 }
 function show(stage){
  phase=stage;
+ if(stage!=='practice')draftCursor=-1;
  el('stageUpload').hidden=stage!=='upload';
  el('stageWork').hidden=stage!=='work';
  el('stageReview').hidden=stage!=='review';
@@ -832,6 +835,7 @@ function restoreStage(stage){
  resetToUpload();
 }
 function goBack(){
+ if(phase==='practice')storeDraft();
  if(phase==='work'){resetToUpload();return}
  if(phase==='upload'){
   if(history.length>1)history.back();
@@ -849,6 +853,7 @@ function goStep(step){
  if(phase==='work'){job++;stopAudio()}
  if(step==='review'){
   if(!sentences.some(sentence=>sentence.text.trim())||phase==='review')return;
+  storeDraft();
   stopAudio();
   renderReview();
   show('review');
@@ -1234,12 +1239,22 @@ function showPracticeChrome(sentence,keepPause){
  el('show').hidden=true;
  el('skipPrompt').hidden=!sentence.prompt;
  el('reveal').hidden=true;
- el('diff').hidden=true;
- el('diff').replaceChildren();
+ const draft=sentence.prompt?'':(sentence.draft||'');
+ el('answer').value=draft;
+ draftCursor=sentence.prompt?-1:cursor;
+ if(!sentence.prompt&&draft&&normalizeWords(draft).length&&!answersMatch(draft,sentence.text)){
+  el('feedback').className='feedback no';
+  el('feedback').textContent='Wrong places are marked.';
+  el('show').hidden=false;
+  renderDiff(draft,sentence.text);
+ }else{
+  el('diff').hidden=true;
+  el('diff').replaceChildren();
+  el('feedback').textContent='';
+  el('feedback').className='feedback';
+  el('show').hidden=true;
+ }
  if(!keepPause)resetPause();
- el('feedback').textContent='';
- el('feedback').className='feedback';
- el('answer').value='';
  misses=0;
  moving=false;
 }
@@ -1327,29 +1342,44 @@ function renderSentenceNav(){
  });
  highlightSentence(cursor);
 }
+function storeDraft(){
+ if(phase!=='practice'||draftCursor<0)return;
+ const sentence=sentences[draftCursor];
+ if(!sentence||sentence.prompt||el('dictateBox').hidden)return;
+ const value=el('answer').value;
+ if((sentence.draft||'')===value)return;
+ if(value)sentence.draft=value;
+ else delete sentence.draft;
+ remember();
+}
 function followPractice(time){
  if(phase!=='practice'||!sentences.length)return;
  const index=sentenceIndexAt(time);
  if(index<0)return;
  highlightSentence(index);
  if(index===cursor)return;
+ storeDraft();
  cursor=index;
  const sentence=sentences[index];
+ syncSentenceButtons();
  showPracticeChrome(sentence,true);
  if(sentence.prompt){
   el('practiceTitle').textContent='Instruction';
   el('promptLine').textContent=sentence.text;
  }else el('practiceTitle').textContent=speakerTitle(sentence);
- syncSentenceButtons();
 }
 function enter(index,startAt){
+ storeDraft();
+ moveTo(index,startAt);
+}
+function moveTo(index,startAt){
  cursor=index;
  if(cursor>=sentences.length)return finish();
  const sentence=sentences[cursor];
- if(!sentence.text.trim())return enter(cursor+1,startAt);
+ if(!sentence.text.trim())return moveTo(cursor+1,startAt);
+ syncSentenceButtons();
  showPracticeChrome(sentence);
  highlightSentence(cursor);
- syncSentenceButtons();
  if(sentence.prompt){
   el('practiceTitle').textContent='Instruction';
   el('promptLine').textContent=sentence.text;
@@ -1371,6 +1401,7 @@ function beginPractice(index){
  enter(Math.max(0,index||0));
 }
 function finish(){
+ storeDraft();
  stopAudio();
  const dictated=dictateSentences().length;
  const prompts=sentences.filter(sentence=>sentence.prompt).length;
@@ -1651,6 +1682,7 @@ async function startJob(file){
  }
 }
 function resetToUpload(){
+ storeDraft();
  job++;
  stopAudio();
  const pending=flushRecording();
@@ -1691,6 +1723,7 @@ el('speaker').addEventListener('click',()=>{
  else loopSentence(sentence);
 });
 el('answer').addEventListener('input',()=>{
+ storeDraft();
  el('diff').hidden=true;
  el('diff').replaceChildren();
  if(el('feedback').classList.contains('no')){el('feedback').textContent='';el('feedback').className='feedback'}
@@ -1770,6 +1803,7 @@ window.addEventListener('popstate',()=>{
  else syncPager();
  navLock=false;
 });
+window.addEventListener('pagehide',()=>{if(phase==='practice')storeDraft();flushRecording()});
 if(!history.state)history.replaceState({stage:'upload'},'',location.pathname+location.search);
 syncPager();
 renderLibrary();
