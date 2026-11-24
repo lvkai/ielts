@@ -1201,6 +1201,10 @@ function speakerNames(){
 function sentenceLength(sentence){
  return Math.max(0,(Number(sentence.end)||0)-(Number(sentence.start)||0));
 }
+function sentenceHeading(index,sentence){
+ const gap='\u00a0\u00a0\u00a0\u00a0';
+ return String(index+1).padStart(2,'0')+gap+clockFine(sentence.start)+' – '+clockFine(sentence.end)+gap+sentenceLength(sentence).toFixed(1)+'s';
+}
 function playButton(index){
  const play=document.createElement('button');
  play.type='button';
@@ -1258,7 +1262,7 @@ function renderReview(){
    const meta=document.createElement('div');
    meta.className='meta';
    const title=document.createElement('b');
-   title.textContent=String(index+1).padStart(2,'0')+'  '+clockFine(sentence.start)+'–'+clockFine(sentence.end)+'  '+sentenceLength(sentence).toFixed(1)+'s';
+   title.textContent=sentenceHeading(index,sentence);
    const blankType=document.createElement('button');
    blankType.type='button';
    blankType.className='flag';
@@ -1296,7 +1300,7 @@ function renderReview(){
   const meta=document.createElement('div');
   meta.className='meta';
   const title=document.createElement('b');
-  title.textContent=String(index+1).padStart(2,'0')+'  '+clockFine(sentence.start)+'–'+clockFine(sentence.end)+'  '+sentenceLength(sentence).toFixed(1)+'s';
+  title.textContent=sentenceHeading(index,sentence);
   const flag=document.createElement('button');
   flag.type='button';
   flag.className='flag';
