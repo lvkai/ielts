@@ -377,7 +377,7 @@ function sentencesFromWords(chunks){
   if(endsSentence(word.text)||(gap>=0.9&&bucket.length>=5)||bucket.length>=30)flush();
  });
  flush();
- return refinePrompts(sentences.map(markSentence).filter(sentence=>sentence.text));
+ return closeShortGaps(refinePrompts(sentences.map(markSentence).filter(sentence=>sentence.text)));
 }
 function markSentence(sentence){
  const start=Math.max(0,Number(sentence.start)||0);
@@ -898,6 +898,7 @@ async function openRecording(id,mode){
   currentId=id;
   sentences=(record.sentences||[]).map(asSentence);
   clampSentences(duration||record.duration||0);
+  const gapsClosed=closeShortGaps(sentences);
   if(!sentences.length)throw new Error('That saved recording has no sentences.');
   el('recordName').value=record.name||'Recording';
   el('nameField').hidden=false;
@@ -924,7 +925,7 @@ async function openRecording(id,mode){
   }else if(stale){
    analysisVersion=ANALYSIS;
    remember();
-  }
+  }else if(gapsClosed)remember();
   if(mine!==job)return;
   renderReview();
   show('review');
@@ -1095,6 +1096,19 @@ function clampSentences(duration){
   sentence.start=Math.min(sentence.start,Math.max(0,duration-0.25));
   sentence.end=Math.min(Math.max(sentence.end,sentence.start+0.25),duration||sentence.end);
  });
+}
+function closeShortGaps(list){
+ let changed=false;
+ for(let i=1;i<list.length;i++){
+  const prev=list[i-1];
+  const sentence=list[i];
+  const gap=sentence.start-prev.end;
+  if(gap>0.03&&gap<=0.5){
+   sentence.start=prev.end;
+   changed=true;
+  }
+ }
+ return changed;
 }
 function updateReviewCount(){
  const dictate=sentences.filter(sentence=>!sentence.prompt&&sentence.text.trim()).length;
@@ -1287,15 +1301,17 @@ function playbackBounds(sentence){
  const audio=el('track');
  const duration=Number.isFinite(audio.duration)?audio.duration:sentence.end+0.2;
  const index=sentences.indexOf(sentence);
- const prev=sentences[index-1];
- const next=sentences[index+1];
- const before=prev?Math.max(0,sentence.start-prev.end):sentence.start;
+ const prev=index>0?sentences[index-1]:null;
+ const next=index>=0&&index<sentences.length-1?sentences[index+1]:null;
+ const before=prev?Math.max(0,sentence.start-prev.end):Math.max(0,sentence.start);
  const after=next?Math.max(0,next.start-sentence.end):Math.max(0,duration-sentence.end);
- let from=Math.max(0,sentence.start-Math.min(0.04,before/2));
- let to=Math.min(duration,sentence.end+Math.min(0.06,after/2));
- const cap=next?next.start-0.02:duration;
- to=Math.min(cap,Math.max(from+0.15,to));
- if(to<from+0.12)to=Math.min(duration,from+0.12);
+ const lead=prev?(before<=0.5?before:Math.min(0.22,before)):Math.min(0.12,before);
+ let from=Math.max(0,sentence.start-lead);
+ if(prev)from=Math.max(prev.end,from);
+ const nextLead=next?(after<=0.5?after:Math.min(0.22,after)):0;
+ let to=Math.min(duration,sentence.end+Math.min(0.05,Math.max(0,after-nextLead)));
+ if(next)to=Math.min(to,Math.max(from,next.start-nextLead));
+ if(to<from+0.12)to=Math.min(next?next.start:duration,from+0.12);
  return {from,to};
 }
 function paintLoop(from,to){
@@ -1813,6 +1829,7 @@ async function startJob(file){
   sentences=built.length?built:(result&&result.text? [markSentence({text:cleanText(result.text),start:0,end:duration})] : []);
   if(!built.length)refinePrompts(sentences);
   clampSentences(duration);
+  closeShortGaps(sentences);
   if(!sentences.length)throw new Error('No speech was found in this recording.');
   setWork('Marking speakers…',100);
   assignSpeakers(sentences,samples,16000);
@@ -1946,9 +1963,7 @@ el('nextSentence').addEventListener('click',()=>stepSentence(1));
 document.addEventListener('keydown',event=>{
  if(phase!=='practice'||event.altKey||event.ctrlKey||event.metaKey)return;
  if(event.target&&event.target.tagName==='SELECT')return;
- if(event.key==='ArrowLeft'){event.preventDefault();stepSentence(-1)}
- else if(event.key==='ArrowRight'){event.preventDefault();stepSentence(1)}
- else if(event.key==='ArrowUp'){event.preventDefault();showOriginal(true)}
+ if(event.key==='ArrowUp'){event.preventDefault();showOriginal(true)}
  else if(event.key==='ArrowDown'){event.preventDefault();showOriginal(false)}
 });
 el('track').addEventListener('timeupdate',()=>{if(!scrubbing)paintFileBar()});
