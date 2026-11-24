@@ -32,11 +32,11 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .secondary{border:1px solid #d8e1f0;background:#fff;color:#455874;font-size:13px;font-weight:730;border-radius:12px;min-height:42px;padding:0 14px}.secondary:hover:not(:disabled){background:#f6f8fc}
 .note{margin:12px 0 0;color:var(--muted);font-size:12px;line-height:1.6}.note.warn{color:#c54d4d}
 .board{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;margin-top:16px;align-items:start}
-.pane{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 9px 36px rgba(35,49,79,.035);padding:14px;min-height:420px}
+.pane{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 9px 36px rgba(35,49,79,.035);padding:14px;min-height:420px}
 .pane h2{margin:2px 8px 10px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:750}
 .song-list,.lyric-list{display:flex;flex-direction:column;gap:2px;max-height:min(68vh,640px);overflow:auto}
 .song,.lyric{display:block;width:100%;border:0;background:transparent;border-radius:10px;min-height:38px;padding:8px 10px;text-align:left;line-height:1.4;color:var(--text)}
-.song{font-weight:700}.lyric{color:var(--muted);font-size:16px}
+.song{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lyric{color:var(--muted);font-size:16px}
 .lyric.now{color:var(--text);font-size:26px;font-weight:750;letter-spacing:-.02em}
 .song.now{background:var(--blue-soft);color:var(--blue);font-weight:750}
 .song-list:empty:before,.lyric-list:empty:before{content:attr(data-empty);display:block;padding:18px 10px;color:var(--muted);line-height:1.5}
@@ -82,7 +82,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
    <p id="lyricHidden" class="hidden-note" hidden>Lyrics hidden</p>
   </section>
  </div>
- <p class="fine">Files stay in this browser and are not uploaded. A line plays again from its start when it ends. Left and right arrows change the line. Shift shows or hides the lyrics.</p>
+ <p class="fine">Files stay in this browser and are not uploaded. When a line ends, playback pauses for one second, then starts that line again. Left and right arrows change the line. Shift shows or hides the lyrics.</p>
 </div>
 <audio id="track" preload="auto" playsinline></audio>
 <script>
@@ -99,7 +99,8 @@ let trackUrl='';
 let ticking=false;
 let timer=0;
 let playToken=0;
-let rewinding=false;
+let holding=false;
+let repeatTimer=0;
 let lyricsOn=localStorage.getItem('lyric-repeat-lyrics')!=='0';
 
 function openDb(){
@@ -166,7 +167,7 @@ function lineEnd(index){
  const next=lines[index+1]?lines[index+1].time:(duration||start+2);
  return next>start+0.12?next:start+0.4;
 }
-function stopTick(){ticking=false;clearTimeout(timer)}
+function stopTick(){ticking=false;holding=false;clearTimeout(timer);clearTimeout(repeatTimer)}
 function paintPlay(){
  const on=ticking&&!audio.paused;
  el('play').textContent=on?'Pause':'Play';
@@ -213,6 +214,7 @@ function renderSongs(){
   button.type='button';
   button.className='song'+(currentSong&&currentSong.id===song.id?' now':'');
   button.textContent=song.name;
+  button.title=song.name;
   button.addEventListener('click',()=>openSong(song.id));
   host.append(button);
  });
@@ -244,11 +246,19 @@ function tick(){
  if(!ticking)return;
  paintProgress();
  const end=lines[lineIndex]?lineEnd(lineIndex):0;
- if(!audio.paused&&!rewinding&&end&&audio.currentTime>=end-0.04){
-  rewinding=true;
-  const done=()=>{audio.removeEventListener('seeked',done);rewinding=false};
-  audio.addEventListener('seeked',done);
-  audio.currentTime=lines[lineIndex].time;
+ if(!audio.paused&&end&&audio.currentTime>=end-0.04){
+  const token=playToken;
+  audio.pause();
+  ticking=false;
+  holding=true;
+  paintPlay();
+  clearTimeout(repeatTimer);
+  repeatTimer=setTimeout(()=>{
+   holding=false;
+   if(token!==playToken)return;
+   startLine(lineIndex);
+  },1000);
+  return;
  }
  timer=setTimeout(tick,50);
 }
@@ -256,7 +266,6 @@ function startLine(index){
  if(!currentSong||!lines.length)return;
  const token=++playToken;
  stopTick();
- rewinding=false;
  lineIndex=Math.max(0,Math.min(lines.length-1,index));
  const start=lines[lineIndex].time;
  ticking=true;
@@ -431,6 +440,7 @@ el('prev').addEventListener('click',()=>step(-1));
 el('next').addEventListener('click',()=>step(1));
 el('play').addEventListener('click',()=>{
  if(!currentSong)return;
+ if(holding){startLine(lineIndex);return}
  if(ticking&&!audio.paused){audio.pause();stopTick();paintPlay();return}
  if(!ticking&&audio.src){ticking=true;audio.play().then(()=>{paintPlay();tick()}).catch(()=>{ticking=false;paintPlay()});return}
  startLine(lineIndex);
