@@ -119,7 +119,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <button type="button" id="choose" class="primary">Upload MP3</button>
    <input id="file" type="file" accept=".mp3,audio/mpeg,.wav,audio/wav,.m4a,audio/mp4,audio/x-m4a" hidden>
   </div>
-  <p class="note">Instruction lines, such as “You will hear…” and “Now turn to section 1”, are marked for you. They play once and are not dictated. You can change a mark before starting. Each upload is saved in this browser with its transcription, so the next time you open it by name. The first transcription downloads an English speech model.</p>
+  <p class="note">Instruction lines, such as “You will hear…” and “Now turn to section 1”, are marked for you. They play once and are not dictated. You can change a mark before starting. Each upload is saved in this browser with its transcription, so the next time you open it by name. The first transcription downloads Whisper Large V3 Turbo when this browser can use the graphics chip. Without that chip, it uses a smaller English model. The download stays in this browser.</p>
   <p id="uploadError" class="note" style="color:var(--red)" role="status"></p>
   <div id="library" class="library" hidden>
    <h2>Saved recordings</h2>
@@ -189,7 +189,8 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
 (()=>{'use strict';
 const el=id=>document.getElementById(id);
 const LIB='https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.2';
-const MODEL='onnx-community/whisper-base.en_timestamped';
+const MODEL_TURBO='onnx-community/whisper-large-v3-turbo_timestamped';
+const MODEL_BASE='onnx-community/whisper-base.en_timestamped';
 const PROMPT_PATTERNS=[
  /\byou will hear (?!from\b)/,
  /\byou'?ll hear (?!from\b)/,
@@ -1441,6 +1442,22 @@ async function loadLibrary(){
  }
  return libraryPromise;
 }
+let activeModel=MODEL_BASE;
+let downloadName='the speech model';
+async function openPipeline(pipeline,env,model,device,dtype,onProgress){
+ const hosts=['https://huggingface.co/','https://hf-mirror.com/'];
+ let lastError;
+ for(const host of hosts){
+  if(env.remoteHost)env.remoteHost=host;
+  try{
+   return await pipeline('automatic-speech-recognition',model,{progress_callback:onProgress,device,dtype});
+  }catch(error){
+   lastError=error;
+   setWork('Trying another download source…',null);
+  }
+ }
+ throw lastError;
+}
 async function loadTranscriber(onProgress){
  if(transcriberPromise)return transcriberPromise;
  transcriberPromise=(async()=>{
@@ -1448,25 +1465,20 @@ async function loadTranscriber(onProgress){
   env.allowLocalModels=false;
   env.useBrowserCache=true;
   if(env.backends&&env.backends.onnx&&env.backends.onnx.wasm)env.backends.onnx.wasm.numThreads=1;
-  const hosts=['https://huggingface.co/','https://hf-mirror.com/'];
-  let lastError;
-  for(const host of hosts){
-   if(env.remoteHost)env.remoteHost=host;
+  const gpu=navigator.gpu?await Promise.race([navigator.gpu.requestAdapter({powerPreference:'high-performance'}),new Promise(resolve=>setTimeout(()=>resolve(null),1500))]).catch(()=>null):null;
+  if(gpu){
    try{
-    const common={progress_callback:onProgress};
-    if(navigator.gpu){
-     try{
-      const adapter=await Promise.race([navigator.gpu.requestAdapter(),new Promise(resolve=>setTimeout(()=>resolve(null),1500))]);
-      if(adapter)return await pipeline('automatic-speech-recognition',MODEL,{...common,device:'webgpu',dtype:{encoder_model:'fp16',decoder_model_merged:'q4'}});
-     }catch(_){}
-    }
-    return await pipeline('automatic-speech-recognition',MODEL,{...common,device:'wasm',dtype:{encoder_model:'q8',decoder_model_merged:'q4'}});
-   }catch(error){
-    lastError=error;
-    setWork('Trying another download source…',null);
+    activeModel=MODEL_TURBO;
+    downloadName='Whisper Large V3 Turbo';
+    return await openPipeline(pipeline,env,MODEL_TURBO,'webgpu',{encoder_model:'fp16',decoder_model_merged:'q4'},onProgress);
+   }catch(_){
+    downloads.clear();
+    setWork('Large V3 Turbo could not start. Using the smaller English model…',null);
    }
   }
-  throw lastError;
+  activeModel=MODEL_BASE;
+  downloadName='the smaller English model';
+  return openPipeline(pipeline,env,MODEL_BASE,'wasm',{encoder_model:'q8',decoder_model_merged:'q4'},onProgress);
  })().catch(error=>{transcriberPromise=null;throw error});
  return transcriberPromise;
 }
@@ -1476,7 +1488,7 @@ function onDownload(update){
  let loaded=0,total=0;
  downloads.forEach(file=>{loaded+=file.loaded;total+=file.total});
  const ratio=total?loaded/total*100:0;
- setWork('Downloading the speech model… '+Math.round(ratio)+'%',ratio);
+ setWork('Downloading '+downloadName+'… '+Math.round(ratio)+'%',ratio);
 }
 async function audioTo16k(file){
  const bytes=await file.arrayBuffer();
@@ -1561,7 +1573,9 @@ async function startJob(file){
   const tick=setInterval(paint,400);
   let result;
   try{
-   result=await transcriber(samples,{return_timestamps:'word',chunk_length_s:28,stride_length_s:5,streamer});
+   const options={return_timestamps:'word',chunk_length_s:28,stride_length_s:5,streamer};
+   if(activeModel===MODEL_TURBO){options.language='english';options.task='transcribe'}
+   result=await transcriber(samples,options);
   }finally{
    clearInterval(tick);
   }
