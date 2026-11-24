@@ -46,7 +46,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 .sentence{border:1px solid var(--line);border-radius:14px;padding:12px}
 .sentence.prompt,.sentence.blank{background:#f7f8fb}
-.meta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.meta-actions{display:flex;align-items:center;gap:10px;margin-left:auto}.meta-pair{display:flex;align-items:center;gap:6px}.meta-sep{width:1px;align-self:stretch;background:#d8e1f0;margin:7px 0;flex:none}.play,.meta-actions .flag,.meta-actions button.who{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1;box-sizing:border-box}.play{border:1px solid #d8e1f0;background:#fff;color:var(--blue);border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}.play.playing{background:var(--blue);color:#fff;border-color:var(--blue)}
+.meta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.meta-actions{display:grid;grid-template-columns:72px 112px 1px 36px 112px;align-items:center;column-gap:8px;margin-left:auto}.meta-sep{width:1px;height:18px;background:#d8e1f0;justify-self:center}.play,.meta-actions .flag,.meta-actions button.who{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1;box-sizing:border-box;width:100%}.play{border:1px solid #d8e1f0;background:#fff;color:var(--blue);border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}.play.playing{background:var(--blue);color:#fff;border-color:var(--blue)}
 .meta b{font-size:13px;font-variant-numeric:tabular-nums}
 .meta span{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
 .flag{border:1px solid #d8e1f0;background:#fff;color:#455874;border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}
@@ -1227,11 +1227,26 @@ function metaSeparator(){
  sep.setAttribute('aria-hidden','true');
  return sep;
 }
-function actionPair(...nodes){
- const pair=document.createElement('div');
- pair.className='meta-pair';
- pair.append(...nodes);
- return pair;
+function speakerButton(sentence){
+ if(sentence.blank||sentence.prompt){
+  const slot=document.createElement('span');
+  slot.className='who-slot';
+  slot.setAttribute('aria-hidden','true');
+  return slot;
+ }
+ const who=document.createElement('button');
+ who.type='button';
+ who.className='who';
+ who.textContent=sentence.speaker||'A';
+ who.setAttribute('aria-label','Speaker '+(sentence.speaker||'A')+'. Click for the next speaker.');
+ who.addEventListener('click',()=>{
+  const next={A:'B',B:'C',C:'A'};
+  sentence.speaker=next[sentence.speaker]||'A';
+  renderReview();
+  renderSentenceNav();
+  remember();
+ });
+ return who;
 }
 function renderReview(){
  const host=el('sentences');
@@ -1251,7 +1266,7 @@ function renderReview(){
    blankType.setAttribute('aria-pressed','true');
    const actions=document.createElement('div');
    actions.className='meta-actions';
-   actions.append(actionPair(playButton(index),transcribeButton(index)),metaSeparator(),actionPair(blankType));
+   actions.append(playButton(index),transcribeButton(index),metaSeparator(),speakerButton(sentence),blankType);
    meta.append(title,actions);
    const tools=document.createElement('div');
    tools.className='tiny';
@@ -1290,24 +1305,7 @@ function renderReview(){
   flag.addEventListener('click',()=>{sentence.prompt=!sentence.prompt;if(sentence.prompt)delete sentence.speaker;renderReview();remember()});
   const actions=document.createElement('div');
   actions.className='meta-actions';
-  const tail=[];
-  if(!sentence.prompt){
-   const who=document.createElement('button');
-   who.type='button';
-   who.className='who';
-   who.textContent=sentence.speaker||'A';
-   who.setAttribute('aria-label','Speaker '+(sentence.speaker||'A')+'. Click for the next speaker.');
-   who.addEventListener('click',()=>{
-    const next={A:'B',B:'C',C:'A'};
-    sentence.speaker=next[sentence.speaker]||'A';
-    renderReview();
-    renderSentenceNav();
-    remember();
-   });
-   tail.push(who);
-  }
-  tail.push(flag);
-  actions.append(actionPair(playButton(index),transcribeButton(index)),metaSeparator(),actionPair(...tail));
+  actions.append(playButton(index),transcribeButton(index),metaSeparator(),speakerButton(sentence),flag);
   meta.append(title,actions);
   const area=document.createElement('textarea');
   area.value=sentence.text||'';
