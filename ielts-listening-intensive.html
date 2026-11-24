@@ -47,7 +47,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .review-head h2{margin:0;font-size:18px;letter-spacing:-.02em}
 .count{color:var(--muted);font-size:13px}
 .list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
-.sentence{border:1px solid var(--line);border-radius:14px;padding:12px}
+.sentence{border:1px solid var(--line);border-radius:14px;padding:12px}.sentence.current{border-color:#b9cbff;box-shadow:0 0 0 3px #315eea18}
 .sentence.prompt,.sentence.blank{background:#f7f8fb}
 .meta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.meta-actions{display:grid;grid-template-columns:72px 112px 1px 36px 112px;align-items:center;column-gap:8px;margin-left:auto}.meta-sep{width:1px;height:18px;background:#d8e1f0;justify-self:center}.play,.meta-actions .flag,.meta-actions button.who{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1;box-sizing:border-box;width:100%}.play{border:1px solid #d8e1f0;background:#fff;color:var(--blue);border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}.play.playing{background:var(--blue);color:#fff;border-color:var(--blue)}
 .meta b{font-size:13px;font-variant-numeric:tabular-nums}
@@ -837,6 +837,65 @@ async function getAudio(id){
  await txDone(tx);
  return audio;
 }
+const OPEN_KEY='ielts-intensive-open';
+const PLACE_KEY='ielts-intensive-place';
+function clampIndex(index){
+ if(!sentences.length)return 0;
+ const at=Number(index);
+ if(!Number.isFinite(at))return 0;
+ return Math.min(sentences.length-1,Math.max(0,Math.round(at)));
+}
+function readOpen(){
+ try{
+  const data=JSON.parse(localStorage.getItem(OPEN_KEY)||'null');
+  if(!data||typeof data.id!=='string'||!data.id)return null;
+  const stage=data.stage==='practice'||data.stage==='review'||data.stage==='done'?data.stage:'review';
+  return {id:data.id,stage};
+ }catch(_){return null}
+}
+function saveOpen(){
+ if(!currentId||phase==='upload'||phase==='work')return;
+ try{localStorage.setItem(OPEN_KEY,JSON.stringify({id:currentId,stage:phase==='done'?'done':phase==='practice'?'practice':'review'}))}catch(_){}
+}
+function clearOpen(){try{localStorage.removeItem(OPEN_KEY)}catch(_){}}
+function savedIndex(id,fallback){
+ try{
+  const all=JSON.parse(localStorage.getItem(PLACE_KEY)||'{}');
+  if(all&&Number.isInteger(all[id])&&all[id]>=0)return all[id];
+ }catch(_){}
+ return Number.isInteger(fallback)&&fallback>=0?fallback:0;
+}
+function writePlace(index){
+ if(!currentId)return;
+ let all={};
+ try{all=JSON.parse(localStorage.getItem(PLACE_KEY)||'{}')||{}}catch(_){all={}}
+ if(!all||typeof all!=='object')all={};
+ all[currentId]=clampIndex(index);
+ try{localStorage.setItem(PLACE_KEY,JSON.stringify(all))}catch(_){}
+}
+function forgetPlace(id){
+ try{
+  const all=JSON.parse(localStorage.getItem(PLACE_KEY)||'{}');
+  if(all&&Object.prototype.hasOwnProperty.call(all,id)){delete all[id];localStorage.setItem(PLACE_KEY,JSON.stringify(all))}
+ }catch(_){}
+ const open=readOpen();
+ if(open&&open.id===id)clearOpen();
+}
+function paintCurrentSentence(){
+ document.querySelectorAll('#sentences .sentence').forEach((row,i)=>row.classList.toggle('current',i===cursor));
+}
+function touchSentence(index){
+ if(!sentences.length)return;
+ cursor=clampIndex(index);
+ writePlace(cursor);
+ paintCurrentSentence();
+ saveOpen();
+}
+function revealSentence(){
+ paintCurrentSentence();
+ const row=el('sentences').children[cursor];
+ if(row)row.scrollIntoView({block:'center'});
+}
 function remember(){
  if(!currentId)return;
  clearTimeout(saveTimer);
@@ -845,7 +904,7 @@ function remember(){
 function flushRecording(){
  clearTimeout(saveTimer);
  if(!currentId)return Promise.resolve();
-  const patch={name:currentName(),sentences:snapshot()};
+  const patch={name:currentName(),sentences:snapshot(),place:clampIndex(cursor)};
   if(analysisVersion)patch.analysis=analysisVersion;
   if(blankPass)patch.blankPass=blankPass;
   return updateRecording(currentId,patch);
@@ -896,6 +955,7 @@ async function renderLibrary(){
    const label=record.name||'Recording';
    if(!confirm('Delete “'+label+'”?'))return;
    await deleteRecording(record.id);
+   forgetPlace(record.id);
    if(currentId===record.id){currentId=null;sentences=[];syncPager()}
    renderLibrary();
   });
@@ -907,7 +967,12 @@ async function renderLibrary(){
 async function openRecording(id,mode){
  const mine=++job;
  stopAudio();
- if(currentId&&currentId!==id)await flushRecording();
+ if(currentId){
+  writePlace(cursor);
+  await flushRecording();
+ }
+ const stage=mode==='practice'?'practice':mode==='done'?'done':'review';
+ try{localStorage.setItem(OPEN_KEY,JSON.stringify({id,stage}))}catch(_){}
  show('work');
  setWork('Opening the saved recording…',null);
  try{
@@ -961,9 +1026,12 @@ async function openRecording(id,mode){
    remember();
   }else if(blankChecked)remember();
   if(mine!==job)return;
+  cursor=clampIndex(savedIndex(id,record.place));
+  writePlace(cursor);
   renderReview();
-  show('review');
-  if(mode==='practice')beginPractice(0);
+  if(mode==='practice')beginPractice(cursor);
+  else if(mode==='done')finish();
+  else{show('review');revealSentence()}
  }catch(error){
   if(mine!==job)return;
   show('upload');
@@ -1004,6 +1072,8 @@ function show(stage){
  el('stageDone').hidden=stage!=='done';
  syncPager();
  noteHistory(stage);
+ if(stage==='upload')clearOpen();
+ else saveOpen();
  const audio=el('track');
  el('fileBar').hidden=stage==='upload'||stage==='work'||!audio.src;
  if(!el('fileBar').hidden)paintFileBar();
@@ -1014,6 +1084,7 @@ function restoreStage(stage){
   stopAudio();
   renderReview();
   show('review');
+  revealSentence();
   return;
  }
  if(stage==='practice'){
@@ -1039,11 +1110,12 @@ function goStep(step){
   stopAudio();
   renderReview();
   show('review');
+  revealSentence();
   return;
  }
  if(step==='practice'){
   if(phase==='practice'||phase==='done'||!sentences.some(sentence=>!sentence.prompt&&sentence.text.trim()))return;
-  beginPractice(0);
+  beginPractice(cursor);
  }
 }
 function stopAudio(){
@@ -1383,6 +1455,7 @@ function renderReview(){
  });
  updateReviewCount();
  paintPreview();
+ paintCurrentSentence();
 }
 function paintPreview(){
  document.querySelectorAll('.sentence .play[data-index]').forEach(button=>{
@@ -1721,7 +1794,7 @@ function followPractice(time){
  highlightSentence(index);
  if(index===cursor)return;
  storeDraft();
- cursor=index;
+ touchSentence(index);
  const sentence=sentences[index];
  syncSentenceButtons();
  showPracticeChrome(sentence,true);
@@ -1744,7 +1817,7 @@ function moveTo(index,startAt,dir){
   if(next<0)return;
   return moveTo(next,startAt,step);
  }
- cursor=index;
+ touchSentence(index);
  syncSentenceButtons();
  showPracticeChrome(sentence);
  highlightSentence(cursor);
@@ -1762,11 +1835,12 @@ function beginPractice(index){
  stopAudio();
  sentences=sentences.map(sentence=>sentence.blank?{text:'',start:sentence.start,end:sentence.end,blank:true,prompt:false}:{...sentence,text:cleanText(sentence.text)}).filter(sentence=>sentence.blank||sentence.text);
  if(!sentences.length)return;
+ cursor=clampIndex(index);
  remember();
  renderReview();
  renderSentenceNav();
  show('practice');
- enter(Math.max(0,index||0));
+ enter(cursor);
 }
 function finish(){
  storeDraft();
@@ -2060,11 +2134,13 @@ async function startJob(file){
  const mine=++job;
  stopAudio();
  if(currentId){
+  writePlace(cursor);
   const previous=currentId;
-  const patch={name:currentName(),sentences:snapshot()};
+  const patch={name:currentName(),sentences:snapshot(),place:clampIndex(cursor)};
   currentId=null;
   updateRecording(previous,patch);
  }
+ clearOpen();
  downloads.clear();
  workReturn='upload';
  sampleCache={id:null,samples:null};
@@ -2194,7 +2270,7 @@ el('cancel').addEventListener('click',()=>{
 });
 el('another').addEventListener('click',resetToUpload);
 el('doneAnother').addEventListener('click',resetToUpload);
-el('begin').addEventListener('click',()=>beginPractice(0));
+el('begin').addEventListener('click',()=>beginPractice(cursor));
 el('again').addEventListener('click',()=>beginPractice(0));
 el('check').addEventListener('click',checkAnswer);
 el('show').addEventListener('click',reveal);
@@ -2284,9 +2360,21 @@ window.addEventListener('popstate',()=>{
  else syncPager();
  navLock=false;
 });
-window.addEventListener('pagehide',()=>{if(phase==='practice')storeDraft();flushRecording()});
+el('sentences').addEventListener('pointerdown',event=>{
+ const row=event.target.closest&&event.target.closest('#sentences .sentence');
+ if(!row||!row.parentElement)return;
+ touchSentence([...row.parentElement.children].indexOf(row));
+},true);
+el('sentences').addEventListener('focusin',event=>{
+ const row=event.target.closest&&event.target.closest('#sentences .sentence');
+ if(!row||!row.parentElement)return;
+ touchSentence([...row.parentElement.children].indexOf(row));
+});
+window.addEventListener('pagehide',()=>{if(phase==='practice')storeDraft();writePlace(cursor);flushRecording()});
 if(!history.state)history.replaceState({stage:'upload'},'',location.pathname+location.search);
 syncPager();
+const opening=readOpen();
+if(opening)openRecording(opening.id,opening.stage==='done'?'done':opening.stage==='practice'?'practice':undefined);
 renderLibrary();
 })();
 </script>
