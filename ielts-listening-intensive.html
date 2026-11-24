@@ -1117,37 +1117,57 @@ function clampSentences(duration){
   sentence.end=Math.min(Math.max(sentence.end,sentence.start+0.25),duration||sentence.end);
  });
 }
+function blankSentence(start,end){
+ return {text:'',start,end,blank:true,prompt:false};
+}
 function shareGaps(list,keepEdges){
  const out=[];
  list.forEach(sentence=>{
   const prev=out.length?out[out.length-1]:null;
-  const gap=prev?sentence.start-prev.end:0;
-  if(prev&&gap>0.03){
-   if(gap<3){
+  if(prev){
+   const gap=sentence.start-prev.end;
+   if(gap>=2)out.push(blankSentence(prev.end,sentence.start));
+   else if(gap){
     const mid=roundTime(prev.end+gap/2);
     prev.end=mid;
     sentence.start=mid;
-   }else{
-    const blankStart=roundTime(prev.end+0.5);
-    const blankEnd=roundTime(sentence.start-0.5);
-    prev.end=blankStart;
-    sentence.start=blankEnd;
-    out.push({text:'',start:blankStart,end:blankEnd,blank:true,prompt:false});
    }
   }
   out.push(sentence);
  });
  if(keepEdges)return out;
  const first=out[0];
- if(first&&!first.blank&&first.start>0.03){
-  if(first.start<3)first.start=0;
-  else{
-   const blankEnd=roundTime(first.start-0.5);
-   first.start=blankEnd;
-   if(blankEnd>0.03)out.unshift({text:'',start:0,end:blankEnd,blank:true,prompt:false});
-  }
+ if(first&&!first.blank&&first.start>0){
+  if(first.start<2)first.start=0;
+  else out.unshift(blankSentence(0,first.start));
  }
  return out;
+}
+function placeSentences(list,from,to,prev,next){
+ let built=list.filter(sentence=>sentence.end>from+0.05&&sentence.start<to-0.05).map(sentence=>{
+  sentence.start=Math.max(from,sentence.start);
+  sentence.end=Math.min(to,sentence.end);
+  return sentence;
+ }).filter(sentence=>sentence.end-sentence.start>=0.2);
+ if(!built.length)return [];
+ built=shareGaps(built,true);
+ const first=built[0];
+ const last=built[built.length-1];
+ const lead=first.start-from;
+ if(lead>=2)built.unshift(blankSentence(from,first.start));
+ else if(lead>0){
+  const mid=roundTime(from+lead/2);
+  if(prev)prev.end=mid;
+  first.start=mid;
+ }
+ const tail=to-last.end;
+ if(tail>=2)built.push(blankSentence(last.end,to));
+ else if(tail>0){
+  const mid=roundTime(last.end+tail/2);
+  last.end=mid;
+  if(next)next.start=mid;
+ }
+ return built;
 }
 function isBlankThanks(text){
  const line=String(text||'').toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim();
@@ -1408,8 +1428,15 @@ function splitAt(index,cursorAt){
  if(!left||!right)return;
  stopAudio();
  const ratio=left.length/text.length;
- const mid=sentence.start+(sentence.end-sentence.start)*ratio;
- sentences.splice(index,1,markSentence({text:left,start:sentence.start,end:mid,speaker:sentence.speaker}),markSentence({text:right,start:mid,end:sentence.end,speaker:sentence.speaker}));
+ let mid=roundTime(sentence.start+(sentence.end-sentence.start)*ratio);
+ mid=Math.min(sentence.end-0.2,Math.max(sentence.start+0.2,mid));
+ const first=markSentence({text:left,start:sentence.start,end:mid,speaker:sentence.speaker});
+ const second=markSentence({text:right,start:mid,end:sentence.end,speaker:sentence.speaker});
+ first.start=sentence.start;
+ first.end=mid;
+ second.start=mid;
+ second.end=sentence.end;
+ sentences.splice(index,1,first,second);
  renderReview();
  remember();
 }
@@ -1418,10 +1445,18 @@ function mergeNext(index){
  if(!next)return;
  stopAudio();
  const current=sentences[index];
- const text=cleanText(current.text+' '+next.text);
+ const text=cleanText((current.blank?'':current.text)+' '+(next.blank?'':next.text));
  const longer=(next.end-next.start)>(current.end-current.start)?next:current;
  const speaker=current.speaker&&current.speaker===next.speaker?current.speaker:(longer.speaker||current.speaker||next.speaker||'');
- sentences.splice(index,2,markSentence({text,start:current.start,end:next.end,speaker}));
+ const start=current.start;
+ const end=next.end;
+ if(!text)sentences.splice(index,2,blankSentence(start,end));
+ else{
+  const merged=markSentence({text,start,end,speaker});
+  merged.start=start;
+  merged.end=end;
+  sentences.splice(index,2,merged);
+ }
  renderReview();
  remember();
 }
@@ -1929,16 +1964,11 @@ async function samplesForCurrent(){
  sampleCache={id:currentId,samples};
  return samples;
 }
-function clipSentences(chunks,origin,from,to){
+function clipSentences(chunks,origin,from,to,prev,next){
  let built=sentencesFromWords(chunks);
  if(!built.length)return [];
  built.forEach(sentence=>{sentence.start+=origin;sentence.end+=origin});
- built=shareGaps(built,true);
- return built.map(sentence=>{
-  sentence.start=Math.max(from,sentence.start);
-  sentence.end=Math.min(to,sentence.end);
-  return sentence;
- }).filter(sentence=>sentence.end-sentence.start>=0.2);
+ return placeSentences(built,from,to,prev,next);
 }
 async function retranscribeSpan(index){
  const sentence=sentences[index];
@@ -1972,7 +2002,7 @@ async function retranscribeSpan(index){
   if(activeModel===MODEL_TURBO){options.language='english';options.task='transcribe'}
   const result=await transcriber(clip,options);
   if(mine!==job)return;
-  const built=clipSentences(result&&result.chunks,origin,from,to);
+  const built=clipSentences(result&&result.chunks,origin,from,to,sentences[index-1]||null,sentences[index+1]||null);
   if(!built.length){
    el('saveNote').className='note warn';
    el('saveNote').textContent='No speech was found in that stretch.';
