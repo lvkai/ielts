@@ -124,8 +124,7 @@ function plantRepeat(text,groups){
  return chars.join('');
 }
 function makeBasic(length){
- const groups=[length];
- return {kind:'basic',groups,digits:plantRepeat(digitsOf(length),groups)};
+ return {kind:'basic',groups:[length],digits:digitsOf(length)};
 }
 function makeItem(kind){
  if(kind==='card'){
