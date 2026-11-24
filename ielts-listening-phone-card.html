@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Free IELTS listening dictation in three groups of ten: basic digits, phone numbers, then credit card numbers.">
+<meta name="description" content="Free IELTS listening dictation. Choose basic digits, a phone number, or a credit card number. Each round has ten questions.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/ielts-listening-phone-card.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="IELTS Listening Phone and Card Dictation">
-<meta property="og:description" content="Free IELTS listening practice. Ten basic numbers, ten phone numbers, then ten card numbers.">
+<meta property="og:description" content="Free IELTS listening practice. Choose basic digits, phone numbers, or card numbers. Ten questions in a round.">
 <meta property="og:url" content="https://lvkai.github.io/ielts/ielts-listening-phone-card.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Listening Phone and Card Dictation","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-phone-card.html","description":"Free IELTS listening practice in three groups of ten: basic digits, phone numbers, then credit card numbers.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Listening Phone and Card Dictation","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-phone-card.html","description":"Free IELTS listening practice. Choose basic digits, phone numbers, or card numbers. Each round has ten questions.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
 <title>IELTS Listening Phone and Card Dictation</title>
@@ -38,8 +38,9 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 <div class="wrap">
  <nav class="home-nav" aria-label="Site"><a href="index.html">← Home</a></nav>
  <header>
-  <div><div class="eyebrow">IELTS LISTENING TRAINER</div><h1 class="heading">Phone and Card Dictation</h1><p class="sub">Three groups of 10. Basic is 3 or 4 digits, then phone numbers, then 16-digit card numbers. 0 is spoken as oh, and repeated digits are double or triple.</p></div>
+  <div><div class="eyebrow">IELTS LISTENING TRAINER</div><h1 class="heading">Phone and Card Dictation</h1><p class="sub">Choose one group. Each round has 10 questions. Basic is 3 or 4 digits. 0 is spoken as oh, and repeated digits are double or triple.</p></div>
   <div class="settings" aria-label="Test settings">
+   <label class="setting"><span>Group</span><select id="kind" aria-label="Practice group"><option value="basic" selected>Basic</option><option value="phone">Phone</option><option value="card">Card</option></select></label>
    <label class="setting voice"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
    <label class="setting"><span>Playback speed</span><select id="speed" aria-label="Playback speed"><option value="0.8">0.8×</option><option value="1" selected>1.0×</option><option value="1.2">1.2×</option></select></label>
    <label class="setting"><span>Time limit</span><select id="limit" aria-label="Time limit per question"><option value="12">12 sec</option><option value="15">15 sec</option><option value="20" selected>20 sec</option><option value="30">30 sec</option></select></label>
@@ -47,14 +48,14 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
  </header>
  <main class="layout">
   <section class="panel practice" aria-label="Dictation practice">
-   <div class="top"><div class="overline" id="roundLabel">Ready</div><div class="progress-count"><b id="qIndex">0</b> / <span id="qTotal">30</span></div></div>
+   <div class="top"><div class="overline" id="roundLabel">Ready</div><div class="progress-count"><b id="qIndex">0</b> / <span id="qTotal">10</span></div></div>
    <div class="track"><div class="track-fill" id="progress"></div></div>
    <div class="activity">
     <button type="button" id="play" class="sound" aria-label="Replay number" title="Replay number" disabled>
      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
     </button>
     <h2 class="activity-title" id="activityTitle">Ready to begin?</h2>
-    <p class="activity-text" id="activityText" role="status">Basic, then phone numbers, then card numbers. Ten questions in each group.</p>
+    <p class="activity-text" id="activityText" role="status">Choose Basic, Phone, or Card, then start 10 questions.</p>
     <div class="timer-wrap"><span id="timer" class="timer-value">--</span><span class="timer-label">sec</span></div>
     <div id="timerTrack" class="timer-progress"><div id="timerFill"></div></div>
    </div>
@@ -87,7 +88,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 <script>
 (()=>{'use strict';
 const el=id=>document.getElementById(id);
-const ROUND=30;
+const ROUND=10;
 const DIGIT=['oh','one','two','three','four','five','six','seven','eight','nine'];
 const PHONE_PATTERNS=[{groups:[4,4]},{groups:[3,3,4]},{groups:[5,6],first:'0'},{groups:[4,3,4]}];
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
@@ -368,7 +369,7 @@ function setUpQuestion(){
  el('activityTitle').textContent=item.kind==='card'?'Listen and type the card number':item.kind==='phone'?'Listen and type the phone number':'Listen and type the digits';
  el('activityText').textContent='Preparing audio…';el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerFill').style.width='0%';el('timerTrack').classList.remove('urgent');refreshStats();el('answer').focus({preventScroll:true});talk();
 }
-function showRoundControls(running){el('start').classList.toggle('hide',running);el('stop').classList.toggle('hide',!running);if(running)el('retry').classList.add('hide')}
+function showRoundControls(running){el('start').classList.toggle('hide',running);el('stop').classList.toggle('hide',!running);el('kind').disabled=running;if(running)el('retry').classList.add('hide')}
 function shuffle(list){
  const copy=list.slice();
  for(let i=copy.length-1;i>0;i--){
@@ -388,17 +389,23 @@ function takeItems(count,make){
  }
  return made;
 }
-function drawRound(){
+function drawBasic(){
  const lengths=shuffle([3,3,3,3,3,4,4,4,4,4]);
- const basic=[];
+ const made=[];
  const seen=new Set();
- while(basic.length<10){
-  const item=makeBasic(lengths[basic.length]);
+ while(made.length<10){
+  const item=makeBasic(lengths[made.length]);
   if(seen.has(item.digits))continue;
   seen.add(item.digits);
-  basic.push(item);
+  made.push(item);
  }
- return basic.concat(takeItems(10,()=>makeItem('phone')),takeItems(10,()=>makeItem('card')));
+ return made;
+}
+function drawRound(){
+ const kind=el('kind').value;
+ if(kind==='phone')return takeItems(10,()=>makeItem('phone'));
+ if(kind==='card')return takeItems(10,()=>makeItem('card'));
+ return drawBasic();
 }
 function startSet(preset){
  prepareDing();clearTick();clearNext();cancelSpeech();
