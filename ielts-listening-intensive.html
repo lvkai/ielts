@@ -1622,6 +1622,11 @@ function stepSentence(delta){
  if(next<0||next>=sentences.length)return;
  enter(next);
 }
+function originalVisible(){
+ const sentence=sentences[cursor];
+ if(!sentence)return false;
+ return sentence.prompt?!el('promptLine').hidden:!el('reveal').hidden;
+}
 function showOriginal(show){
  if(phase!=='practice')return;
  const sentence=sentences[cursor];
@@ -1960,11 +1965,18 @@ el('fileScrub').addEventListener('keydown',event=>{
 });
 el('prevSentence').addEventListener('click',()=>stepSentence(-1));
 el('nextSentence').addEventListener('click',()=>stepSentence(1));
+let shiftAlone=false;
 document.addEventListener('keydown',event=>{
- if(phase!=='practice'||event.altKey||event.ctrlKey||event.metaKey)return;
+ if(event.key==='Shift'){if(!event.repeat)shiftAlone=true;return}
+ if(event.shiftKey)shiftAlone=false;
+});
+document.addEventListener('keyup',event=>{
+ if(event.key!=='Shift')return;
+ const alone=shiftAlone;
+ shiftAlone=false;
+ if(!alone||phase!=='practice'||event.altKey||event.ctrlKey||event.metaKey)return;
  if(event.target&&event.target.tagName==='SELECT')return;
- if(event.key==='ArrowUp'){event.preventDefault();showOriginal(true)}
- else if(event.key==='ArrowDown'){event.preventDefault();showOriginal(false)}
+ showOriginal(!originalVisible());
 });
 el('track').addEventListener('timeupdate',()=>{if(!scrubbing)paintFileBar()});
 el('track').addEventListener('loadedmetadata',()=>paintFileBar());
