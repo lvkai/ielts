@@ -136,7 +136,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
  </section>
  <section id="stageReview" class="panel" hidden aria-label="Check sentences">
   <div class="review-head"><div><h2>Check the sentences</h2><label id="nameField" class="name-field" hidden><span>Name</span><input id="recordName" type="text" maxlength="80" autocomplete="off" aria-label="Recording name"></label><p id="saveNote" class="note"></p></div><p id="reviewCount" class="count"></p></div>
-  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined. A, B, and C mark who is speaking on a dictated line. Click the letter to change it. A Blank line is a long silence. Dictation skips it.</p>
+  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Retranscribe replaces that one stretch. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined. A, B, and C mark who is speaking on a dictated line. Click the letter to change it. A Blank line is a long silence. Dictation skips it.</p>
   <div id="sentences" class="list"></div>
   <div class="start-bar">
    <button type="button" id="another" class="secondary">Choose another file</button>
@@ -714,6 +714,8 @@ let previewIndex=-1;
 let scrubbing=false;
 let misses=0;
 let currentId=null;
+let sampleCache={id:null,samples:null};
+let workReturn='upload';
 let saveTimer=0;
 let writeChain=Promise.resolve();
 let dbPromise=null;
@@ -905,6 +907,7 @@ async function openRecording(id,mode){
   const duration=await attachTrack(audio.blob);
   if(mine!==job)return;
   currentId=id;
+  if(sampleCache.id!==id)sampleCache={id:null,samples:null};
   sentences=(record.sentences||[]).map(asSentence);
   clampSentences(duration||record.duration||0);
   blankPass=record.blankPass||0;
@@ -1104,7 +1107,7 @@ function clampSentences(duration){
   sentence.end=Math.min(Math.max(sentence.end,sentence.start+0.25),duration||sentence.end);
  });
 }
-function shareGaps(list){
+function shareGaps(list,keepEdges){
  const out=[];
  list.forEach(sentence=>{
   const prev=out.length?out[out.length-1]:null;
@@ -1124,6 +1127,7 @@ function shareGaps(list){
   }
   out.push(sentence);
  });
+ if(keepEdges)return out;
  const first=out[0];
  if(first&&!first.blank&&first.start>0.03){
   if(first.start<3)first.start=0;
@@ -1248,7 +1252,11 @@ function renderReview(){
    startHere.type='button';
    startHere.textContent='Start here';
    startHere.addEventListener('click',()=>beginPractice(index));
-   tools.append(edge('Start −0.1','start',-0.1),edge('Start +0.1','start',0.1),edge('End −0.1','end',-0.1),edge('End +0.1','end',0.1),merge,startHere);
+   const again=document.createElement('button');
+   again.type='button';
+   again.textContent='Retranscribe';
+   again.addEventListener('click',()=>retranscribeSpan(index));
+   tools.append(edge('Start −0.1','start',-0.1),edge('Start +0.1','start',0.1),edge('End −0.1','end',-0.1),edge('End +0.1','end',0.1),merge,startHere,again);
    row.append(meta,note,tools);
    host.append(row);
    return;
@@ -1311,7 +1319,11 @@ function renderReview(){
    button.addEventListener('click',()=>nudgeBoundary(index,side,delta));
    return button;
   };
-  tools.append(edge('Start −0.1', 'start', -0.1),edge('Start +0.1', 'start', 0.1),edge('End −0.1', 'end', -0.1),edge('End +0.1', 'end', 0.1),split,merge,startHere);
+  const again=document.createElement('button');
+  again.type='button';
+  again.textContent='Retranscribe';
+  again.addEventListener('click',()=>retranscribeSpan(index));
+  tools.append(edge('Start −0.1', 'start', -0.1),edge('Start +0.1', 'start', 0.1),edge('End −0.1', 'end', -0.1),edge('End +0.1', 'end', 0.1),split,merge,startHere,again);
   row.append(meta,area,tools);
   host.append(row);
  });
@@ -1871,6 +1883,80 @@ async function audioTo16k(file){
  const rendered=await offline.startRendering();
  return new Float32Array(rendered.getChannelData(0));
 }
+async function samplesForCurrent(){
+ if(sampleCache.id===currentId&&sampleCache.samples)return sampleCache.samples;
+ const saved=await getAudio(currentId);
+ if(!saved||!saved.blob)throw new Error('That saved recording could not be opened.');
+ const samples=await audioTo16k(saved.blob);
+ sampleCache={id:currentId,samples};
+ return samples;
+}
+function clipSentences(chunks,origin,from,to){
+ let built=sentencesFromWords(chunks);
+ if(!built.length)return [];
+ built.forEach(sentence=>{sentence.start+=origin;sentence.end+=origin});
+ built=shareGaps(built,true);
+ return built.map(sentence=>{
+  sentence.start=Math.max(from,sentence.start);
+  sentence.end=Math.min(to,sentence.end);
+  return sentence;
+ }).filter(sentence=>sentence.end-sentence.start>=0.2);
+}
+async function retranscribeSpan(index){
+ const sentence=sentences[index];
+ if(!sentence)return;
+ if(!currentId){
+  el('saveNote').className='note warn';
+  el('saveNote').textContent='This recording is not saved, so that stretch cannot be transcribed again.';
+  return;
+ }
+ const mine=++job;
+ const from=sentence.start;
+ const to=Math.max(sentence.end,sentence.start+0.3);
+ const speaker=sentence.speaker;
+ workReturn='review';
+ stopAudio();
+ show('work');
+ setWork('Reading this stretch…',null);
+ try{
+  const samples=await samplesForCurrent();
+  if(mine!==job)return;
+  setWork('Loading the speech model…',null);
+  const transcriber=await loadTranscriber(onDownload);
+  if(mine!==job)return;
+  const rate=16000;
+  const origin=Math.max(0,from-0.25);
+  const stop=Math.min(samples.length/rate,to+0.25);
+  const clip=samples.slice(Math.floor(origin*rate),Math.ceil(stop*rate));
+  if(clip.length<16000*0.2)throw new Error('That stretch is too short to transcribe.');
+  setWork('Transcribing this stretch…',null);
+  const options={return_timestamps:'word',chunk_length_s:28,stride_length_s:5};
+  if(activeModel===MODEL_TURBO){options.language='english';options.task='transcribe'}
+  const result=await transcriber(clip,options);
+  if(mine!==job)return;
+  const built=clipSentences(result&&result.chunks,origin,from,to);
+  if(!built.length){
+   show('review');
+   el('saveNote').className='note warn';
+   el('saveNote').textContent='No speech was found in that stretch.';
+   return;
+  }
+  built.forEach(item=>{
+   if(!item.blank&&!item.prompt&&item.text.trim()&&speaker)item.speaker=speaker;
+  });
+  sentences.splice(index,1,...built);
+  remember();
+  renderReview();
+  show('review');
+  el('saveNote').className='note';
+  el('saveNote').textContent='That stretch was transcribed again.';
+ }catch(error){
+  if(mine!==job)return;
+  show('review');
+  el('saveNote').className='note warn';
+  el('saveNote').textContent=(error&&error.message?error.message:'That stretch could not be transcribed.');
+ }
+}
 function attachTrack(file){
  if(trackUrl)URL.revokeObjectURL(trackUrl);
  trackUrl=URL.createObjectURL(file);
@@ -1896,6 +1982,8 @@ async function startJob(file){
   updateRecording(previous,patch);
  }
  downloads.clear();
+ workReturn='upload';
+ sampleCache={id:null,samples:null};
  show('work');
  setWork('Preparing the recording…',null);
  try{
@@ -1903,6 +1991,7 @@ async function startJob(file){
   if(mine!==job)return;
   setWork('Reading the audio…',null);
   const samples=await audioTo16k(file);
+  sampleCache={id:null,samples};
   if(mine!==job)return;
   setWork('Loading the speech model…',null);
   const transcriber=await loadTranscriber(onDownload);
@@ -1959,6 +2048,7 @@ async function startJob(file){
   try{
    const name=stem(file);
    currentId=await createRecording(file,name,duration);
+   sampleCache.id=currentId;
    analysisVersion=ANALYSIS;
    if(mine!==job)return;
    el('recordName').value=name;
@@ -2006,7 +2096,10 @@ el('drop').addEventListener('drop',event=>{
  const file=event.dataTransfer.files&&event.dataTransfer.files[0];
  if(file)startJob(file);
 });
-el('cancel').addEventListener('click',resetToUpload);
+el('cancel').addEventListener('click',()=>{
+ if(workReturn==='review'&&sentences.length){job++;stopAudio();show('review');return}
+ resetToUpload();
+});
 el('another').addEventListener('click',resetToUpload);
 el('doneAnother').addEventListener('click',resetToUpload);
 el('begin').addEventListener('click',()=>beginPractice(0));
