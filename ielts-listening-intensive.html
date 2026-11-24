@@ -168,6 +168,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
     <button type="button" id="show" class="secondary" hidden>Show sentence</button>
     <button type="button" id="skipPrompt" class="secondary" hidden>Continue</button>
     <label class="setting"><span>Speed</span><select id="speed" aria-label="Playback speed"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1" selected>1.0×</option><option value="1.15">1.15×</option></select></label>
+    <label class="setting"><span>Repeats</span><select id="repeats" aria-label="Times to repeat each sentence"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="inf" selected>Infinite</option></select></label>
    </div>
    <p id="promptLine" class="prompt-line" hidden></p>
   </div>
@@ -189,7 +190,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <button type="button" id="doneAnother" class="secondary">Choose another file</button>
   </div>
  </section>
- <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. A correct sentence, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play.</p>
+ <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. A correct sentence, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Repeats sets how many times a sentence plays before it stops. Infinite keeps going until you move on.</p>
  <div id="toast" class="toast" hidden role="dialog" aria-modal="true" aria-labelledby="toastTitle">
   <div class="toast-card">
    <h2 id="toastTitle">Transcribing</h2>
@@ -1109,7 +1110,14 @@ function commitSeek(time){
  }
  paintFileBar(at);
 }
+const REPEAT_KEY='ielts-intensive-repeats';
 function rate(){return Number(el('speed').value)||1}
+function repeatLimit(){
+ const value=el('repeats').value;
+ if(value==='inf')return Infinity;
+ const count=Number(value);
+ return count===1||count===2||count===3||count===5?count:Infinity;
+}
 function dictateSentences(){return sentences.filter(sentence=>!sentence.prompt&&sentence.text.trim())}
 function clampSentences(duration){
  sentences.forEach(sentence=>{
@@ -1527,6 +1535,7 @@ function loopSentence(sentence,startAt){
  const first=Number.isFinite(startAt)?Math.min(to-0.08,Math.max(from,startAt)):from;
  let opened=false;
  let armed=false;
+ let plays=0;
  const arm=()=>{armed=true};
  const play=()=>{if(paused||token!==loopToken)return;const target=opened?from:first;opened=true;seekAndPlay(audio,target,token,ok=>{if(ok)arm();else el('feedback').textContent='Tap the speaker to play.'})};
  const watch=()=>{
@@ -1536,8 +1545,10 @@ function loopSentence(sentence,startAt){
   paintFileBar();
   if(audio.currentTime>=to-0.04){
    armed=false;
+   plays++;
    audio.pause();
    el('speaker').classList.remove('playing');
+   if(plays>=repeatLimit())return;
    loopTimer=setTimeout(()=>{if(token!==loopToken)return;if(paused){watch();return}play();watch()},2000);
   }else loopTimer=setTimeout(watch,40);
  };
@@ -2207,6 +2218,11 @@ el('answer').addEventListener('keydown',event=>{
  if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();checkAnswer()}
 });
 el('speed').addEventListener('change',()=>{const audio=el('track');if(audio.src)audio.playbackRate=rate()});
+try{
+ const savedRepeats=localStorage.getItem(REPEAT_KEY);
+ if(savedRepeats&&el('repeats').querySelector('option[value="'+savedRepeats+'"]'))el('repeats').value=savedRepeats;
+}catch(_){}
+el('repeats').addEventListener('change',()=>{try{localStorage.setItem(REPEAT_KEY,el('repeats').value)}catch(_){}});
 el('recordName').addEventListener('input',remember);
 el('recordName').addEventListener('blur',()=>{
  if(!el('recordName').value.trim())el('recordName').value='Recording';
