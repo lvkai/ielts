@@ -47,7 +47,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .sentence{border:1px solid var(--line);border-radius:14px;padding:12px}
 .sentence.prompt,.sentence.blank{background:#f7f8fb}
 .blank-label{margin:0;color:var(--muted);font-size:14px;font-weight:650}
-.meta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.meta-actions{display:flex;align-items:center;gap:8px;margin-left:auto}.play{border:1px solid #d8e1f0;background:#fff;color:var(--blue);border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}.play.playing{background:var(--blue);color:#fff;border-color:var(--blue)}
+.meta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.meta-actions{display:flex;align-items:center;gap:10px;margin-left:auto}.meta-pair{display:flex;align-items:center;gap:6px}.meta-sep{width:1px;align-self:stretch;background:#d8e1f0;margin:7px 0;flex:none}.play,.meta-actions .flag,.meta-actions button.who{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1;box-sizing:border-box}.play{border:1px solid #d8e1f0;background:#fff;color:var(--blue);border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}.play.playing{background:var(--blue);color:#fff;border-color:var(--blue)}
 .meta b{font-size:13px;font-variant-numeric:tabular-nums}
 .meta span{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
 .flag{border:1px solid #d8e1f0;background:#fff;color:#455874;border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}
@@ -136,7 +136,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
  </section>
  <section id="stageReview" class="panel" hidden aria-label="Check sentences">
   <div class="review-head"><div><h2>Check the sentences</h2><label id="nameField" class="name-field" hidden><span>Name</span><input id="recordName" type="text" maxlength="80" autocomplete="off" aria-label="Recording name"></label><p id="saveNote" class="note"></p></div><p id="reviewCount" class="count"></p></div>
-  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Retranscribe replaces that one stretch. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined. A, B, and C mark who is speaking on a dictated line. Click the letter to change it. A Blank line is a long silence. Dictation skips it.</p>
+  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Transcribe replaces that one stretch. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined. A, B, and C mark who is speaking on a dictated line. Click the letter to change it. A Blank line is a long silence. Dictation skips it.</p>
   <div id="sentences" class="list"></div>
   <div class="start-bar">
    <button type="button" id="another" class="secondary">Choose another file</button>
@@ -1213,6 +1213,27 @@ function playButton(index){
  play.addEventListener('click',()=>previewSentence(index));
  return play;
 }
+function transcribeButton(index){
+ const button=document.createElement('button');
+ button.type='button';
+ button.className='play';
+ button.textContent='Transcribe';
+ button.setAttribute('aria-label','Transcribe sentence '+(index+1));
+ button.addEventListener('click',()=>retranscribeSpan(index));
+ return button;
+}
+function metaSeparator(){
+ const sep=document.createElement('span');
+ sep.className='meta-sep';
+ sep.setAttribute('aria-hidden','true');
+ return sep;
+}
+function actionPair(...nodes){
+ const pair=document.createElement('div');
+ pair.className='meta-pair';
+ pair.append(...nodes);
+ return pair;
+}
 function renderReview(){
  const host=el('sentences');
  host.replaceChildren();
@@ -1224,13 +1245,15 @@ function renderReview(){
    meta.className='meta';
    const title=document.createElement('b');
    title.textContent=String(index+1).padStart(2,'0')+'  '+clockFine(sentence.start)+'–'+clockFine(sentence.end)+'  '+sentenceLength(sentence).toFixed(1)+'s';
-   const label=document.createElement('span');
-   label.className='flag';
-   label.textContent='Blank';
+   const blankType=document.createElement('button');
+   blankType.type='button';
+   blankType.className='flag';
+   blankType.textContent='Blank';
+   blankType.setAttribute('aria-pressed','true');
    const actions=document.createElement('div');
    actions.className='meta-actions';
-   actions.append(playButton(index));
-   meta.append(title,label,actions);
+   actions.append(actionPair(playButton(index),transcribeButton(index)),metaSeparator(),actionPair(blankType));
+   meta.append(title,actions);
    const note=document.createElement('p');
    note.className='blank-label';
    note.textContent='Blank';
@@ -1252,11 +1275,7 @@ function renderReview(){
    startHere.type='button';
    startHere.textContent='Start here';
    startHere.addEventListener('click',()=>beginPractice(index));
-   const again=document.createElement('button');
-   again.type='button';
-   again.textContent='Retranscribe';
-   again.addEventListener('click',()=>retranscribeSpan(index));
-   tools.append(edge('Start −0.1','start',-0.1),edge('Start +0.1','start',0.1),edge('End −0.1','end',-0.1),edge('End +0.1','end',0.1),merge,startHere,again);
+   tools.append(edge('Start −0.1','start',-0.1),edge('Start +0.1','start',0.1),edge('End −0.1','end',-0.1),edge('End +0.1','end',0.1),merge,startHere);
    row.append(meta,note,tools);
    host.append(row);
    return;
@@ -1275,6 +1294,7 @@ function renderReview(){
   flag.addEventListener('click',()=>{sentence.prompt=!sentence.prompt;if(sentence.prompt)delete sentence.speaker;renderReview();remember()});
   const actions=document.createElement('div');
   actions.className='meta-actions';
+  const tail=[];
   if(!sentence.prompt){
    const who=document.createElement('button');
    who.type='button';
@@ -1288,9 +1308,10 @@ function renderReview(){
     renderSentenceNav();
     remember();
    });
-   actions.append(who);
+   tail.push(who);
   }
-  actions.append(playButton(index),flag);
+  tail.push(flag);
+  actions.append(actionPair(playButton(index),transcribeButton(index)),metaSeparator(),actionPair(...tail));
   meta.append(title,actions);
   const area=document.createElement('textarea');
   area.value=sentence.text||'';
@@ -1319,11 +1340,7 @@ function renderReview(){
    button.addEventListener('click',()=>nudgeBoundary(index,side,delta));
    return button;
   };
-  const again=document.createElement('button');
-  again.type='button';
-  again.textContent='Retranscribe';
-  again.addEventListener('click',()=>retranscribeSpan(index));
-  tools.append(edge('Start −0.1', 'start', -0.1),edge('Start +0.1', 'start', 0.1),edge('End −0.1', 'end', -0.1),edge('End +0.1', 'end', 0.1),split,merge,startHere,again);
+  tools.append(edge('Start −0.1', 'start', -0.1),edge('Start +0.1', 'start', 0.1),edge('End −0.1', 'end', -0.1),edge('End +0.1', 'end', 0.1),split,merge,startHere);
   row.append(meta,area,tools);
   host.append(row);
  });
@@ -1331,7 +1348,7 @@ function renderReview(){
  paintPreview();
 }
 function paintPreview(){
- document.querySelectorAll('.sentence .play').forEach(button=>{
+ document.querySelectorAll('.sentence .play[data-index]').forEach(button=>{
   const index=Number(button.dataset.index);
   const on=index===previewIndex;
   button.classList.toggle('playing',on);
