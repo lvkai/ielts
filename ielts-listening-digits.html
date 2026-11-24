@@ -65,7 +65,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="input-area">
     <label class="answer-label" for="answer">Your 10 digits</label>
     <div class="answer-row"><input id="answer" type="text" inputmode="numeric" maxlength="10" autocomplete="off" spellcheck="false" disabled><button id="submit" class="primary" type="button" disabled>Check</button></div>
-    <div class="below"><p class="tip">Type while it plays. Press Enter to check.</p><span id="feedback" class="feedback" aria-live="polite"></span></div>
+    <div class="below"><p class="tip">It checks itself after 10 digits.</p><span id="feedback" class="feedback" aria-live="polite"></span></div>
    </div>
    <div class="actions"><button id="start" class="primary" type="button">Start round</button><button id="next" class="primary hide" type="button">Next</button><button id="stop" class="secondary stop hide" type="button">Stop</button></div>
   </section>
@@ -332,7 +332,10 @@ el('stop').addEventListener('click',stopRound);
 el('next').addEventListener('click',nextQuestion);
 el('play').addEventListener('click',()=>{if(phase==='speaking'||phase==='answering'||phase==='review')playDigits()});
 el('submit').addEventListener('click',checkAnswer);
-el('answer').addEventListener('input',()=>{el('answer').value=el('answer').value.replace(/\D/g,'').slice(0,COUNT)});
+el('answer').addEventListener('input',()=>{
+ el('answer').value=el('answer').value.replace(/\D/g,'').slice(0,COUNT);
+ if((phase==='speaking'||phase==='answering')&&el('answer').value.length===COUNT)checkAnswer();
+});
 el('answer').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();if(phase==='review')nextQuestion();else checkAnswer()}});
 fillVoices();
 if(speechOK)window.speechSynthesis.addEventListener('voiceschanged',fillVoices);
