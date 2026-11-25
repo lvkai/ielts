@@ -83,7 +83,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .diff mark.good{background:#e5f6ee;color:#0f6b48}
 .reveal{margin-top:12px;padding:12px 14px;border-radius:12px;background:#f4f7fb;line-height:1.55}
 .practice-layout{display:flex;align-items:flex-start;gap:16px}.practice-main{flex:1;min-width:0}
-.sentence-nav{width:156px;flex:none;display:flex;flex-direction:column;gap:4px;max-height:min(70vh,640px);overflow:auto;padding-right:2px}
+.sentence-nav{width:196px;flex:none;display:flex;flex-direction:column;gap:4px;max-height:min(70vh,640px);overflow:auto;padding-right:2px}
 .practice-name{margin:0 0 14px;font-size:18px;font-weight:750;letter-spacing:-.02em;line-height:1.35;overflow-wrap:anywhere}
 .jump{display:flex;align-items:center;gap:6px;width:100%;border:0;background:transparent;border-radius:10px;min-height:34px;padding:0 6px;color:var(--text);font-size:13px;font-weight:750;text-align:left;white-space:nowrap}
 .jump.blank{color:var(--muted)}
@@ -1781,11 +1781,11 @@ function renderSentenceNav(){
   const time=document.createElement('span');
   time.className='nav-time';
   const length=sentenceLength(sentence);
-  time.textContent=length.toFixed(1)+'s';
+  time.textContent=clockFine(sentence.start)+' - '+length.toFixed(1)+'s';
   const speaker=!sentence.blank&&!sentence.prompt?(sentence.speaker||'A'):'';
   const parts=['Sentence '+(index+1)];
   if(speaker)parts.push('speaker '+speaker);
-  parts.push(length.toFixed(1)+' seconds',sentence.blank?'blank':sentence.prompt?'instruction':'dictation');
+  parts.push(clockFine(sentence.start),length.toFixed(1)+' seconds',sentence.blank?'blank':sentence.prompt?'instruction':'dictation');
   button.setAttribute('aria-label',parts.join(', '));
   if(sentence.blank)button.classList.add('blank');
   if(sentence.blank||sentence.prompt){
