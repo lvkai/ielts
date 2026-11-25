@@ -1359,8 +1359,9 @@ function speakerButton(sentence){
  who.textContent=sentence.speaker||'A';
  who.setAttribute('aria-label','Speaker '+(sentence.speaker||'A')+'. Click for the next speaker.');
  who.addEventListener('click',()=>{
-  const next={A:'B',B:'C',C:'A'};
-  sentence.speaker=next[sentence.speaker]||'A';
+  const order=['A','B','C'];
+  const current=order.includes(sentence.speaker)?sentence.speaker:'A';
+  sentence.speaker=order[(order.indexOf(current)+1)%order.length];
   renderReview();
   renderSentenceNav();
   remember();
