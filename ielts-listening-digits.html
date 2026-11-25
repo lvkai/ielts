@@ -44,12 +44,12 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
   <div>
    <div class="eyebrow">IELTS LISTENING TRAINER</div>
    <h1 class="heading">Digit Dictation</h1>
-   <p class="sub">Each round has 10 questions. Set how many digits each question has, and how many are spoken together before the gap. The same digit repeated inside a group is spoken as double or triple. Type while they play. 0 is spoken as oh.</p>
+   <p class="sub">Each round has 10 questions. Total is how many digits a question has. Group is how many are spoken together before the gap. The same digit repeated inside a group is spoken as double or triple. Type while they play. 0 is spoken as oh.</p>
   </div>
   <div class="settings" aria-label="Voice, grouping, and gap">
    <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
-   <label class="setting"><span>Digits</span><input id="length" type="number" inputmode="numeric" min="1" max="30" value="12" aria-label="Digits in each question"></label>
-   <label class="setting"><span>At a time</span><input id="count" type="number" inputmode="numeric" min="1" max="30" value="1" aria-label="Digits spoken before each gap"></label>
+   <label class="setting"><span>Total</span><input id="length" type="number" inputmode="numeric" min="1" max="30" value="12" aria-label="Total digits in each question"></label>
+   <label class="setting"><span>Group</span><input id="count" type="number" inputmode="numeric" min="1" max="30" value="1" aria-label="Digits in each group"></label>
    <label class="setting"><span>Gap</span><select id="gap" aria-label="Gap between digits"><option value="0">0 s</option><option value="100">0.1 s</option><option value="200">0.2 s</option><option value="300">0.3 s</option><option value="500" selected>0.5 s</option></select></label>
   </div>
  </header>
@@ -69,7 +69,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
     <div class="answer-row"><input id="answer" type="text" inputmode="numeric" maxlength="12" autocomplete="off" spellcheck="false" disabled><button id="submit" class="primary" type="button" disabled>Check</button></div>
     <div class="below"><p class="tip" id="tip">A full answer is checked in place. Enter starts the next question.</p><span id="feedback" class="feedback" aria-live="polite"></span></div>
    </div>
-   <div class="actions"><button id="start" class="primary" type="button">Start round</button><button id="next" class="primary hide" type="button">Next</button><button id="stop" class="secondary stop hide" type="button">Stop</button></div>
+   <div class="actions"><button id="start" class="primary" type="button">Start round</button><button id="missed" class="secondary hide" type="button">Missed</button><button id="next" class="primary hide" type="button">Next</button><button id="stop" class="secondary stop hide" type="button">Stop</button></div>
   </section>
   <aside class="panel results" aria-label="Question results">
    <div class="result-top"><h2>Results</h2><div class="result-metrics"><span class="score">Correct <b id="score">0</b> / <b id="completed">0</b></span><span class="score">Average <b id="avgTime">—</b></span></div></div>
@@ -78,15 +78,15 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <p class="footnote" id="summary">The answer stays hidden until you check.</p>
   </aside>
  </main>
- <p class="bottom">Digits in one group are spoken together. A repeated digit in that group is double or triple. The gap runs before the next group.</p>
+ <p class="bottom">Digits in one group are spoken together. A repeated digit in that group is double or triple. The gap runs before the next group. A missed group stays in this browser and can be practiced.</p>
 </div>
 <script>
 (()=>{'use strict';
 const el=id=>document.getElementById(id);
 const DIGIT=['oh','one','two','three','four','five','six','seven','eight','nine'];
-const ROUND=10,MAX_DIGITS=30,VOICE_KEY='ielts-digit-voice',GAP_KEY='ielts-digit-gap',GROUP_KEY='ielts-digit-group',LENGTH_KEY='ielts-digit-length';
+const ROUND=10,MAX_DIGITS=30,VOICE_KEY='ielts-digit-voice',GAP_KEY='ielts-digit-gap',GROUP_KEY='ielts-digit-group',LENGTH_KEY='ielts-digit-length',MISS_KEY='ielts-digit-misses';
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
-let items=[],answers=[],position=0,phase='idle',speechGeneration=0,gapTimer=null,held=null,heardAt=null,clockTimer=null;
+let items=[],answers=[],position=0,phase='idle',speechGeneration=0,gapTimer=null,held=null,heardAt=null,clockTimer=null,questionGroup=1,missedRound=false;
 function randomBelow(n){
  if(n<=1)return 0;
  if(globalThis.crypto?.getRandomValues){
@@ -127,8 +127,51 @@ function speakRun(digit,count){
  else if(left===1)words.push(name);
  return words;
 }
+function readMisses(){
+ try{
+  const list=JSON.parse(localStorage.getItem(MISS_KEY)||'[]');
+  return Array.isArray(list)?list.filter(item=>typeof item==='string'&&/^[0-9]+$/.test(item)&&item.length<=MAX_DIGITS):[];
+ }catch(_){return []}
+}
+function writeMisses(list){
+ try{localStorage.setItem(MISS_KEY,JSON.stringify(list.slice(0,100)))}catch(_){}
+}
+function noteGroups(digits,typed,size){
+ const step=Math.max(1,Math.min(size||digits.length,digits.length));
+ const missed=readMisses();
+ const wrong=new Set();
+ const right=new Set();
+ for(let i=0;i<digits.length;i+=step){
+  const correct=digits.slice(i,i+step);
+  if(correct===typed.slice(i,i+step))right.add(correct);
+  else wrong.add(correct);
+ }
+ wrong.forEach(group=>{
+  const at=missed.indexOf(group);
+  if(at>=0)missed.splice(at,1);
+  missed.unshift(group);
+ });
+ right.forEach(group=>{
+  if(wrong.has(group))return;
+  const at=missed.indexOf(group);
+  if(at>=0)missed.splice(at,1);
+ });
+ writeMisses(missed);
+}
+function formatDigits(text,size){
+ const source=String(text||'');
+ if(!source)return '';
+ const step=Math.max(1,Math.min(size||source.length,source.length));
+ const parts=[];
+ for(let i=0;i<source.length;i+=step)parts.push(source.slice(i,i+step));
+ return parts.join(' ');
+}
+function formattedMax(count,size){
+ const step=Math.max(1,size||count||1);
+ return count+Math.max(0,Math.ceil(count/step)-1);
+}
 function spokenGroups(digits){
- const size=groupSize(digits.length);
+ const size=Math.max(1,Math.min(questionGroup||groupSize(digits.length),digits.length));
  const groups=[];
  for(let i=0;i<digits.length;i+=size){
   const slice=digits.slice(i,i+size);
@@ -295,11 +338,17 @@ function playDigits(){
  };
  setTimeout(()=>{if(token===speechGeneration)speakAt(0)},40);
 }
-function digitLine(text,compare){
+function digitLine(text,compare,size){
  const span=document.createElement('span');
  const source=String(text||'');
  if(!source){span.className='hidden-val';span.textContent='—';return span}
+ const step=Math.max(1,Math.min(size||source.length,source.length));
  for(let i=0;i<source.length;i++){
+  if(i>0&&i%step===0){
+   const gap=document.createElement('span');
+   gap.textContent=' ';
+   span.append(gap);
+  }
   const part=document.createElement('span');
   part.textContent=source[i];
   if(compare&&source[i]!==compare[i])part.className='miss';
@@ -310,7 +359,8 @@ function digitLine(text,compare){
 function renderRows(){
  const host=el('rows');
  host.replaceChildren();
- for(let i=0;i<ROUND;i++){
+ const rows=phase==='idle'?ROUND:(items.length||ROUND);
+ for(let i=0;i<rows;i++){
   const result=answers[i];
   const active=i===position&&(phase==='speaking'||phase==='answering'||phase==='review');
   const row=document.createElement('div');
@@ -318,8 +368,8 @@ function renderRows(){
   const number=document.createElement('span');
   number.className='num';
   number.textContent=String(i+1).padStart(2,'0');
-  const entered=result?digitLine(result.input,result.digits):digitLine('');
-  const truth=result?digitLine(result.digits,result.input):digitLine('');
+  const entered=result?digitLine(result.input,result.digits,result.group):digitLine('');
+  const truth=result?digitLine(result.digits,result.input,result.group):digitLine('');
   if(result)truth.classList.add('truth');
   const status=document.createElement('span');
   status.className='status '+(result?(result.ok?'good':'bad'):(active?'current':'mute'));
@@ -332,9 +382,11 @@ function renderRows(){
  }
 }
 function refresh(){
- el('qIndex').textContent=phase==='idle'?'0':phase==='complete'?String(ROUND):String(Math.min(position+1,ROUND));
+ const total=phase==='idle'?ROUND:(items.length||ROUND);
+ el('qTotal').textContent=String(total);
+ el('qIndex').textContent=phase==='idle'?'0':phase==='complete'?String(total):String(Math.min(position+1,total));
  el('roundLabel').textContent=phase==='idle'?'Ready':phase==='complete'?'Round complete':`Question ${position+1} · ${phase==='speaking'?'Playing':phase==='review'?'Checked':'Your turn'}`;
- el('progress').style.width=(answers.length/ROUND*100)+'%';
+ el('progress').style.width=(total?answers.length/total*100:0)+'%';
  el('score').textContent=String(answers.filter(item=>item.ok).length);
  el('completed').textContent=String(answers.length);
  const timed=answers.filter(item=>typeof item.elapsed==='number');
@@ -348,7 +400,10 @@ function showControls(){
  el('start').textContent=phase==='complete'?'Start another round':'Start round';
  el('stop').classList.toggle('hide',!running);
  el('next').classList.toggle('hide',phase!=='review');
- el('next').textContent=position+1>=ROUND?'Finish':'Next';
+ el('next').textContent=position+1>=items.length?'Finish':'Next';
+ const misses=readMisses().length;
+ el('missed').classList.toggle('hide',running||!misses);
+ el('missed').textContent='Missed '+misses;
  el('answer').readOnly=phase==='review';
  el('play').disabled=!running;
  el('voice').disabled=running||!usableVoices().length;
@@ -357,8 +412,9 @@ function openQuestion(){
  phase='speaking';
  resetClock();
  const count=items[position].length;
+ questionGroup=missedRound?count:groupSize(count);
  el('answer').value='';
- el('answer').maxLength=count;
+ el('answer').maxLength=formattedMax(count,questionGroup);
  el('answer').disabled=false;
  el('submit').disabled=false;
  el('answerLabel').textContent='Your '+count+' digits';
@@ -375,6 +431,7 @@ function openQuestion(){
 function startRound(){
  if(!usableVoices().length){el('activityText').textContent='Add a Google voice in Chrome, or a Windows Natural voice such as Sonia or Ryan.';return}
  cancelSpeech();
+ missedRound=false;
  items=Array.from({length:ROUND},randomDigits);
  answers=[];
  position=0;
@@ -384,6 +441,7 @@ function startRound(){
 function stopRound(){
  cancelSpeech();
  resetClock();
+ missedRound=false;
  items=[];answers=[];position=0;phase='idle';
  el('answer').value='';el('answer').disabled=true;el('answer').readOnly=false;el('submit').disabled=true;
  el('feedback').textContent='';el('feedback').className='feedback';
@@ -402,14 +460,16 @@ function checkAnswer(){
  clearClock();
  const elapsed=heardAt===null?0:(performance.now()-heardAt)/1000;
  const ok=typed===digits;
- answers.push({digits,input:typed,ok,elapsed});
+ noteGroups(digits,typed,questionGroup);
+ answers.push({digits,input:typed,ok,elapsed,group:questionGroup});
  phase='review';
+ el('answer').value=formatDigits(typed,questionGroup);
  el('submit').disabled=true;
  el('feedback').textContent=ok?'Correct':'Check the marked digits';
  el('feedback').className='feedback '+(ok?'ok':'no');
  el('activityTitle').textContent=ok?'Matched':'Not the same sequence';
- el('activityText').textContent=digits.split('').join(' ');
- el('tip').textContent=position+1>=ROUND?'Press Enter to finish this round.':'Press Enter for the next question.';
+ el('activityText').textContent=formatDigits(digits,questionGroup);
+ el('tip').textContent=position+1>=items.length?'Press Enter to finish this round.':'Press Enter for the next question.';
  refresh();
  showControls();
  el('answer').focus();
@@ -417,7 +477,7 @@ function checkAnswer(){
 function nextQuestion(){
  if(phase!=='review')return;
  position++;
- if(position>=ROUND){
+ if(position>=items.length){
   phase='complete';
   resetClock();
   el('answer').disabled=true;el('answer').readOnly=false;el('submit').disabled=true;
@@ -443,7 +503,20 @@ el('count').addEventListener('change',()=>{commitNumber(el('count'),1,MAX_DIGITS
 try{const savedGap=localStorage.getItem(GAP_KEY);if(savedGap&&el('gap').querySelector(`option[value="${savedGap}"]`))el('gap').value=savedGap}catch(_){}
 restoreNumber(el('length'),LENGTH_KEY,12,MAX_DIGITS);
 restoreNumber(el('count'),GROUP_KEY,1,MAX_DIGITS);
+function startMissed(){
+ const pool=readMisses().slice(0,ROUND);
+ if(!pool.length)return;
+ if(!usableVoices().length){el('activityText').textContent='Add a Google voice in Chrome, or a Windows Natural voice such as Sonia or Ryan.';return}
+ cancelSpeech();
+ missedRound=true;
+ items=pool;
+ answers=[];
+ position=0;
+ el('summary').textContent='Each question is a group you missed.';
+ openQuestion();
+}
 el('start').addEventListener('click',startRound);
+el('missed').addEventListener('click',startMissed);
 el('stop').addEventListener('click',stopRound);
 el('next').addEventListener('click',nextQuestion);
 el('play').addEventListener('click',()=>{
@@ -453,9 +526,23 @@ el('play').addEventListener('click',()=>{
 });
 el('submit').addEventListener('click',checkAnswer);
 el('answer').addEventListener('input',()=>{
+ if(phase!=='speaking'&&phase!=='answering')return;
  const count=activeLength();
- el('answer').value=el('answer').value.replace(/\D/g,'').slice(0,count);
- if((phase==='speaking'||phase==='answering')&&el('answer').value.length===count)checkAnswer();
+ const raw=el('answer').value;
+ const caret=el('answer').selectionStart||0;
+ const digitsBefore=(raw.slice(0,caret).match(/\d/g)||[]).length;
+ const typed=raw.replace(/\D/g,'').slice(0,count);
+ el('answer').value=formatDigits(typed,questionGroup);
+ const formatted=el('answer').value;
+ let seen=0,pos=formatted.length;
+ for(let i=0;i<formatted.length;i++){
+  if(/\d/.test(formatted[i])){
+   if(seen===Math.min(digitsBefore,typed.length)){pos=i;break}
+   seen++;
+  }
+ }
+ el('answer').setSelectionRange(pos,pos);
+ if(typed.length===count)checkAnswer();
 });
 el('answer').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();if(phase==='review')nextQuestion();else checkAnswer()}});
 fillVoices();
