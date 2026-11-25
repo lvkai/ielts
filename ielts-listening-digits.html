@@ -33,6 +33,8 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 .results{padding:23px 23px 20px;min-height:548px}.result-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.result-top h2{font-size:17px;margin:0;letter-spacing:-.02em}.result-metrics{display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-end}.score{font-size:12px;color:var(--muted)}.score b{font-size:17px;color:var(--text);font-variant-numeric:tabular-nums}
 .cols,.res-row{display:grid;grid-template-columns:28px minmax(0,1fr) minmax(0,1fr) 52px 58px;align-items:center;gap:6px}.cols{font-size:11px;color:var(--muted);padding:15px 8px 11px;border-bottom:1px solid var(--line)}.res-row{min-height:46px;border-bottom:1px solid #f0f3f7;padding:9px 8px;font-size:13px;font-variant-numeric:tabular-nums;letter-spacing:.04em}.res-row:last-child{border-bottom:0}.res-row.active{border-radius:9px;background:#f2f5ff}.num{font-size:12px;color:#a0acc0;letter-spacing:0}.hidden-val{color:#c7ceda}.truth{font-weight:760}.miss{color:var(--red);font-weight:800}.status{font-size:19px;font-weight:800;line-height:1}.status.good{color:var(--green)}.status.bad{color:var(--red)}.status.mute{color:#9aa7ba;font-size:12px}.status.current{color:var(--blue);font-size:12px}.time-col,.time-used{text-align:right;letter-spacing:0}.time-used{font-size:12px;font-weight:700;color:var(--muted)}
 .footnote{margin-top:15px;padding-top:15px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.6}.bottom{margin-top:22px;text-align:center;font-size:12px;line-height:1.7;color:var(--muted)}
+.history-links{display:flex;gap:12px;margin-top:6px}.text-link{border:0;padding:0;background:none;color:var(--blue);font-size:13px;font-weight:750;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.text-link:hover{color:#2148c4}
+.stats-dialog{border:0;border-radius:16px;padding:0;width:min(420px,calc(100vw - 28px));max-height:min(72vh,520px);color:var(--text);box-shadow:0 18px 50px rgba(24,35,57,.22)}.stats-dialog::backdrop{background:rgba(24,35,57,.38)}.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}.dialog-head h3{margin:0;font-size:16px}.dialog-close{width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:var(--red);font-size:18px;font-weight:700;line-height:1;cursor:pointer}.dialog-close:hover{background:#fdecee}.dialog-scroll{overflow:auto;max-height:min(46vh,340px)}.stats-table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}.stats-table th,.stats-table td{padding:9px 16px;text-align:left}.stats-table th{font-size:11px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line)}.stats-table td:last-child,.stats-table th:last-child{text-align:right}.dialog-empty{margin:0;padding:22px 16px;color:var(--muted);font-size:13px}.dialog-actions{display:flex;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line)}.dialog-actions .primary{min-height:44px;height:44px;padding:0 16px;font-size:13px}
 @media(max-width:800px){.wrap{padding:27px 16px 34px}header{align-items:start;flex-direction:column}.settings,.setting,.setting select,.setting input{width:100%}.layout{grid-template-columns:1fr}.practice,.results{min-height:0}.activity{min-height:220px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
 </style>
@@ -69,22 +71,32 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
     <div class="answer-row"><input id="answer" type="text" inputmode="numeric" maxlength="12" autocomplete="off" spellcheck="false" disabled><button id="submit" class="primary" type="button" disabled>Check</button></div>
     <div class="below"><p class="tip" id="tip">A full answer is checked in place. Enter starts the next question.</p><span id="feedback" class="feedback" aria-live="polite"></span></div>
    </div>
-   <div class="actions"><button id="start" class="primary" type="button">Start round</button><button id="missed" class="secondary hide" type="button">Missed</button><button id="next" class="primary hide" type="button">Next</button><button id="stop" class="secondary stop hide" type="button">Stop</button></div>
+   <div class="actions"><button id="start" class="primary" type="button">Start round</button><button id="next" class="primary hide" type="button">Next</button><button id="stop" class="secondary stop hide" type="button">Stop</button></div>
   </section>
   <aside class="panel results" aria-label="Question results">
-   <div class="result-top"><h2>Results</h2><div class="result-metrics"><span class="score">Correct <b id="score">0</b> / <b id="completed">0</b></span><span class="score">Average <b id="avgTime">—</b></span></div></div>
+   <div class="result-top"><div><h2>Results</h2><div class="history-links"><button type="button" id="openMissed" class="text-link">Missed</button><button type="button" id="openSlow" class="text-link">Slowest</button></div></div><div class="result-metrics"><span class="score">Correct <b id="score">0</b> / <b id="completed">0</b></span><span class="score">Average <b id="avgTime">—</b></span></div></div>
    <div class="cols"><span>No.</span><span>Correct</span><span>Yours</span><span>Result</span><span class="time-col">Time</span></div>
    <div id="rows"></div>
    <p class="footnote" id="summary">The answer stays hidden until you check.</p>
   </aside>
  </main>
- <p class="bottom">Digits in one group are spoken together. A repeated digit in that group is double or triple. The gap runs before the next group. A missed group stays in this browser and can be practiced.</p>
+ <p class="bottom">Digits in one group are spoken together. A repeated digit in that group is double or triple. The gap runs before the next group. Missed groups and answer times stay in this browser. Three correct answers remove one miss.</p>
 </div>
+<dialog id="missDialog" class="stats-dialog" aria-labelledby="missTitle">
+ <div class="dialog-head"><h3 id="missTitle">Missed</h3><button type="button" id="closeMiss" class="dialog-close" aria-label="Close">×</button></div>
+ <div class="dialog-scroll"><table class="stats-table"><thead><tr><th>Group</th><th>Misses</th></tr></thead><tbody id="missBody"></tbody></table><p id="missEmpty" class="dialog-empty hide">No missed groups yet.</p></div>
+ <div class="dialog-actions"><button type="button" id="practiceMissedDialog" class="primary" disabled>Practice these</button></div>
+</dialog>
+<dialog id="slowDialog" class="stats-dialog" aria-labelledby="slowTitle">
+ <div class="dialog-head"><h3 id="slowTitle">Slowest</h3><button type="button" id="closeSlow" class="dialog-close" aria-label="Close">×</button></div>
+ <div class="dialog-scroll"><table class="stats-table"><thead><tr><th>Group</th><th>Time</th></tr></thead><tbody id="slowBody"></tbody></table><p id="slowEmpty" class="dialog-empty hide">No timed groups yet.</p></div>
+ <div class="dialog-actions"><button type="button" id="practiceSlowDialog" class="primary" disabled>Practice these</button></div>
+</dialog>
 <script>
 (()=>{'use strict';
 const el=id=>document.getElementById(id);
 const DIGIT=['oh','one','two','three','four','five','six','seven','eight','nine'];
-const ROUND=10,MAX_DIGITS=30,VOICE_KEY='ielts-digit-voice',GAP_KEY='ielts-digit-gap',GROUP_KEY='ielts-digit-group',LENGTH_KEY='ielts-digit-length',MISS_KEY='ielts-digit-misses';
+const ROUND=10,MAX_DIGITS=30,VOICE_KEY='ielts-digit-voice',GAP_KEY='ielts-digit-gap',GROUP_KEY='ielts-digit-group',LENGTH_KEY='ielts-digit-length',STATS_KEY='ielts-digit-stats',MISS_KEY='ielts-digit-misses';
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
 let items=[],answers=[],position=0,phase='idle',speechGeneration=0,gapTimer=null,held=null,heardAt=null,clockTimer=null,questionGroup=1,missedRound=false;
 function randomBelow(n){
@@ -127,36 +139,97 @@ function speakRun(digit,count){
  else if(left===1)words.push(name);
  return words;
 }
-function readMisses(){
+function validGroup(group){return typeof group==='string'&&/^[0-9]+$/.test(group)&&group.length<=MAX_DIGITS}
+function loadStats(){
+ let stats={};
  try{
-  const list=JSON.parse(localStorage.getItem(MISS_KEY)||'[]');
-  return Array.isArray(list)?list.filter(item=>typeof item==='string'&&/^[0-9]+$/.test(item)&&item.length<=MAX_DIGITS):[];
- }catch(_){return []}
+  const raw=JSON.parse(localStorage.getItem(STATS_KEY)||'{}');
+  if(raw&&typeof raw==='object'&&!Array.isArray(raw))stats=raw;
+ }catch(_){}
+ try{
+  const old=JSON.parse(localStorage.getItem(MISS_KEY)||'null');
+  if(Array.isArray(old)){
+   old.forEach(group=>{
+    if(!validGroup(group))return;
+    const row=stats[group]&&typeof stats[group]==='object'?stats[group]:{};
+    row.misses=Math.max(Number(row.misses)||0,1);
+    stats[group]=row;
+   });
+   localStorage.removeItem(MISS_KEY);
+   localStorage.setItem(STATS_KEY,JSON.stringify(stats));
+  }
+ }catch(_){}
+ return stats;
 }
-function writeMisses(list){
- try{localStorage.setItem(MISS_KEY,JSON.stringify(list.slice(0,100)))}catch(_){}
-}
-function noteGroups(digits,typed,size){
+let groupStats=loadStats();
+function saveStats(){try{localStorage.setItem(STATS_KEY,JSON.stringify(groupStats))}catch(_){}}
+function noteGroups(digits,typed,size,elapsed){
  const step=Math.max(1,Math.min(size||digits.length,digits.length));
- const missed=readMisses();
- const wrong=new Set();
- const right=new Set();
+ const outcome=new Map();
  for(let i=0;i<digits.length;i+=step){
   const correct=digits.slice(i,i+step);
-  if(correct===typed.slice(i,i+step))right.add(correct);
-  else wrong.add(correct);
+  const ok=correct===typed.slice(i,i+step);
+  outcome.set(correct,outcome.has(correct)?outcome.get(correct)&&ok:ok);
  }
- wrong.forEach(group=>{
-  const at=missed.indexOf(group);
-  if(at>=0)missed.splice(at,1);
-  missed.unshift(group);
+ outcome.forEach((ok,group)=>{
+  const row=groupStats[group]&&typeof groupStats[group]==='object'?groupStats[group]:{misses:0,rights:0};
+  if(ok){
+   row.rights=(Number(row.rights)||0)+1;
+   if(row.rights>=3){
+    row.rights=0;
+    if((Number(row.misses)||0)>0)row.misses=(Number(row.misses)||0)-1;
+   }
+  }else row.misses=(Number(row.misses)||0)+1;
+  if(elapsed>0)row.lastTime=elapsed;
+  if((Number(row.misses)||0)<=0){delete row.misses;delete row.rights}
+  if(!row.misses&&!(Number(row.lastTime)>0))delete groupStats[group];
+  else groupStats[group]=row;
  });
- right.forEach(group=>{
-  if(wrong.has(group))return;
-  const at=missed.indexOf(group);
-  if(at>=0)missed.splice(at,1);
+ saveStats();
+}
+function rankedMisses(){
+ return Object.entries(groupStats).map(([group,row])=>({group,misses:Number(row&&row.misses)||0}))
+  .filter(row=>validGroup(row.group)&&row.misses>0)
+  .sort((a,b)=>b.misses-a.misses||a.group.localeCompare(b.group)).slice(0,10);
+}
+function rankedSlow(){
+ return Object.entries(groupStats).map(([group,row])=>({group,lastTime:Number(row&&row.lastTime)||0}))
+  .filter(row=>validGroup(row.group)&&row.lastTime>0)
+  .sort((a,b)=>b.lastTime-a.lastTime||a.group.localeCompare(b.group)).slice(0,10);
+}
+function canStartRound(){return phase==='idle'||phase==='complete'}
+function fillStatTable(body,empty,rows,cells){
+ body.replaceChildren();
+ empty.classList.toggle('hide',rows.length>0);
+ rows.forEach(row=>{
+  const tr=document.createElement('tr');
+  cells(row).forEach(text=>{const td=document.createElement('td');td.textContent=text;tr.append(td)});
+  body.append(tr);
  });
- writeMisses(missed);
+}
+function renderMissDialog(){
+ const rows=rankedMisses();
+ fillStatTable(el('missBody'),el('missEmpty'),rows,row=>[row.group,String(row.misses)]);
+ el('practiceMissedDialog').disabled=!rows.length||!canStartRound();
+}
+function renderSlowDialog(){
+ const rows=rankedSlow();
+ fillStatTable(el('slowBody'),el('slowEmpty'),rows,row=>[row.group,row.lastTime.toFixed(1)+'s']);
+ el('practiceSlowDialog').disabled=!rows.length||!canStartRound();
+}
+function openStatsDialog(dialog,render){render();if(!dialog.open)dialog.showModal()}
+function practiceGroups(rows,summary){
+ if(!canStartRound()||!rows.length)return;
+ if(!usableVoices().length){el('activityText').textContent='Add a Google voice in Chrome, or a Windows Natural voice such as Sonia or Ryan.';return}
+ el('missDialog').close();
+ el('slowDialog').close();
+ cancelSpeech();
+ missedRound=true;
+ items=rows.map(row=>row.group);
+ answers=[];
+ position=0;
+ el('summary').textContent=summary;
+ openQuestion();
 }
 function formatDigits(text,size){
  const source=String(text||'');
@@ -401,9 +474,6 @@ function showControls(){
  el('stop').classList.toggle('hide',!running);
  el('next').classList.toggle('hide',phase!=='review');
  el('next').textContent=position+1>=items.length?'Finish':'Next';
- const misses=readMisses().length;
- el('missed').classList.toggle('hide',running||!misses);
- el('missed').textContent='Missed '+misses;
  el('answer').readOnly=phase==='review';
  el('play').disabled=!running;
  el('voice').disabled=running||!usableVoices().length;
@@ -460,7 +530,7 @@ function checkAnswer(){
  clearClock();
  const elapsed=heardAt===null?0:(performance.now()-heardAt)/1000;
  const ok=typed===digits;
- noteGroups(digits,typed,questionGroup);
+ noteGroups(digits,typed,questionGroup,elapsed);
  answers.push({digits,input:typed,ok,elapsed,group:questionGroup});
  phase='review';
  el('answer').value=formatDigits(typed,questionGroup);
@@ -503,20 +573,15 @@ el('count').addEventListener('change',()=>{commitNumber(el('count'),1,MAX_DIGITS
 try{const savedGap=localStorage.getItem(GAP_KEY);if(savedGap&&el('gap').querySelector(`option[value="${savedGap}"]`))el('gap').value=savedGap}catch(_){}
 restoreNumber(el('length'),LENGTH_KEY,12,MAX_DIGITS);
 restoreNumber(el('count'),GROUP_KEY,1,MAX_DIGITS);
-function startMissed(){
- const pool=readMisses().slice(0,ROUND);
- if(!pool.length)return;
- if(!usableVoices().length){el('activityText').textContent='Add a Google voice in Chrome, or a Windows Natural voice such as Sonia or Ryan.';return}
- cancelSpeech();
- missedRound=true;
- items=pool;
- answers=[];
- position=0;
- el('summary').textContent='Each question is a group you missed.';
- openQuestion();
-}
 el('start').addEventListener('click',startRound);
-el('missed').addEventListener('click',startMissed);
+el('openMissed').addEventListener('click',()=>openStatsDialog(el('missDialog'),renderMissDialog));
+el('openSlow').addEventListener('click',()=>openStatsDialog(el('slowDialog'),renderSlowDialog));
+el('closeMiss').addEventListener('click',()=>el('missDialog').close());
+el('closeSlow').addEventListener('click',()=>el('slowDialog').close());
+el('practiceMissedDialog').addEventListener('click',()=>practiceGroups(rankedMisses(),'Each question is a group you missed.'));
+el('practiceSlowDialog').addEventListener('click',()=>practiceGroups(rankedSlow(),'Each question is one of your slowest groups.'));
+el('missDialog').addEventListener('click',event=>{if(event.target===el('missDialog'))el('missDialog').close()});
+el('slowDialog').addEventListener('click',event=>{if(event.target===el('slowDialog'))el('slowDialog').close()});
 el('stop').addEventListener('click',stopRound);
 el('next').addEventListener('click',nextQuestion);
 el('play').addEventListener('click',()=>{
