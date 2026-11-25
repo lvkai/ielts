@@ -80,7 +80,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <p class="footnote" id="summary">The answer stays hidden until you check.</p>
   </aside>
  </main>
- <p class="bottom">Digits in one group are spoken together. A repeated digit in that group is double or triple. The gap runs before the next group. Missed groups and answer times stay in this browser. Three correct answers remove one miss.</p>
+ <p class="bottom">Digits in one group are spoken together. A repeated digit in that group is double or triple. The gap runs before the next group. Missed groups and each group's time stay in this browser. A group's time starts when that group is spoken and stops when its digits are entered. Three correct answers remove one miss.</p>
 </div>
 <dialog id="missDialog" class="stats-dialog" aria-labelledby="missTitle">
  <div class="dialog-head"><h3 id="missTitle">Missed</h3><button type="button" id="closeMiss" class="dialog-close" aria-label="Close">×</button></div>
@@ -98,7 +98,7 @@ const el=id=>document.getElementById(id);
 const DIGIT=['oh','one','two','three','four','five','six','seven','eight','nine'];
 const ROUND=10,MAX_DIGITS=30,VOICE_KEY='ielts-digit-voice',GAP_KEY='ielts-digit-gap',GROUP_KEY='ielts-digit-group',LENGTH_KEY='ielts-digit-length',STATS_KEY='ielts-digit-stats',MISS_KEY='ielts-digit-misses';
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
-let items=[],answers=[],position=0,phase='idle',speechGeneration=0,gapTimer=null,held=null,heardAt=null,clockTimer=null,questionGroup=1,missedRound=false;
+let items=[],answers=[],position=0,phase='idle',speechGeneration=0,gapTimer=null,held=null,heardAt=null,clockTimer=null,groupMarks=[],questionGroup=1,missedRound=false;
 function randomBelow(n){
  if(n<=1)return 0;
  if(globalThis.crypto?.getRandomValues){
@@ -163,15 +163,19 @@ function loadStats(){
 }
 let groupStats=loadStats();
 function saveStats(){try{localStorage.setItem(STATS_KEY,JSON.stringify(groupStats))}catch(_){}}
-function noteGroups(digits,typed,size,elapsed){
+function noteGroups(digits,typed,size,times){
  const step=Math.max(1,Math.min(size||digits.length,digits.length));
  const outcome=new Map();
+ let index=0;
  for(let i=0;i<digits.length;i+=step){
   const correct=digits.slice(i,i+step);
   const ok=correct===typed.slice(i,i+step);
-  outcome.set(correct,outcome.has(correct)?outcome.get(correct)&&ok:ok);
+  const time=Number(times&&times[index])||0;
+  index++;
+  const prev=outcome.get(correct);
+  outcome.set(correct,prev?{ok:prev.ok&&ok,time:time>0?time:prev.time}:{ok,time});
  }
- outcome.forEach((ok,group)=>{
+ outcome.forEach(({ok,time},group)=>{
   const row=groupStats[group]&&typeof groupStats[group]==='object'?groupStats[group]:{misses:0,rights:0};
   if(ok){
    row.rights=(Number(row.rights)||0)+1;
@@ -180,7 +184,7 @@ function noteGroups(digits,typed,size,elapsed){
     if((Number(row.misses)||0)>0)row.misses=(Number(row.misses)||0)-1;
    }
   }else row.misses=(Number(row.misses)||0)+1;
-  if(elapsed>0)row.lastTime=elapsed;
+  if(time>0)row.lastTime=time;
   if((Number(row.misses)||0)<=0){delete row.misses;delete row.rights}
   if(!row.misses&&!(Number(row.lastTime)>0))delete groupStats[group];
   else groupStats[group]=row;
@@ -322,6 +326,39 @@ function clearClock(){
 function resetClock(){
  clearClock();
  heardAt=null;
+ groupMarks=[];
+}
+function groupCountFor(digits){
+ const step=Math.max(1,Math.min(questionGroup||digits.length,digits.length));
+ return Math.ceil(digits.length/step);
+}
+function groupDigitEnd(index,total){
+ const step=Math.max(1,questionGroup||1);
+ return Math.min(total,(index+1)*step);
+}
+function typedDigitCount(){return el('answer').value.replace(/\D/g,'').length}
+function markGroupStart(index){
+ const digits=items[position];
+ if(!digits||phase==='review')return;
+ const count=groupCountFor(digits);
+ if(groupMarks.length!==count)groupMarks=Array.from({length:count},()=>({start:null,end:null}));
+ const mark=groupMarks[index];
+ if(!mark||mark.start!==null)return;
+ mark.start=performance.now();
+ if(typedDigitCount()>=groupDigitEnd(index,digits.length))mark.end=mark.start;
+}
+function stampGroupEnds(){
+ const digits=items[position];
+ if(!digits||(phase!=='speaking'&&phase!=='answering'))return;
+ const typed=typedDigitCount();
+ const now=performance.now();
+ groupMarks.forEach((mark,index)=>{
+  if(mark.end!==null||mark.start===null)return;
+  if(typed>=groupDigitEnd(index,digits.length))mark.end=now;
+ });
+}
+function groupTimes(){
+ return groupMarks.map(mark=>mark.start!==null&&mark.end!==null&&mark.end>=mark.start?(mark.end-mark.start)/1000:0);
 }
 function clockLabel(){
  if(phase==='review'){
@@ -400,6 +437,7 @@ function playDigits(){
   };
   utterance.onstart=()=>{
    if(token!==speechGeneration)return;
+   markGroupStart(index);
    startClock();
    el('play').classList.add('playing');
    el('activityText').textContent=phase==='review'?'Replaying the digits.':'Playing…';
@@ -523,6 +561,7 @@ function stopRound(){
 }
 function checkAnswer(){
  if(phase!=='answering'&&phase!=='speaking')return;
+ stampGroupEnds();
  const digits=items[position];
  const typed=el('answer').value.replace(/\D/g,'');
  if(typed.length!==digits.length){el('feedback').textContent='Enter all '+digits.length+' digits';el('feedback').className='feedback no';el('answer').focus();return}
@@ -530,7 +569,7 @@ function checkAnswer(){
  clearClock();
  const elapsed=heardAt===null?0:(performance.now()-heardAt)/1000;
  const ok=typed===digits;
- noteGroups(digits,typed,questionGroup,elapsed);
+ noteGroups(digits,typed,questionGroup,groupTimes());
  answers.push({digits,input:typed,ok,elapsed,group:questionGroup});
  phase='review';
  el('answer').value=formatDigits(typed,questionGroup);
@@ -607,6 +646,7 @@ el('answer').addEventListener('input',()=>{
   }
  }
  el('answer').setSelectionRange(pos,pos);
+ stampGroupEnds();
  if(typed.length===count)checkAnswer();
 });
 el('answer').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();if(phase==='review')nextQuestion();else checkAnswer()}});
