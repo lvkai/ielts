@@ -288,7 +288,7 @@ function renderRows(){
   number.className='num';
   number.textContent=String(i+1).padStart(2,'0');
   const entered=result?digitLine(result.input,result.digits):digitLine('');
-  const truth=result?digitLine(result.digits):digitLine('');
+  const truth=result?digitLine(result.digits,result.input):digitLine('');
   if(result)truth.classList.add('truth');
   const status=document.createElement('span');
   status.className='status '+(result?(result.ok?'good':'bad'):(active?'current':'mute'));
