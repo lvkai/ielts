@@ -163,7 +163,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <div class="practice-actions">
     <button type="button" id="check" class="primary">Check</button>
     <button type="button" id="prevSentence" class="secondary icon-btn" aria-label="Previous sentence"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h2.2v14H6zM18.5 5 8.2 12l10.3 7z"/></svg></button>
-    <button type="button" id="pause" class="secondary icon-btn" aria-pressed="false" aria-label="Pause"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg></button>
+    <button type="button" id="pause" class="secondary icon-btn" aria-pressed="false" aria-label="Play"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></button>
     <button type="button" id="nextSentence" class="secondary icon-btn" aria-label="Next sentence"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.8 5H18v14h-2.2zM5.5 5l10.3 7L5.5 19z"/></svg></button>
     <button type="button" id="show" class="secondary" hidden>Show sentence</button>
     <button type="button" id="skipPrompt" class="secondary" hidden>Continue</button>
@@ -717,6 +717,8 @@ let loopToken=0;
 let loopTimer=0;
 let moving=false;
 let paused=false;
+let playbackLive=false;
+let betweenRepeats=false;
 let loopFrom=0;
 let loopTo=0;
 let phase='upload';
@@ -1122,8 +1124,10 @@ function stopAudio(){
  loopToken++;
  clearTimeout(loopTimer);
  previewIndex=-1;
+ playbackLive=false;
+ betweenRepeats=false;
  el('track').pause();
- el('speaker').classList.remove('playing');
+ paintTransport();
  paintPreview();
  paintFileBar();
 }
@@ -1582,12 +1586,10 @@ function seekAndPlay(audio,from,token,onReady){
  const start=()=>{
   if(token!==loopToken)return;
   audio.play().then(()=>{
-   if(token!==loopToken||paused){audio.pause();el('speaker').classList.remove('playing');return}
-   el('speaker').classList.add('playing');
+   if(token!==loopToken||paused){audio.pause();return}
    onReady(true);
   }).catch(()=>{
    if(token!==loopToken)return;
-   el('speaker').classList.remove('playing');
    onReady(false);
   });
  };
@@ -1610,7 +1612,8 @@ function loopSentence(sentence,startAt){
  let armed=false;
  let plays=0;
  const arm=()=>{armed=true};
- const play=()=>{if(paused||token!==loopToken)return;const target=opened?from:first;opened=true;seekAndPlay(audio,target,token,ok=>{if(ok)arm();else el('feedback').textContent='Tap the speaker to play.'})};
+ if(!paused){playbackLive=true;paintTransport()}
+ const play=()=>{if(paused||token!==loopToken)return;const target=opened?from:first;opened=true;seekAndPlay(audio,target,token,ok=>{if(token!==loopToken)return;if(ok)arm();else{playbackLive=false;paintTransport();el('feedback').textContent='Tap the speaker to play.'}})};
  const watch=()=>{
   if(token!==loopToken)return;
   if(paused||!armed||scrubbing){loopTimer=setTimeout(watch,paused?80:40);return}
@@ -1619,9 +1622,11 @@ function loopSentence(sentence,startAt){
   if(audio.currentTime>=to-0.04){
    armed=false;
    plays++;
+   if(plays>=repeatLimit()){playbackLive=false;betweenRepeats=false}
+   else betweenRepeats=true;
    audio.pause();
-   el('speaker').classList.remove('playing');
-   if(plays>=repeatLimit())return;
+   paintTransport();
+   if(!playbackLive)return;
    loopTimer=setTimeout(()=>{if(token!==loopToken)return;if(paused){watch();return}play();watch()},2000);
   }else loopTimer=setTimeout(watch,40);
  };
@@ -1638,8 +1643,10 @@ function playOnce(sentence,done,startAt){
  const first=Number.isFinite(startAt)?Math.min(to-0.08,Math.max(from,startAt)):from;
  let armed=false;
  let finished=false;
+ if(!paused){playbackLive=true;paintTransport()}
  seekAndPlay(audio,first,token,ok=>{
-  if(!ok)el('practiceTitle').textContent='Tap the speaker to play this instruction.';
+  if(token!==loopToken)return;
+  if(!ok){playbackLive=false;paintTransport();el('practiceTitle').textContent='Tap the speaker to play this instruction.'}
   else armed=true;
  });
  const watch=()=>{
@@ -1649,8 +1656,9 @@ function playOnce(sentence,done,startAt){
   paintFileBar();
   if(audio.currentTime>=to-0.04||audio.ended){
    finished=true;
+   playbackLive=false;
    audio.pause();
-   el('speaker').classList.remove('playing');
+   paintTransport();
    done();
    return;
   }
@@ -1907,31 +1915,42 @@ function showOriginal(show){
  if(show)reveal();
  else{el('reveal').hidden=true;el('reveal').textContent=''}
 }
+function paintTransport(){
+ const audio=el('track');
+ const sounding=phase==='practice'&&!paused&&!audio.paused;
+ const active=sounding||(phase==='practice'&&!paused&&betweenRepeats);
+ setButtonIcon(el('pause'),active?'pause':'play',active?'Pause':'Play');
+ el('pause').setAttribute('aria-pressed',paused?'true':'false');
+ el('speaker').classList.toggle('playing',sounding);
+}
 function resetPause(){
  paused=false;
- setButtonIcon(el('pause'),'pause','Pause');
- el('pause').setAttribute('aria-pressed','false');
+ playbackLive=false;
+ betweenRepeats=false;
+ paintTransport();
 }
 function togglePause(){
  if(phase!=='practice')return;
- paused=!paused;
- setButtonIcon(el('pause'),paused?'play':'pause',paused?'Resume':'Pause');
- el('pause').setAttribute('aria-pressed',paused?'true':'false');
  const audio=el('track');
- if(paused){
+ if(!paused&&(betweenRepeats||!audio.paused)){
+  paused=true;
+  betweenRepeats=false;
   audio.pause();
-  el('speaker').classList.remove('playing');
+  paintTransport();
+  focusAnswer();
   return;
  }
+ paused=false;
  const sentence=sentences[cursor];
- if(!sentence)return;
- if(audio.currentTime<loopFrom-0.05||audio.currentTime>loopTo-0.04){
+ if(!sentence){paintTransport();return}
+ if(!playbackLive||audio.currentTime<loopFrom-0.05||audio.currentTime>loopTo-0.04){
   if(sentence.prompt)playOnce(sentence,()=>{if(phase==='practice')enter(cursor+1)});
   else loopSentence(sentence);
   focusAnswer();
   return;
  }
- audio.play().then(()=>el('speaker').classList.add('playing')).catch(()=>{});
+ audio.play().catch(()=>{});
+ paintTransport();
  focusAnswer();
 }
 function focusAnswer(){
@@ -2349,6 +2368,8 @@ document.addEventListener('keyup',event=>{
  if(event.target&&event.target.tagName==='SELECT')return;
  showOriginal(!originalVisible());
 });
+el('track').addEventListener('play',()=>{if(phase!=='practice')return;betweenRepeats=false;paintTransport()});
+el('track').addEventListener('pause',()=>{if(phase==='practice')paintTransport()});
 el('track').addEventListener('timeupdate',()=>{if(!scrubbing)paintFileBar()});
 el('track').addEventListener('loadedmetadata',()=>paintFileBar());
 el('track').addEventListener('ended',()=>paintFileBar());
