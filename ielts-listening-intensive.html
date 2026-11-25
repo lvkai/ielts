@@ -58,9 +58,9 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .sentence.prompt textarea{color:#607089}
 .tiny{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
 .tiny button{border:0;background:none;color:var(--blue);font-size:12px;font-weight:750;padding:0;text-decoration:underline;text-underline-offset:3px}
-.nudge{display:inline-flex;align-items:center;gap:4px}
-.nudge span{color:var(--muted);font-size:12px;font-weight:700}
-.tiny .nudge button{border:1px solid #d8e1f0;background:#fff;color:var(--text);border-radius:8px;width:28px;height:28px;padding:0;font-size:16px;font-weight:650;line-height:1;text-decoration:none}
+.nudge{display:inline-flex;align-items:center;border:1px solid #d8e1f0;border-radius:8px;background:#fff;overflow:hidden}
+.nudge span{color:var(--muted);font-size:12px;font-weight:700;min-width:38px;padding:0 4px;text-align:center}
+.tiny .nudge button{border:0;background:transparent;color:var(--text);border-radius:0;width:28px;height:28px;padding:0;font-size:15px;font-weight:650;line-height:1;text-decoration:none}
 .tiny .nudge button:hover:not(:disabled){background:#f6f8fc}
 .start-bar{position:sticky;bottom:0;display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:8px;padding:16px 0 4px;background:linear-gradient(transparent,#fff 16px)}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -1383,11 +1383,11 @@ function edgeControls(index){
    const control=document.createElement('button');
    control.type='button';
    control.textContent=sign;
-   control.setAttribute('aria-label',label+' '+(delta<0?'minus':'plus')+' 0.1 seconds');
+   control.setAttribute('aria-label','Move '+label.toLowerCase()+' '+(delta<0?'earlier':'later')+' by 0.1 seconds');
    control.addEventListener('click',()=>nudgeBoundary(index,side,delta));
    return control;
   };
-  group.append(name,button('−',-0.1),button('+',0.1));
+  group.append(button('←',-0.1),name,button('→',0.1));
   return group;
  };
  return [make('Start','start'),make('End','end')];
