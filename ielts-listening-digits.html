@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Free IELTS listening practice for single digits. Each question plays ten digits with a half-second gap. Type the sequence.">
+<meta name="description" content="Free IELTS listening practice for digits. Each question is 12 digits by default. Set how many are spoken together. A repeat inside a group is double or triple.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/ielts-listening-digits.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="IELTS Listening Digit Dictation">
-<meta property="og:description" content="Hear ten digits, one at a time, with a half-second gap. Type the sequence. Each round has ten questions.">
+<meta property="og:description" content="Each round has ten questions. Set the length, 12 by default, and how many digits are spoken together. A repeat inside a group is double or triple.">
 <meta property="og:url" content="https://lvkai.github.io/ielts/ielts-listening-digits.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Listening Digit Dictation","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-digits.html","description":"Free IELTS listening practice. Hear ten single digits with a half-second gap and type the sequence.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Listening Digit Dictation","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-digits.html","description":"Free IELTS listening practice. Set how many digits to hear, 12 by default, and how many are spoken together. A repeat inside a group is double or triple.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
 <title>IELTS Listening Digit Dictation</title>
@@ -22,7 +22,7 @@
 .wrap{max-width:1100px;margin:0 auto;padding:43px 22px 56px}
 .home-nav{margin:0 0 10px}.home-nav a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.home-nav a:hover{text-decoration:underline}
 header{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:26px}.eyebrow{color:var(--blue);font-size:11px;letter-spacing:.15em;font-weight:800;margin-bottom:9px}.heading{font-size:clamp(25px,3.7vw,36px);letter-spacing:-.045em;line-height:1.15;margin:0}.sub{font-size:13px;color:var(--muted);margin:10px 0 0;max-width:46em}
-.settings{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.setting{display:grid;gap:6px}.setting span{font-size:11px;color:var(--muted);font-weight:650}.setting select{appearance:none;border:1px solid var(--line);border-radius:10px;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;width:280px;padding:11px 30px 11px 13px;font-weight:700;color:var(--text);font-size:13px}.setting.compact select{width:88px}
+.settings{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.setting{display:grid;gap:6px}.setting span{font-size:11px;color:var(--muted);font-weight:650}.setting select{appearance:none;border:1px solid var(--line);border-radius:10px;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;width:280px;padding:11px 30px 11px 13px;font-weight:700;color:var(--text);font-size:13px}.setting input[type="number"]{border:1px solid var(--line);border-radius:10px;background:var(--surface);width:88px;padding:11px 12px;font-weight:700;color:var(--text);font-size:13px}
 .layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(340px,1fr);gap:18px;align-items:start}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 9px 36px rgba(35,49,79,.035)}
 .practice{padding:26px 29px 28px;min-height:548px;display:flex;flex-direction:column}.top{display:flex;justify-content:space-between;align-items:center;gap:16px}.overline{color:var(--muted);font-size:13px;font-weight:650}.progress-count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}.progress-count b{font-size:22px;color:var(--text);font-weight:800}.track{height:5px;margin-top:17px;border-radius:100px;background:#eef1f6;overflow:hidden}.track-fill{width:0;height:100%;border-radius:100px;background:var(--blue);transition:width .25s}
 .activity{display:flex;align-items:center;flex-direction:column;justify-content:center;min-height:268px;text-align:center;padding:28px 0 18px}.sound{height:92px;width:92px;border-radius:27px;border:1px solid #dbe4ff;background:var(--blue-soft);display:flex;align-items:center;justify-content:center;color:var(--blue)}.sound:hover:not(:disabled){background:#e5ecff}.sound svg{width:36px;height:36px}.sound.playing{background:#dbe5ff}.activity-title{font-size:20px;font-weight:760;letter-spacing:-.022em;margin:22px 0 6px}.activity-text{min-height:22px;font-size:13px;color:var(--muted);margin:0;line-height:1.6}
@@ -33,7 +33,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 .results{padding:23px 23px 20px;min-height:548px}.result-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.result-top h2{font-size:17px;margin:0;letter-spacing:-.02em}.score{font-size:12px;color:var(--muted)}.score b{font-size:17px;color:var(--text);font-variant-numeric:tabular-nums}
 .cols,.res-row{display:grid;grid-template-columns:28px minmax(0,1fr) minmax(0,1fr) 52px;align-items:center;gap:6px}.cols{font-size:11px;color:var(--muted);padding:15px 8px 11px;border-bottom:1px solid var(--line)}.res-row{min-height:46px;border-bottom:1px solid #f0f3f7;padding:9px 8px;font-size:13px;font-variant-numeric:tabular-nums;letter-spacing:.04em}.res-row:last-child{border-bottom:0}.res-row.active{border-radius:9px;background:#f2f5ff}.num{font-size:12px;color:#a0acc0;letter-spacing:0}.hidden-val{color:#c7ceda}.truth{font-weight:760}.miss{color:var(--red);font-weight:800}.status{font-size:19px;font-weight:800;line-height:1}.status.good{color:var(--green)}.status.bad{color:var(--red)}.status.mute{color:#9aa7ba;font-size:12px}.status.current{color:var(--blue);font-size:12px}
 .footnote{margin-top:15px;padding-top:15px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.6}.bottom{margin-top:22px;text-align:center;font-size:12px;line-height:1.7;color:var(--muted)}
-@media(max-width:800px){.wrap{padding:27px 16px 34px}header{align-items:start;flex-direction:column}.settings,.setting,.setting select{width:100%}.layout{grid-template-columns:1fr}.practice,.results{min-height:0}.activity{min-height:220px}}
+@media(max-width:800px){.wrap{padding:27px 16px 34px}header{align-items:start;flex-direction:column}.settings,.setting,.setting select,.setting input{width:100%}.layout{grid-template-columns:1fr}.practice,.results{min-height:0}.activity{min-height:220px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
 </style>
 </head>
@@ -44,11 +44,12 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
   <div>
    <div class="eyebrow">IELTS LISTENING TRAINER</div>
    <h1 class="heading">Digit Dictation</h1>
-   <p class="sub">Each round has 10 questions, and each question is 10 digits. Choose how many digits are spoken together before the gap. Type while they play. 0 is spoken as oh.</p>
+   <p class="sub">Each round has 10 questions. Set how many digits each question has, and how many are spoken together before the gap. The same digit repeated inside a group is spoken as double or triple. Type while they play. 0 is spoken as oh.</p>
   </div>
   <div class="settings" aria-label="Voice, grouping, and gap">
    <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
-   <label class="setting compact"><span>At a time</span><select id="count" aria-label="Digits spoken before each gap"><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label>
+   <label class="setting"><span>Digits</span><input id="length" type="number" inputmode="numeric" min="1" max="30" value="12" aria-label="Digits in each question"></label>
+   <label class="setting"><span>At a time</span><input id="count" type="number" inputmode="numeric" min="1" max="30" value="1" aria-label="Digits spoken before each gap"></label>
    <label class="setting"><span>Gap</span><select id="gap" aria-label="Gap between digits"><option value="0">0 s</option><option value="100">0.1 s</option><option value="200">0.2 s</option><option value="300">0.3 s</option><option value="500" selected>0.5 s</option></select></label>
   </div>
  </header>
@@ -61,11 +62,11 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
     </button>
     <h2 class="activity-title" id="activityTitle">Ready to begin?</h2>
-    <p class="activity-text" id="activityText" role="status">Start a round of 10 digit sequences.</p>
+    <p class="activity-text" id="activityText" role="status">Start a round of 10 questions.</p>
    </div>
    <div class="input-area">
-    <label class="answer-label" id="answerLabel" for="answer">Your 10 digits</label>
-    <div class="answer-row"><input id="answer" type="text" inputmode="numeric" maxlength="10" autocomplete="off" spellcheck="false" disabled><button id="submit" class="primary" type="button" disabled>Check</button></div>
+    <label class="answer-label" id="answerLabel" for="answer">Your 12 digits</label>
+    <div class="answer-row"><input id="answer" type="text" inputmode="numeric" maxlength="12" autocomplete="off" spellcheck="false" disabled><button id="submit" class="primary" type="button" disabled>Check</button></div>
     <div class="below"><p class="tip" id="tip">A full answer is checked in place. Enter starts the next question.</p><span id="feedback" class="feedback" aria-live="polite"></span></div>
    </div>
    <div class="actions"><button id="start" class="primary" type="button">Start round</button><button id="next" class="primary hide" type="button">Next</button><button id="stop" class="secondary stop hide" type="button">Stop</button></div>
@@ -77,13 +78,13 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <p class="footnote" id="summary">The answer stays hidden until you check.</p>
   </aside>
  </main>
- <p class="bottom">Each question is 10 digits. The chosen number is spoken together, then the gap runs before the next group.</p>
+ <p class="bottom">Digits in one group are spoken together. A repeated digit in that group is double or triple. The gap runs before the next group.</p>
 </div>
 <script>
 (()=>{'use strict';
 const el=id=>document.getElementById(id);
 const DIGIT=['oh','one','two','three','four','five','six','seven','eight','nine'];
-const ROUND=10,LENGTH=10,VOICE_KEY='ielts-digit-voice',GAP_KEY='ielts-digit-gap',GROUP_KEY='ielts-digit-group';
+const ROUND=10,MAX_DIGITS=30,VOICE_KEY='ielts-digit-voice',GAP_KEY='ielts-digit-gap',GROUP_KEY='ielts-digit-group',LENGTH_KEY='ielts-digit-length';
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
 let items=[],answers=[],position=0,phase='idle',speechGeneration=0,gapTimer=null,held=null;
 function randomBelow(n){
@@ -96,21 +97,57 @@ function randomBelow(n){
  }
  return Math.floor(Math.random()*n);
 }
-function groupSize(){
- const value=Number(el('count').value);
- return value>=1&&value<=LENGTH?value:1;
+function commitNumber(input,fallback,max){
+ const value=Math.round(Number(input.value));
+ const next=value>=1&&value<=max?value:fallback;
+ input.value=String(next);
+ return next;
 }
+function questionLength(){return commitNumber(el('length'),12,MAX_DIGITS)}
+function groupSize(total){
+ const cap=total||questionLength();
+ const value=Math.round(Number(el('count').value));
+ if(value>=1)return Math.min(value,cap);
+ return 1;
+}
+function rememberLength(){try{localStorage.setItem(LENGTH_KEY,el('length').value)}catch(_){}}
 function rememberGroup(){try{localStorage.setItem(GROUP_KEY,el('count').value)}catch(_){}}
 function randomDigits(){
+ const total=questionLength();
  let text='';
- while(text.length<LENGTH)text+=String(randomBelow(10));
+ while(text.length<total)text+=String(randomBelow(10));
  return text;
 }
+function speakRun(digit,count){
+ const name=DIGIT[digit];
+ const words=[];
+ let left=count;
+ while(left>=3){words.push('triple '+name);left-=3}
+ if(left===2)words.push('double '+name);
+ else if(left===1)words.push(name);
+ return words;
+}
 function spokenGroups(digits){
- const size=groupSize();
+ const size=groupSize(digits.length);
  const groups=[];
- for(let i=0;i<digits.length;i+=size)groups.push([...digits.slice(i,i+size)].map(digit=>DIGIT[Number(digit)]).join(' '));
+ for(let i=0;i<digits.length;i+=size){
+  const slice=digits.slice(i,i+size);
+  const words=[];
+  let at=0;
+  while(at<slice.length){
+   const digit=Number(slice[at]);
+   let end=at+1;
+   while(end<slice.length&&Number(slice[end])===digit)end++;
+   words.push(...speakRun(digit,end-at));
+   at=end;
+  }
+  groups.push(words.join(' '));
+ }
  return groups;
+}
+function activeLength(){
+ const digits=items[position];
+ return digits?digits.length:questionLength();
 }
 function mechanical(voice){
  const name=voice&&voice.name||'';
@@ -184,8 +221,9 @@ function playDigits(){
   if(settled||token!==speechGeneration)return;
   settled=true;
   el('play').classList.remove('playing');
-  if(phase==='speaking'){phase='answering';el('activityText').textContent='Type the 10 digits.';el('answer').disabled=false;el('submit').disabled=false}
-  else if(phase==='answering')el('activityText').textContent='Type the 10 digits.';
+  const count=digits.length;
+  if(phase==='speaking'){phase='answering';el('activityText').textContent='Type the '+count+' digits.';el('answer').disabled=false;el('submit').disabled=false}
+  else if(phase==='answering')el('activityText').textContent='Type the '+count+' digits.';
  };
  const fail=()=>{
   if(settled||token!==speechGeneration)return;
@@ -280,15 +318,16 @@ function showControls(){
 }
 function openQuestion(){
  phase='speaking';
+ const count=items[position].length;
  el('answer').value='';
- el('answer').maxLength=LENGTH;
+ el('answer').maxLength=count;
  el('answer').disabled=false;
  el('submit').disabled=false;
- el('answerLabel').textContent='Your 10 digits';
+ el('answerLabel').textContent='Your '+count+' digits';
  el('tip').textContent='A full answer is checked in place. Enter starts the next question.';
  el('feedback').textContent='';
  el('feedback').className='feedback';
- el('activityTitle').textContent='Listen to 10 digits';
+ el('activityTitle').textContent='Listen to '+count+' digits';
  el('activityText').textContent='Preparing audio…';
  refresh();
  showControls();
@@ -319,7 +358,7 @@ function checkAnswer(){
  if(phase!=='answering'&&phase!=='speaking')return;
  const digits=items[position];
  const typed=el('answer').value.replace(/\D/g,'');
- if(typed.length!==LENGTH){el('feedback').textContent='Enter all 10 digits';el('feedback').className='feedback no';el('answer').focus();return}
+ if(typed.length!==digits.length){el('feedback').textContent='Enter all '+digits.length+' digits';el('feedback').className='feedback no';el('answer').focus();return}
  cancelSpeech();
  const ok=typed===digits;
  answers.push({digits,input:typed,ok});
@@ -351,9 +390,17 @@ function nextQuestion(){
 }
 el('voice').addEventListener('change',rememberVoice);
 el('gap').addEventListener('change',rememberGap);
-el('count').addEventListener('change',rememberGroup);
+function restoreNumber(input,key,fallback,max){
+ try{
+  const saved=Math.round(Number(localStorage.getItem(key)));
+  input.value=String(saved>=1&&saved<=max?saved:fallback);
+ }catch(_){input.value=String(fallback)}
+}
+el('length').addEventListener('change',()=>{commitNumber(el('length'),12,MAX_DIGITS);rememberLength()});
+el('count').addEventListener('change',()=>{commitNumber(el('count'),1,MAX_DIGITS);rememberGroup()});
 try{const savedGap=localStorage.getItem(GAP_KEY);if(savedGap&&el('gap').querySelector(`option[value="${savedGap}"]`))el('gap').value=savedGap}catch(_){}
-try{const savedGroup=localStorage.getItem(GROUP_KEY);if(savedGroup&&el('count').querySelector(`option[value="${savedGroup}"]`))el('count').value=savedGroup}catch(_){}
+restoreNumber(el('length'),LENGTH_KEY,12,MAX_DIGITS);
+restoreNumber(el('count'),GROUP_KEY,1,MAX_DIGITS);
 el('start').addEventListener('click',startRound);
 el('stop').addEventListener('click',stopRound);
 el('next').addEventListener('click',nextQuestion);
@@ -364,8 +411,9 @@ el('play').addEventListener('click',()=>{
 });
 el('submit').addEventListener('click',checkAnswer);
 el('answer').addEventListener('input',()=>{
- el('answer').value=el('answer').value.replace(/\D/g,'').slice(0,LENGTH);
- if((phase==='speaking'||phase==='answering')&&el('answer').value.length===LENGTH)checkAnswer();
+ const count=activeLength();
+ el('answer').value=el('answer').value.replace(/\D/g,'').slice(0,count);
+ if((phase==='speaking'||phase==='answering')&&el('answer').value.length===count)checkAnswer();
 });
 el('answer').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();if(phase==='review')nextQuestion();else checkAnswer()}});
 fillVoices();
