@@ -56,8 +56,12 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .flag[aria-pressed="true"]{background:#fff6df;border-color:#efd7a2;color:var(--gold)}
 .sentence textarea{width:100%;min-height:68px;resize:none;overflow:hidden;border:1px solid #d6deeb;border-radius:10px;padding:10px 12px;line-height:1.5;color:var(--text)}
 .sentence.prompt textarea{color:#607089}
-.tiny{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.tiny{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
 .tiny button{border:0;background:none;color:var(--blue);font-size:12px;font-weight:750;padding:0;text-decoration:underline;text-underline-offset:3px}
+.nudge{display:inline-flex;align-items:center;gap:4px}
+.nudge span{color:var(--muted);font-size:12px;font-weight:700}
+.tiny .nudge button{border:1px solid #d8e1f0;background:#fff;color:var(--text);border-radius:8px;width:28px;height:28px;padding:0;font-size:16px;font-weight:650;line-height:1;text-decoration:none}
+.tiny .nudge button:hover:not(:disabled){background:#f6f8fc}
 .start-bar{position:sticky;bottom:0;display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:8px;padding:16px 0 4px;background:linear-gradient(transparent,#fff 16px)}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .overline{color:var(--muted);font-size:13px;font-weight:650}
@@ -1369,6 +1373,25 @@ function speakerButton(sentence){
  });
  return who;
 }
+function edgeControls(index){
+ const make=(label,side)=>{
+  const group=document.createElement('span');
+  group.className='nudge';
+  const name=document.createElement('span');
+  name.textContent=label;
+  const button=(sign,delta)=>{
+   const control=document.createElement('button');
+   control.type='button';
+   control.textContent=sign;
+   control.setAttribute('aria-label',label+' '+(delta<0?'minus':'plus')+' 0.1 seconds');
+   control.addEventListener('click',()=>nudgeBoundary(index,side,delta));
+   return control;
+  };
+  group.append(name,button('−',-0.1),button('+',0.1));
+  return group;
+ };
+ return [make('Start','start'),make('End','end')];
+}
 function renderReview(){
  const host=el('sentences');
  host.replaceChildren();
@@ -1391,13 +1414,6 @@ function renderReview(){
    meta.append(title,actions);
    const tools=document.createElement('div');
    tools.className='tiny';
-   const edge=(sideLabel,side,delta)=>{
-    const button=document.createElement('button');
-    button.type='button';
-    button.textContent=sideLabel;
-    button.addEventListener('click',()=>nudgeBoundary(index,side,delta));
-    return button;
-   };
    const merge=document.createElement('button');
    merge.type='button';
    merge.textContent='Merge with next';
@@ -1407,7 +1423,7 @@ function renderReview(){
    startHere.type='button';
    startHere.textContent='Start here';
    startHere.addEventListener('click',()=>beginPractice(index));
-   tools.append(edge('Start −0.1','start',-0.1),edge('Start +0.1','start',0.1),edge('End −0.1','end',-0.1),edge('End +0.1','end',0.1),merge,startHere);
+   tools.append(...edgeControls(index),merge,startHere);
    row.append(meta,tools);
    host.append(row);
    return;
@@ -1448,14 +1464,7 @@ function renderReview(){
   startHere.type='button';
   startHere.textContent='Start here';
   startHere.addEventListener('click',()=>beginPractice(index));
-  const edge=(label,side,delta)=>{
-   const button=document.createElement('button');
-   button.type='button';
-   button.textContent=label;
-   button.addEventListener('click',()=>nudgeBoundary(index,side,delta));
-   return button;
-  };
-  tools.append(edge('Start −0.1', 'start', -0.1),edge('Start +0.1', 'start', 0.1),edge('End −0.1', 'end', -0.1),edge('End +0.1', 'end', 0.1),split,merge,startHere);
+  tools.append(...edgeControls(index),split,merge,startHere);
   row.append(meta,area,tools);
   host.append(row);
  });
