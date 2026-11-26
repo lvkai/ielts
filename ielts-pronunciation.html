@@ -141,6 +141,15 @@ const GROUPS=[
   {w:'duck',ipa:'/dʌk/',hint:'Short ʌ. Not dark.',hear:['dark'],say:'A duck can swim.'},
   {w:'dark',ipa:'/dɑːk/',hint:'Long ɑː. Not duck.',hear:['duck'],say:'It is dark.'}
  ]},
+ {id:'ai',label:'aɪ/e',blurb:'aɪ opens, then glides up. e stays flat.',words:[
+  {w:'kind',ipa:'/kaɪnd/',hint:'Open, then glide. Not a flat e.',say:'She is kind.'},
+  {w:'bite',ipa:'/baɪt/',hint:'aɪ. Not bet.',hear:['bet'],say:'Do not bite it.'},
+  {w:'bet',ipa:'/bet/',hint:'Flat e. Not bite.',hear:['bite'],say:'I bet he wins.'},
+  {w:'light',ipa:'/laɪt/',hint:'aɪ. Not let.',hear:['let'],say:'The light is on.'},
+  {w:'let',ipa:'/let/',hint:'Flat e. Not light.',hear:['light'],say:'Please let her in.'},
+  {w:'white',ipa:'/waɪt/',hint:'aɪ. Not wet.',hear:['wet'],say:'The shirt is white.'},
+  {w:'wet',ipa:'/wet/',hint:'Flat e. Not white.',hear:['white'],say:'The coat is wet.'}
+ ]},
  {id:'nor',label:'no r',blurb:'Do not add an r. father is not farther, and idea is not idear.',words:[
   {w:'father',ipa:'/ˈfɑːðə/',hint:'Not farther.',hear:['farther'],say:'My father is kind.'},
   {w:'cause',ipa:'/kɔːz/',hint:'No r.',say:'The cause is clear.'},
@@ -522,6 +531,7 @@ function contrastNote(id){
  if(id==='ae')return {kind:'',text:'In the sentence, listen for the vowel. bad is a lower vowel than bed.'};
  if(id==='uu')return {kind:'',text:'In the sentence, ʊ is short and uː is long.'};
  if(id==='aa')return {kind:'',text:'In the sentence, ʌ is short and central. ɑː is long and open.'};
+ if(id==='ai')return {kind:'',text:'In the sentence, aɪ opens then glides. e stays flat.'};
  if(id==='nor')return {kind:'',text:'Do not add an r in the middle or at the end. Compare the word with the model.'};
  return {kind:'',text:'In the sentence, compare the word with the model.'};
 }
