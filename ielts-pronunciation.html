@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Free IELTS pronunciation practice for sounds many Chinese speakers change. Hear the word, record it, then hear the model and your recording one after the other.">
+<meta name="description" content="Free IELTS pronunciation practice for sounds many Chinese speakers change. Hear the word, record it, then hear the model and your recording one after the other. A recognizer says what it heard.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/ielts-pronunciation.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -29,7 +29,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 .practice{padding:26px 29px 28px;min-height:520px;display:flex;flex-direction:column}.top{display:flex;justify-content:space-between;align-items:center;gap:16px}.overline{color:var(--muted);font-size:13px;font-weight:650}.progress-count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}.progress-count b{font-size:22px;color:var(--text);font-weight:800}
 .stage{display:flex;flex-direction:column;align-items:center;text-align:center;padding:28px 0 8px}.sound{height:74px;width:74px;border-radius:22px;border:1px solid #dbe4ff;background:var(--blue-soft);display:flex;align-items:center;justify-content:center;color:var(--blue)}.sound svg{width:30px;height:30px}.sound.playing{background:#dbe5ff}.word{margin:18px 0 0;font-size:clamp(40px,6vw,64px);line-height:1;letter-spacing:-.04em;font-weight:760}.ipa{margin:10px 0 0;font-size:20px;color:#31466d;font-weight:650}.hint{margin:8px 0 0;font-size:14px;color:var(--muted);line-height:1.5}
 .steps{display:flex;justify-content:center;gap:8px;list-style:none;margin:22px 0 0;padding:0}.steps li{min-width:92px;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:750;color:var(--muted);background:#f3f6fb}.steps li.active{color:#fff;background:var(--blue)}.steps li.done{color:var(--green);background:#e7f6ef}
-.status{min-height:22px;margin:14px 0 0;font-size:13px;color:var(--muted);font-weight:700}.count{margin:6px 0 0;font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.03em;color:var(--text)}.count.idle{color:transparent}
+.status{min-height:22px;margin:14px 0 0;font-size:13px;color:var(--muted);font-weight:700}.review{min-height:22px;margin:8px 0 0;max-width:36em;font-size:14px;line-height:1.45;font-weight:720;color:var(--muted)}.review.ok{color:var(--green)}.review.no{color:var(--red)}.count{margin:6px 0 0;font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.03em;color:var(--text)}.count.idle{color:transparent}
 .actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:18px}.primary{border:0;background:var(--blue);color:#fff;font-size:14px;font-weight:750;border-radius:13px;padding:0 27px;min-height:51px}.primary:hover:not(:disabled){background:#264fd0}.secondary{border:1px solid #d8e1f0;background:#fff;color:#455874;font-size:13px;font-weight:730;border-radius:12px;padding:11px 16px;min-height:51px}.secondary:hover:not(:disabled){background:#f6f8fc}.stop{color:var(--red);border-color:#f0d0d0}.stop:hover:not(:disabled){background:#fdecee}.hide{display:none!important}
 .list{padding:18px 18px 16px}.list h2{margin:0 0 4px;font-size:17px;letter-spacing:-.02em}.blurb{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.5}.words{display:grid;gap:8px}.word-btn{display:flex;justify-content:space-between;gap:12px;align-items:baseline;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px}.word-btn b{font-size:15px;font-weight:760}.word-btn span{color:var(--muted);font-size:12px;line-height:1.4}.word-btn[aria-current="true"]{border-color:#c5d4ff;background:var(--blue-soft)}.word-btn:hover{border-color:#c5d4ff}
 .bottom{margin-top:22px;text-align:center;font-size:12px;line-height:1.7;color:var(--muted)}
@@ -44,7 +44,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
   <div>
    <div class="eyebrow">IELTS SPEAKING TRAINER</div>
    <h1 class="heading">Pronunciation Compare</h1>
-   <p class="sub">These are sounds many Chinese speakers change in English. Each round plays the word, records you, then plays the model and your recording one after the other.</p>
+   <p class="sub">These are sounds many Chinese speakers change in English. Each round plays the word, records you, then plays the model and your recording one after the other. A recognizer says what it heard.</p>
   </div>
   <div class="settings" aria-label="Voice">
    <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
@@ -65,6 +65,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
      <li id="stepCompare">3 Compare</li>
     </ol>
     <p class="status" id="status" role="status">Press Start. The model plays, then you say the word.</p>
+    <p class="review" id="review" role="status"></p>
     <p class="count idle" id="count" aria-hidden="true">2.0</p>
    </div>
    <div class="actions">
@@ -85,91 +86,91 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 (()=>{'use strict';
 const GROUPS=[
  {id:'think',label:'think th',blurb:'A soft th, not s.',words:[
-  {w:'think',ipa:'/θɪŋk/',hint:'Not sink.'},
-  {w:'three',ipa:'/θriː/',hint:'Not sree.'},
-  {w:'thank',ipa:'/θæŋk/',hint:'Not sank.'},
-  {w:'birthday',ipa:'/ˈbɜːθdeɪ/',hint:'th in the middle.'},
-  {w:'month',ipa:'/mʌnθ/',hint:'Final th.'},
-  {w:'something',ipa:'/ˈsʌmθɪŋ/',hint:'th, not s.'}
+  {w:'think',ipa:'/θɪŋk/',hint:'Not sink.',hear:['sink']},
+  {w:'three',ipa:'/θriː/',hint:'Not sree.',hear:['tree','free','sree']},
+  {w:'thank',ipa:'/θæŋk/',hint:'Not sank.',hear:['sank','tank']},
+  {w:'birthday',ipa:'/ˈbɜːθdeɪ/',hint:'th in the middle.',hear:['birsday','birfday']},
+  {w:'month',ipa:'/mʌnθ/',hint:'Final th.',hear:['muns','munf']},
+  {w:'something',ipa:'/ˈsʌmθɪŋ/',hint:'th, not s.',hear:['somesing']}
  ]},
  {id:'this',label:'this th',blurb:'A voiced th, not d or z.',words:[
-  {w:'this',ipa:'/ðɪs/',hint:'Not dis.'},
-  {w:'they',ipa:'/ðeɪ/',hint:'Not dey.'},
-  {w:'mother',ipa:'/ˈmʌðə/',hint:'Voiced th.'},
-  {w:'weather',ipa:'/ˈweðə/',hint:'Not weder.'},
-  {w:'brother',ipa:'/ˈbrʌðə/',hint:'Voiced th.'},
-  {w:'although',ipa:'/ɔːlˈðəʊ/',hint:'Voiced th.'}
+  {w:'this',ipa:'/ðɪs/',hint:'Not dis.',hear:['dis','zis']},
+  {w:'they',ipa:'/ðeɪ/',hint:'Not dey.',hear:['day','dey','zay']},
+  {w:'mother',ipa:'/ˈmʌðə/',hint:'Voiced th.',hear:['moder']},
+  {w:'weather',ipa:'/ˈweðə/',hint:'Not weder.',hear:['weder']},
+  {w:'brother',ipa:'/ˈbrʌðə/',hint:'Voiced th.',hear:['broder']},
+  {w:'although',ipa:'/ɔːlˈðəʊ/',hint:'Voiced th.',hear:['aldo']}
  ]},
  {id:'vw',label:'v / w',blurb:'v touches the teeth. w does not.',words:[
-  {w:'very',ipa:'/ˈveri/',hint:'Teeth on the lip for v.'},
-  {w:'vest',ipa:'/vest/',hint:'Not west.'},
-  {w:'vine',ipa:'/vaɪn/',hint:'Not wine.'},
-  {w:'video',ipa:'/ˈvɪdiəʊ/',hint:'v, not w.'},
-  {w:'available',ipa:'/əˈveɪləbl/',hint:'The v.'},
-  {w:'review',ipa:'/rɪˈvjuː/',hint:'v, not w.'}
+  {w:'very',ipa:'/ˈveri/',hint:'Teeth on the lip for v.',hear:['wery']},
+  {w:'vest',ipa:'/vest/',hint:'Not west.',hear:['west']},
+  {w:'vine',ipa:'/vaɪn/',hint:'Not wine.',hear:['wine']},
+  {w:'video',ipa:'/ˈvɪdiəʊ/',hint:'v, not w.',hear:['wideo']},
+  {w:'available',ipa:'/əˈveɪləbl/',hint:'The v.',hear:['awailable']},
+  {w:'review',ipa:'/rɪˈvjuː/',hint:'v, not w.',hear:['rewiew']}
  ]},
  {id:'lr',label:'l / r',blurb:'The tongue is different for l and r.',words:[
-  {w:'rice',ipa:'/raɪs/',hint:'Not lice.'},
-  {w:'right',ipa:'/raɪt/',hint:'Not light.'},
-  {w:'really',ipa:'/ˈrɪəli/',hint:'The r is not l.'},
-  {w:'library',ipa:'/ˈlaɪbrəri/',hint:'Both l and r.'},
-  {w:'problem',ipa:'/ˈprɒbləm/',hint:'The r after p.'},
-  {w:'grow',ipa:'/ɡrəʊ/',hint:'gr together.'}
+  {w:'rice',ipa:'/raɪs/',hint:'Not lice.',hear:['lice']},
+  {w:'right',ipa:'/raɪt/',hint:'Not light.',hear:['light']},
+  {w:'really',ipa:'/ˈrɪəli/',hint:'The r is not l.',hear:['leally']},
+  {w:'library',ipa:'/ˈlaɪbrəri/',hint:'Both l and r.',hear:['libary']},
+  {w:'problem',ipa:'/ˈprɒbləm/',hint:'The r after p.',hear:['ploblem']},
+  {w:'grow',ipa:'/ɡrəʊ/',hint:'gr together.',hear:['glow']}
  ]},
  {id:'ln',label:'l / n',blurb:'l is often heard as n.',words:[
-  {w:'light',ipa:'/laɪt/',hint:'l, not n.'},
-  {w:'night',ipa:'/naɪt/',hint:'n, not l.'},
-  {w:'line',ipa:'/laɪn/',hint:'l, not n.'},
-  {w:'nine',ipa:'/naɪn/',hint:'n, not l.'},
-  {w:'slow',ipa:'/sləʊ/',hint:'l, not n.'},
-  {w:'snow',ipa:'/snəʊ/',hint:'n, not l.'}
+  {w:'light',ipa:'/laɪt/',hint:'l, not n.',hear:['night']},
+  {w:'night',ipa:'/naɪt/',hint:'n, not l.',hear:['light']},
+  {w:'line',ipa:'/laɪn/',hint:'l, not n.',hear:['nine']},
+  {w:'nine',ipa:'/naɪn/',hint:'n, not l.',hear:['line']},
+  {w:'slow',ipa:'/sləʊ/',hint:'l, not n.',hear:['snow']},
+  {w:'snow',ipa:'/snəʊ/',hint:'n, not l.',hear:['slow']}
  ]},
  {id:'ie',label:'ship / sheep',blurb:'ship is short. sheep is long.',words:[
-  {w:'ship',ipa:'/ʃɪp/',hint:'Short i.'},
-  {w:'sheep',ipa:'/ʃiːp/',hint:'Long ee.'},
-  {w:'live',ipa:'/lɪv/',hint:'Short i. The verb.'},
-  {w:'leave',ipa:'/liːv/',hint:'Long ee.'},
-  {w:'sit',ipa:'/sɪt/',hint:'Short i.'},
-  {w:'seat',ipa:'/siːt/',hint:'Long ee.'}
+  {w:'ship',ipa:'/ʃɪp/',hint:'Short i.',hear:['sheep']},
+  {w:'sheep',ipa:'/ʃiːp/',hint:'Long ee.',hear:['ship']},
+  {w:'live',ipa:'/lɪv/',hint:'Short i. The verb.',hear:['leave']},
+  {w:'leave',ipa:'/liːv/',hint:'Long ee.',hear:['live']},
+  {w:'sit',ipa:'/sɪt/',hint:'Short i.',hear:['seat']},
+  {w:'seat',ipa:'/siːt/',hint:'Long ee.',hear:['sit']}
  ]},
  {id:'ae',label:'bad / bed',blurb:'bad uses a lower vowel than bed.',words:[
-  {w:'bad',ipa:'/bæd/',hint:'Low a, as in cat.'},
-  {w:'bed',ipa:'/bed/',hint:'e, as in bed.'},
-  {w:'man',ipa:'/mæn/',hint:'Low a.'},
-  {w:'men',ipa:'/men/',hint:'e.'},
-  {w:'sat',ipa:'/sæt/',hint:'Low a.'},
-  {w:'set',ipa:'/set/',hint:'e.'}
+  {w:'bad',ipa:'/bæd/',hint:'Low a, as in cat.',hear:['bed']},
+  {w:'bed',ipa:'/bed/',hint:'e, as in bed.',hear:['bad']},
+  {w:'man',ipa:'/mæn/',hint:'Low a.',hear:['men']},
+  {w:'men',ipa:'/men/',hint:'e.',hear:['man']},
+  {w:'sat',ipa:'/sæt/',hint:'Low a.',hear:['set']},
+  {w:'set',ipa:'/set/',hint:'e.',hear:['sat']}
  ]},
  {id:'end',label:'endings',blurb:'Keep the last consonant. It is often dropped.',words:[
-  {w:'bed',ipa:'/bed/',hint:'Keep the final d.'},
-  {w:'bag',ipa:'/bæɡ/',hint:'Keep the final g.'},
-  {w:'back',ipa:'/bæk/',hint:'Keep the final k.'},
-  {w:'five',ipa:'/faɪv/',hint:'Keep the final v.'},
-  {w:'asked',ipa:'/ɑːskt/',hint:'Keep both the k and the t.'},
-  {w:'clothes',ipa:'/kləʊðz/',hint:'The end is voiced th plus z.'}
+  {w:'bed',ipa:'/bed/',hint:'Keep the final d.',tail:true},
+  {w:'bag',ipa:'/bæɡ/',hint:'Keep the final g.',tail:true},
+  {w:'back',ipa:'/bæk/',hint:'Keep the final k.',tail:true},
+  {w:'five',ipa:'/faɪv/',hint:'Keep the final v.',tail:true,hear:['fife']},
+  {w:'asked',ipa:'/ɑːskt/',hint:'Keep both the k and the t.',tail:true,hear:['ask']},
+  {w:'clothes',ipa:'/kləʊðz/',hint:'The end is voiced th plus z.',tail:true,hear:['close','cloth']}
  ]},
  {id:'ng',label:'sing',blurb:'sing ends with ng. thin ends with n.',words:[
-  {w:'sing',ipa:'/sɪŋ/',hint:'ng, not n.'},
-  {w:'thing',ipa:'/θɪŋ/',hint:'Ends with ng.'},
-  {w:'bang',ipa:'/bæŋ/',hint:'ng, not n.'},
-  {w:'ring',ipa:'/rɪŋ/',hint:'ng, not n.'},
-  {w:'thin',ipa:'/θɪn/',hint:'Ends with n.'},
-  {w:'ban',ipa:'/bæn/',hint:'Ends with n, not ng.'}
+  {w:'sing',ipa:'/sɪŋ/',hint:'ng, not n.',hear:['sin']},
+  {w:'thing',ipa:'/θɪŋ/',hint:'Ends with ng.',hear:['thin']},
+  {w:'bang',ipa:'/bæŋ/',hint:'ng, not n.',hear:['ban']},
+  {w:'ring',ipa:'/rɪŋ/',hint:'ng, not n.',hear:['rin']},
+  {w:'thin',ipa:'/θɪn/',hint:'Ends with n.',hear:['thing']},
+  {w:'ban',ipa:'/bæn/',hint:'Ends with n, not ng.',hear:['bang']}
  ]},
  {id:'stress',label:'stress',blurb:'The loud syllable is the one marked.',words:[
-  {w:'comfortable',ipa:'/ˈkʌmftəbl/',hint:'Stress the first syllable.'},
-  {w:'interesting',ipa:'/ˈɪntrəstɪŋ/',hint:'Stress the first syllable.'},
-  {w:'vegetable',ipa:'/ˈvedʒtəbl/',hint:'Stress the first syllable.'},
-  {w:'develop',ipa:'/dɪˈveləp/',hint:'Stress the second syllable.'},
-  {w:'photograph',ipa:'/ˈfəʊtəɡrɑːf/',hint:'Stress the first syllable.'},
-  {w:'photographer',ipa:'/fəˈtɒɡrəfə/',hint:'Stress the second syllable.'}
+  {w:'comfortable',ipa:'/ˈkʌmftəbl/',hint:'Stress the first syllable.',stress:true},
+  {w:'interesting',ipa:'/ˈɪntrəstɪŋ/',hint:'Stress the first syllable.',stress:true},
+  {w:'vegetable',ipa:'/ˈvedʒtəbl/',hint:'Stress the first syllable.',stress:true},
+  {w:'develop',ipa:'/dɪˈveləp/',hint:'Stress the second syllable.',stress:true},
+  {w:'photograph',ipa:'/ˈfəʊtəɡrɑːf/',hint:'Stress the first syllable.',stress:true},
+  {w:'photographer',ipa:'/fəˈtɒɡrəfə/',hint:'Stress the second syllable.',stress:true}
  ]}
 ];
 const VOICE_KEY='ielts-pronunciation-voice',GROUP_KEY='ielts-pronunciation-group';
 const RECORD_MS=2000,READY_MS=400,GAP_MS=400;
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
 const el=id=>document.getElementById(id);
-let groupIndex=0,wordIndex=0,generation=0,stream=null,recorder=null,bufferSource=null,speechWatch=null,recordTimer=null,countTimer=null,waitTimer=null,ctx=null,completed=false,running=false;
+let groupIndex=0,wordIndex=0,generation=0,stream=null,recorder=null,recognizer=null,listenTimer=null,bufferSource=null,speechWatch=null,recordTimer=null,countTimer=null,waitTimer=null,ctx=null,completed=false,running=false;
 function group(){return GROUPS[groupIndex]}
 function item(){return group().words[wordIndex]}
 function audioContext(){
@@ -221,6 +222,11 @@ function fillVoices(){
 function chosenVoice(){return usableVoices().find(voice=>voice.voiceURI===el('voice').value)||null}
 function rememberVoice(){try{localStorage.setItem(VOICE_KEY,el('voice').value)}catch(_){}}
 function setStatus(text){el('status').textContent=text}
+function setReview(text,kind){
+ const node=el('review');
+ node.textContent=text||'';
+ node.className='review'+(kind?' '+kind:'');
+}
 function setCount(text,on){
  el('count').textContent=text;
  el('count').classList.toggle('idle',!on);
@@ -267,7 +273,7 @@ function renderWords(){
   const hint=document.createElement('span');
   hint.textContent=word.hint;
   button.append(name,hint);
-  button.addEventListener('click',()=>{if(running)return;wordIndex=index;completed=false;showWord();showControls();setStatus('Press Start. The model plays, then you say the word.');setStep('')});
+  button.addEventListener('click',()=>{if(running)return;wordIndex=index;completed=false;showWord();showControls();setStep('');setReview('');setCount('',false);setStatus('Press Start. The model plays, then you say the word.')});
   host.append(button);
  });
 }
@@ -285,7 +291,7 @@ function renderGroups(){
    if(running||index===groupIndex)return;
    groupIndex=index;wordIndex=0;completed=false;
    try{localStorage.setItem(GROUP_KEY,entry.id)}catch(_){}
-   renderWords();showWord();showControls();setStep('');setCount('',false);
+   renderWords();showWord();showControls();setStep('');setCount('',false);setReview('');
    setStatus('Press Start. The model plays, then you say the word.');
   });
   host.append(button);
@@ -305,10 +311,18 @@ function cancelSpeech(){
  if(speechOK){try{window.speechSynthesis.cancel()}catch(_){}}
  el('sound').classList.remove('playing');
 }
+function cancelListen(){
+ if(listenTimer){clearTimeout(listenTimer);listenTimer=null}
+ const current=recognizer;
+ recognizer=null;
+ if(!current)return;
+ try{current.onend=null;current.onerror=null;current.onresult=null;current.abort()}catch(_){}
+}
 function cancel(){
  generation++;
  cancelSpeech();
  cancelRecord();
+ cancelListen();
  cancelAudio();
  setCount('',false);
 }
@@ -380,18 +394,14 @@ function record(ms,token){
   recordTimer=setTimeout(()=>{if(rec.state==='recording')rec.stop()},ms);
  });
 }
-function playBlob(blob,token){
- return new Promise(async(resolve,reject)=>{
+function playBuffer(buffer,token){
+ return new Promise((resolve,reject)=>{
   try{
-   const raw=await blob.arrayBuffer();
-   if(token!==generation){reject(new Error('cancel'));return}
-   const decoded=await audioContext().decodeAudioData(raw);
-   if(token!==generation){reject(new Error('cancel'));return}
    const source=audioContext().createBufferSource();
    bufferSource=source;
-   source.buffer=decoded;
+   source.buffer=buffer;
    source.connect(audioContext().destination);
-   source.onended=()=>{if(bufferSource===source)bufferSource=null;token===generation?resolve():reject(new Error('cancel'))};
+   source.onended=()=>{if(bufferSource===source)bufferSource=null;el('sound').classList.remove('playing');token===generation?resolve():reject(new Error('cancel'))};
    el('sound').classList.add('playing');
    source.start();
   }catch(_){
@@ -399,6 +409,106 @@ function playBlob(blob,token){
    if(token!==generation)reject(new Error('cancel'));
    else reject(new Error('play'));
   }
+ });
+}
+function trimLeadingSilence(buffer){
+ if(!buffer||typeof buffer.getChannelData!=='function'||!(buffer.length>0)||!(buffer.sampleRate>0))return {buffer,voiced:true};
+ const rate=buffer.sampleRate;
+ const hop=Math.max(1,Math.floor(rate*0.01));
+ const count=buffer.numberOfChannels||1;
+ const peaks=[];
+ for(let i=0;i+hop<=buffer.length;i+=hop){
+  let peak=0;
+  for(let c=0;c<count;c++){
+   const data=buffer.getChannelData(c);
+   for(let j=i;j<i+hop;j++){
+    const value=Math.abs(data[j]);
+    if(value>peak)peak=value;
+   }
+  }
+  peaks.push(peak);
+ }
+ if(!peaks.length)return {buffer,voiced:false};
+ const sample=Math.min(6,peaks.length);
+ const noise=peaks.slice(0,sample).reduce((sum,value)=>sum+value,0)/sample;
+ const gate=Math.max(0.015,noise*3.5);
+ let index=-1;
+ for(let i=0;i<peaks.length-1;i++){
+  if(peaks[i]>=gate&&peaks[i+1]>=gate*0.7){index=i;break}
+ }
+ if(index<0)return {buffer,voiced:false};
+ const start=Math.max(0,index*hop-Math.floor(rate*0.04));
+ if(start<Math.floor(rate*0.03))return {buffer,voiced:true};
+ if(typeof audioContext().createBuffer!=='function')return {buffer,voiced:true};
+ const length=buffer.length-start;
+ const trimmed=audioContext().createBuffer(count,length,rate);
+ for(let c=0;c<count;c++){
+  const dst=new Float32Array(length);
+  dst.set(buffer.getChannelData(c).subarray(start));
+  trimmed.copyToChannel(dst,c);
+ }
+ return {buffer:trimmed,voiced:true};
+}
+async function prepareRecording(blob,token){
+ const raw=await blob.arrayBuffer();
+ if(token!==generation)throw new Error('cancel');
+ const decoded=await audioContext().decodeAudioData(raw);
+ if(token!==generation)throw new Error('cancel');
+ return trimLeadingSilence(decoded);
+}
+function cleanWords(text){
+ return String(text||'').toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim();
+}
+function hasWord(text,word){
+ return cleanWords(text).split(' ').includes(word);
+}
+function evaluate(word,heard,voiced){
+ if(!voiced)return {kind:'no',text:'No speech in the recording. Move closer and try again.'};
+ if(!heard)return {kind:'',text:'This browser cannot score the recording. Chrome can.'};
+ const pool=[heard.text,...(heard.alts||[])].map(cleanWords).filter(Boolean);
+ if(!pool.length)return {kind:'no',text:'I didn\'t catch any speech. Move closer and try again.'};
+ const target=word.w.toLowerCase();
+ if(pool.some(text=>hasWord(text,target))){
+  if(word.stress)return {kind:'ok',text:'Heard “'+target+'”. The word matched. Listen again for the stressed syllable.'};
+  if(word.tail)return {kind:'ok',text:'Heard “'+target+'”. The word matched. Listen again for the last consonant.'};
+  return {kind:'ok',text:'Heard “'+target+'”. That matches.'};
+ }
+ const wrong=(word.hear||[]).find(item=>pool.some(text=>hasWord(text,item)));
+ if(wrong)return {kind:'no',text:'Heard “'+wrong+'”, not '+target+'. '+word.hint};
+ const shown=pool[0].length>42?pool[0].slice(0,42)+'…':pool[0];
+ return {kind:'no',text:'Heard “'+shown+'”, not '+target+'. '+word.hint};
+}
+function listen(ms,token){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR)return Promise.resolve(null);
+ return new Promise(resolve=>{
+  let settled=false;
+  let text='';
+  let alts=[];
+  const rec=new SR();
+  recognizer=rec;
+  const finish=result=>{
+   if(settled)return;
+   settled=true;
+   if(recognizer===rec)recognizer=null;
+   resolve(token===generation?result:null);
+  };
+  rec.lang='en-GB';
+  rec.interimResults=true;
+  rec.continuous=true;
+  rec.maxAlternatives=5;
+  rec.onresult=event=>{
+   let latest='';
+   for(let i=0;i<event.results.length;i++){
+    latest+=event.results[i][0].transcript+' ';
+    if(event.results[i].isFinal)alts=[...event.results[i]].map(row=>row.transcript);
+   }
+   text=latest.trim();
+  };
+  rec.onerror=event=>{if(event&&(event.error==='not-allowed'||event.error==='service-not-allowed'))finish(null)};
+  rec.onend=()=>finish({text,alts});
+  try{rec.start()}catch(_){finish(null);return}
+  listenTimer=setTimeout(()=>{try{rec.stop()}catch(_){finish({text,alts})}},ms);
  });
 }
 function failMessage(error){
@@ -418,6 +528,7 @@ async function run(token){
   if(token!==generation)return;
   setStep('listen');
   setStatus('Listen.');
+  setReview('');
   setCount('',false);
   await speak(word.w,token);
   if(token!==generation)return;
@@ -426,10 +537,13 @@ async function run(token){
   if(token!==generation)return;
   setStep('record');
   setStatus('Say the word.');
+  const heardPromise=listen(RECORD_MS,token);
   const blob=await record(RECORD_MS,token);
   if(token!==generation)return;
   setCount('',false);
   if(!blob.size)throw new Error('play');
+  const trimmed=await prepareRecording(blob,token);
+  if(token!==generation)return;
   setStep('compare');
   setStatus('Model.');
   await speak(word.w,token);
@@ -437,9 +551,13 @@ async function run(token){
   await wait(GAP_MS,token);
   if(token!==generation)return;
   setStatus('Your recording.');
-  await playBlob(blob,token);
+  await playBuffer(trimmed.buffer,token);
   if(token!==generation)return;
-  el('sound').classList.remove('playing');
+  let heard=null;
+  try{heard=await Promise.race([heardPromise,wait(800,token).then(()=>null)])}catch(error){if(token!==generation)return}
+  if(token!==generation)return;
+  const verdict=evaluate(word,heard,trimmed.voiced);
+  setReview(verdict.text,verdict.kind);
   completed=true;
   setStep('');
   setStatus('Model, then you. Press Again to repeat.');
@@ -463,6 +581,7 @@ function stop(){
  cancel();
  running=false;
  setStep('');
+ setReview('');
  setStatus('Stopped. Press Start when you are ready.');
  showControls();
 }
