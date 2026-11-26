@@ -31,7 +31,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 .steps{display:flex;justify-content:center;gap:8px;list-style:none;margin:22px 0 0;padding:0}.steps li{min-width:92px;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:750;color:var(--muted);background:#f3f6fb}.steps li.active{color:#fff;background:var(--blue)}.steps li.done{color:var(--green);background:#e7f6ef}
 .status{min-height:22px;margin:14px 0 0;font-size:13px;color:var(--muted);font-weight:700}.review{min-height:22px;margin:8px 0 0;max-width:36em;font-size:14px;line-height:1.45;font-weight:720;color:var(--muted)}.review.ok{color:var(--green)}.review.no{color:var(--red)}.notes{list-style:none;margin:12px auto 0;padding:0;display:grid;gap:6px;width:min(100%,460px);text-align:left}.notes li{font-size:13px;line-height:1.45;color:#31466d;background:#f6f8fc;border-radius:10px;padding:8px 10px}.notes li.ok{background:#e7f6ef;color:var(--green)}.notes li.no{background:#fdecee;color:var(--red)}.waves{width:min(100%,460px);margin:12px auto 0;display:grid;gap:8px}.wave-row{display:grid;grid-template-columns:48px minmax(0,1fr);gap:8px;align-items:center}.wave-label{font-size:11px;font-weight:750;color:var(--muted);text-align:right}.wave{display:block;height:52px;max-width:100%;background:#f6f8fc;border-radius:10px}.replay{display:flex;justify-content:center;gap:8px;margin-top:12px}.replay-btn{border:1px solid #d8e1f0;background:#fff;color:#31466d;font-size:13px;font-weight:730;border-radius:999px;padding:8px 14px;min-height:40px}.replay-btn:hover:not(:disabled){background:#f6f8fc}.replay-btn.active{color:#fff;background:var(--blue);border-color:var(--blue)}.count{margin:6px 0 0;font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.03em;color:var(--text)}.count.idle{color:transparent}
 .actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:18px}.primary{border:0;background:var(--blue);color:#fff;font-size:14px;font-weight:750;border-radius:13px;padding:0 27px;min-height:51px}.primary:hover:not(:disabled){background:#264fd0}.secondary{border:1px solid #d8e1f0;background:#fff;color:#455874;font-size:13px;font-weight:730;border-radius:12px;padding:11px 16px;min-height:51px}.secondary:hover:not(:disabled){background:#f6f8fc}.stop{color:var(--red);border-color:#f0d0d0}.stop:hover:not(:disabled){background:#fdecee}.hide{display:none!important}
-.list{padding:18px 18px 16px}.list h2{margin:0 0 4px;font-size:17px;letter-spacing:-.02em}.blurb{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.5}.words{display:grid;gap:8px}.word-btn{display:flex;justify-content:space-between;gap:12px;align-items:baseline;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px}.word-btn b{font-size:15px;font-weight:760}.word-btn span{color:var(--muted);font-size:12px;line-height:1.4}.word-btn[aria-current="true"]{border-color:#c5d4ff;background:var(--blue-soft)}.word-btn:hover{border-color:#c5d4ff}
+.list{padding:18px 18px 16px}.list h2{margin:0 0 4px;font-size:17px;letter-spacing:-.02em}.blurb{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.5}.words{display:grid;gap:8px;max-height:min(70vh,640px);overflow:auto}.word-btn{display:flex;justify-content:space-between;gap:12px;align-items:baseline;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px}.word-btn b{font-size:15px;font-weight:760}.word-btn span{color:var(--muted);font-size:12px;line-height:1.4}.word-btn[aria-current="true"]{border-color:#c5d4ff;background:var(--blue-soft)}.word-btn:hover{border-color:#c5d4ff}
 .bottom{margin-top:22px;text-align:center;font-size:12px;line-height:1.7;color:var(--muted)}
 @media(max-width:800px){.wrap{padding:27px 16px 34px}header{align-items:start;flex-direction:column}.settings,.setting,.setting select{width:100%}.layout{grid-template-columns:1fr}.practice{min-height:0;padding:22px 18px 20px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
@@ -141,13 +141,22 @@ const GROUPS=[
   {w:'duck',ipa:'/dʌk/',hint:'Short ʌ. Not dark.',hear:['dark'],say:'A duck can swim.'},
   {w:'dark',ipa:'/dɑːk/',hint:'Long ɑː. Not duck.',hear:['duck'],say:'It is dark.'}
  ]},
- {id:'nor',label:'ə/ər',blurb:'The last vowel is plain. Do not add an r.',words:[
+ {id:'nor',label:'no r',blurb:'Do not add an r. father is not farther, and idea is not idear.',words:[
+  {w:'father',ipa:'/ˈfɑːðə/',hint:'Not farther.',hear:['farther'],say:'My father is kind.'},
+  {w:'cause',ipa:'/kɔːz/',hint:'No r.',say:'The cause is clear.'},
+  {w:'doll',ipa:'/dɒl/',hint:'No r.',say:'This doll is small.'},
+  {w:'poll',ipa:'/pəʊl/',hint:'No r.',say:'The poll is open.'},
+  {w:'college',ipa:'/ˈkɒlɪdʒ/',hint:'No r.',say:'College starts soon.'},
+  {w:'modern',ipa:'/ˈmɒdn/',hint:'No extra r.',say:'This phone is modern.'},
+  {w:'really',ipa:'/ˈrɪəli/',hint:'Not rearlly.',hear:['rearlly'],say:'I really like it.'},
   {w:'idea',ipa:'/aɪˈdɪə/',hint:'Not idear.',hear:['idear'],say:'That is my idea.'},
   {w:'china',ipa:'/ˈtʃaɪnə/',hint:'Not chinar.',hear:['chinar'],say:'This bowl is from China.'},
-  {w:'america',ipa:'/əˈmerɪkə/',hint:'Not americar.',hear:['americar'],say:'He lives in America.'},
-  {w:'sofa',ipa:'/ˈsəʊfə/',hint:'Not sofar.',hear:['sofar'],say:'The sofa is blue.'},
-  {w:'banana',ipa:'/bəˈnɑːnə/',hint:'Not bananar.',hear:['bananar'],say:'I ate a banana.'},
-  {w:'panda',ipa:'/ˈpændə/',hint:'Not pandar.',hear:['pandar'],say:'The panda is sleepy.'}
+  {w:'famous',ipa:'/ˈfeɪməs/',hint:'Not famours.',hear:['famours'],say:'The book is famous.'},
+  {w:'because',ipa:'/bɪˈkɒz/',hint:'No r.',say:'I stayed because of the rain.'},
+  {w:'panda',ipa:'/ˈpændə/',hint:'Not pander.',hear:['pander'],say:'The panda is sleepy.'},
+  {w:'purpose',ipa:'/ˈpɜːpəs/',hint:'The ending has no r.',say:'The purpose is clear.'},
+  {w:'delicious',ipa:'/dɪˈlɪʃəs/',hint:'No r.',say:'The cake is delicious.'},
+  {w:'area',ipa:'/ˈeəriə/',hint:'The last vowel has no r.',say:'This area is quiet.'}
  ]}
 ];
 const GROUP_KEY='ielts-pronunciation-group';
@@ -513,7 +522,7 @@ function contrastNote(id){
  if(id==='ae')return {kind:'',text:'In the sentence, listen for the vowel. bad is a lower vowel than bed.'};
  if(id==='uu')return {kind:'',text:'In the sentence, ʊ is short and uː is long.'};
  if(id==='aa')return {kind:'',text:'In the sentence, ʌ is short and central. ɑː is long and open.'};
- if(id==='nor')return {kind:'',text:'In the sentence, the word should end on a vowel, with no r after it.'};
+ if(id==='nor')return {kind:'',text:'Do not add an r in the middle or at the end. Compare the word with the model.'};
  return {kind:'',text:'In the sentence, compare the word with the model.'};
 }
 function speechSpan(buffer){
