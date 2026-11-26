@@ -117,30 +117,6 @@ const GROUPS=[
   {w:'available',ipa:'/əˈveɪləbl/',hint:'The v.',hear:['awailable'],say:'A room is available.'},
   {w:'review',ipa:'/rɪˈvjuː/',hint:'v, not w.',hear:['rewiew'],say:'Please review the list.'}
  ]},
- {id:'lr',label:'l / r',blurb:'The tongue is different for l and r.',words:[
-  {w:'rice',ipa:'/raɪs/',hint:'Not lice.',hear:['lice'],say:'I cooked some rice.'},
-  {w:'right',ipa:'/raɪt/',hint:'Not light.',hear:['light'],say:'Please turn right.'},
-  {w:'really',ipa:'/ˈrɪəli/',hint:'The r is not l.',hear:['leally'],say:'I really like it.'},
-  {w:'library',ipa:'/ˈlaɪbrəri/',hint:'Both l and r.',hear:['libary'],say:'The library is open.'},
-  {w:'problem',ipa:'/ˈprɒbləm/',hint:'The r after p.',hear:['ploblem'],say:'We solved the problem.'},
-  {w:'grow',ipa:'/ɡrəʊ/',hint:'gr together.',hear:['glow'],say:'The trees grow fast.'}
- ]},
- {id:'ln',label:'l / n',blurb:'l is often heard as n.',words:[
-  {w:'light',ipa:'/laɪt/',hint:'l, not n.',hear:['night'],say:'Leave the light on.'},
-  {w:'night',ipa:'/naɪt/',hint:'n, not l.',hear:['light'],say:'We walked at night.'},
-  {w:'line',ipa:'/laɪn/',hint:'l, not n.',hear:['nine'],say:'Draw a straight line.'},
-  {w:'nine',ipa:'/naɪn/',hint:'n, not l.',hear:['line'],say:'The shop opens at nine.'},
-  {w:'slow',ipa:'/sləʊ/',hint:'l, not n.',hear:['snow'],say:'The traffic is slow.'},
-  {w:'snow',ipa:'/snəʊ/',hint:'n, not l.',hear:['slow'],say:'The snow is deep.'}
- ]},
- {id:'ie',label:'ship / sheep',blurb:'ship is short. sheep is long.',words:[
-  {w:'ship',ipa:'/ʃɪp/',hint:'Short i.',hear:['sheep'],say:'The ship is large.'},
-  {w:'sheep',ipa:'/ʃiːp/',hint:'Long ee.',hear:['ship'],say:'Ten sheep are here.'},
-  {w:'live',ipa:'/lɪv/',hint:'Short i. The verb.',hear:['leave'],say:'They live near me.'},
-  {w:'leave',ipa:'/liːv/',hint:'Long ee.',hear:['live'],say:'We leave at noon.'},
-  {w:'sit',ipa:'/sɪt/',hint:'Short i.',hear:['seat'],say:'Please sit down.'},
-  {w:'seat',ipa:'/siːt/',hint:'Long ee.',hear:['sit'],say:'This seat is free.'}
- ]},
  {id:'ae',label:'bad / bed',blurb:'bad uses a lower vowel than bed.',words:[
   {w:'bad',ipa:'/bæd/',hint:'Low a, as in cat.',hear:['bed'],say:'The weather is bad.'},
   {w:'bed',ipa:'/bed/',hint:'e, as in bed.',hear:['bad'],say:'The bed is warm.'},
@@ -149,22 +125,6 @@ const GROUPS=[
   {w:'sat',ipa:'/sæt/',hint:'Low a.',hear:['set'],say:'I sat by the door.'},
   {w:'set',ipa:'/set/',hint:'e.',hear:['sat'],say:'Please set it down.'}
  ]},
- {id:'end',label:'endings',blurb:'Keep the last consonant. It is often dropped.',words:[
-  {w:'bed',ipa:'/bed/',hint:'Keep the final d.',tail:true,say:'The bed is warm.'},
-  {w:'bag',ipa:'/bæɡ/',hint:'Keep the final g.',tail:true,say:'Her bag is heavy.'},
-  {w:'back',ipa:'/bæk/',hint:'Keep the final k.',tail:true,say:'She came back early.'},
-  {w:'five',ipa:'/faɪv/',hint:'Keep the final v.',tail:true,hear:['fife'],say:'Give me five minutes.'},
-  {w:'asked',ipa:'/ɑːskt/',hint:'Keep both the k and the t.',tail:true,hear:['ask'],say:'She asked for help.'},
-  {w:'clothes',ipa:'/kləʊðz/',hint:'The end is voiced th plus z.',tail:true,hear:['close','cloth'],say:'I washed my clothes.'}
- ]},
- {id:'ng',label:'sing',blurb:'sing ends with ng. thin ends with n.',words:[
-  {w:'sing',ipa:'/sɪŋ/',hint:'ng, not n.',hear:['sin'],say:'The birds sing.'},
-  {w:'thing',ipa:'/θɪŋ/',hint:'Ends with ng.',hear:['thin'],say:'That is the thing.'},
-  {w:'bang',ipa:'/bæŋ/',hint:'ng, not n.',hear:['ban'],say:'I heard a loud bang.'},
-  {w:'ring',ipa:'/rɪŋ/',hint:'ng, not n.',hear:['rin'],say:'He lost his ring.'},
-  {w:'thin',ipa:'/θɪn/',hint:'Ends with n.',hear:['thing'],say:'The rope is thin.'},
-  {w:'ban',ipa:'/bæn/',hint:'Ends with n, not ng.',hear:['bang'],say:'They announced a ban.'}
- ]},
  {id:'nor',label:'no final r',blurb:'The last vowel is plain. Do not add an r.',words:[
   {w:'idea',ipa:'/aɪˈdɪə/',hint:'Not idear.',hear:['idear'],say:'That is my idea.'},
   {w:'china',ipa:'/ˈtʃaɪnə/',hint:'Not chinar.',hear:['chinar'],say:'This bowl is from China.'},
@@ -172,14 +132,6 @@ const GROUPS=[
   {w:'sofa',ipa:'/ˈsəʊfə/',hint:'Not sofar.',hear:['sofar'],say:'The sofa is blue.'},
   {w:'banana',ipa:'/bəˈnɑːnə/',hint:'Not bananar.',hear:['bananar'],say:'I ate a banana.'},
   {w:'panda',ipa:'/ˈpændə/',hint:'Not pandar.',hear:['pandar'],say:'The panda is sleepy.'}
- ]},
- {id:'stress',label:'stress',blurb:'The loud syllable is the one marked.',words:[
-  {w:'comfortable',ipa:'/ˈkʌmftəbl/',hint:'Stress the first syllable.',stress:true,say:'The chair is comfortable.'},
-  {w:'interesting',ipa:'/ˈɪntrəstɪŋ/',hint:'Stress the first syllable.',stress:true,say:'The class is interesting.'},
-  {w:'vegetable',ipa:'/ˈvedʒtəbl/',hint:'Stress the first syllable.',stress:true,say:'I like this vegetable.'},
-  {w:'develop',ipa:'/dɪˈveləp/',hint:'Stress the second syllable.',stress:true,say:'We develop the plan.'},
-  {w:'photograph',ipa:'/ˈfəʊtəɡrɑːf/',hint:'Stress the first syllable.',stress:true,say:'I kept the photograph.'},
-  {w:'photographer',ipa:'/fəˈtɒɡrəfə/',hint:'Stress the second syllable.',stress:true,say:'The photographer waited.'}
  ]}
 ];
 const GROUP_KEY='ielts-pronunciation-group';
@@ -539,16 +491,12 @@ function measure(buffer){
  }
  return {duration,peakPos,endRatio,highRatio,voiced:true};
 }
-function contrastNote(id,word){
+function contrastNote(id){
  if(id==='think'||id==='this')return {kind:'',text:'Listen for the th in the word, then again in the sentence.'};
  if(id==='vw')return {kind:'',text:'In the sentence, v touches the top teeth. w does not.'};
- if(id==='ie')return {kind:'',text:/ː/.test(word.ipa)?'In the sentence, hold the long vowel.':'In the sentence, keep this vowel short.'};
- if(id==='end')return {kind:'',text:'In the sentence, keep the last consonant of the word.'};
- if(id==='ng')return {kind:'',text:word.ipa.includes('ŋ')?'In the sentence, the word should end with ng.':'In the sentence, the word should end with n, not ng.'};
- if(id==='stress')return {kind:'',text:word.hint.includes('first')?'In the sentence, stress the first syllable of the word.':'In the sentence, stress the second syllable of the word.'};
  if(id==='ae')return {kind:'',text:'In the sentence, listen for the vowel. bad is a lower vowel than bed.'};
  if(id==='nor')return {kind:'',text:'In the sentence, the word should end on a vowel, with no r after it.'};
- return {kind:'',text:'In the sentence, compare the word with the model. The difference is in the tongue.'};
+ return {kind:'',text:'In the sentence, compare the word with the model.'};
 }
 function speechSpan(buffer){
  const data=buffer.getChannelData(0),rate=buffer.sampleRate||48000;
@@ -714,7 +662,7 @@ async function run(token){
    const stats=measure(trimmed.buffer);
    if(stats&&stats.voiced){
     notes.push({kind:'',text:'Speech in your recording lasts '+stats.duration.toFixed(2)+'s.'});
-    const extra=contrastNote(group().id,word);
+    const extra=contrastNote(group().id);
     if(extra)notes.push(extra);
    }
    const guesses=(heard&&heard.alts||[]).map(cleanWords).filter(text=>text&&text!==cleanWords(heard.text)).slice(0,2);
