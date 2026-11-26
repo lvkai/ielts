@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Free IELTS intensive listening. Upload an MP3, transcribe it in the browser, and loop one sentence until the dictation matches. Instruction lines are not dictated.">
+<meta name="description" content="Free IELTS intensive listening. Upload an MP3, transcribe it in the browser, play each sentence once, or loop one sentence until the dictation matches.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/ielts-listening-intensive.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="IELTS Intensive Listening">
-<meta property="og:description" content="Upload an MP3. The page transcribes it in the browser and loops one sentence until your dictation matches.">
+<meta property="og:description" content="Upload an MP3. The page transcribes it in the browser, plays each sentence once, or loops one sentence until your dictation matches.">
 <meta property="og:url" content="https://lvkai.github.io/ielts/ielts-listening-intensive.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Intensive Listening","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-intensive.html","description":"Upload an MP3, transcribe it in the browser, and loop one sentence until the dictation matches. Instruction lines are not dictated.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Intensive Listening","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-intensive.html","description":"Upload an MP3, transcribe it in the browser, play each sentence once, or loop one sentence until the dictation matches.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
 <title>IELTS Intensive Listening</title>
@@ -20,7 +20,7 @@
 :root{--bg:#f6f8fb;--surface:#fff;--text:#182339;--muted:#738097;--line:#e4eaf2;--blue:#315eea;--blue-soft:#edf1ff;--green:#168363;--red:#c54d4d;--gold:#8a6414;--r:19px}
 *{box-sizing:border-box}html{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif}body{margin:0;background:var(--bg);color:var(--text);min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}
 [hidden]{display:none!important}
-.wrap{max-width:820px;margin:0 auto;padding:36px 22px 64px}
+.wrap{max-width:1080px;margin:0 auto;padding:36px 22px 64px}
 .pager{display:flex;align-items:center;gap:8px;margin:0 0 18px;flex-wrap:wrap}.pager a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.pager a:hover{text-decoration:underline}.pager a:focus-visible{outline:3px solid #adc0ff;outline-offset:2px;border-radius:4px}.steps{display:flex;flex-wrap:wrap;align-items:center;margin:0;padding:0;list-style:none}.steps li{display:flex;align-items:center}.steps li+li:before{content:"";width:12px;height:1px;margin:0 2px;background:#d5deea}.steps button{border:0;background:transparent;color:var(--muted);border-radius:999px;min-height:36px;padding:0 10px;font-size:13px;font-weight:750}.steps button[aria-current="page"]{background:var(--blue-soft);color:var(--blue)}.steps button:hover:not(:disabled){color:var(--text)}
 .eyebrow{color:var(--blue);font-size:11px;letter-spacing:.15em;font-weight:800;margin-bottom:9px}
 h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.15}
@@ -96,8 +96,10 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
 .setting{position:relative;display:flex;align-items:center}.setting span{position:absolute;left:0;bottom:calc(100% + 3px);font-size:11px;line-height:1;color:var(--muted);font-weight:650;white-space:nowrap}.setting select{appearance:none;border:1px solid var(--line);border-radius:12px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;min-height:42px;padding:0 28px 0 12px;font-weight:700}
 .note{margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.6}.note.warn{color:var(--red)}
 .name-field{display:flex;align-items:center;gap:8px;margin-top:10px}.name-field span{font-size:12px;color:var(--muted);font-weight:750}.name-field input{width:min(360px,100%);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-weight:700}
-.library{margin-top:22px}.library h2{margin:0 0 4px;font-size:16px;letter-spacing:-.02em}.library-empty{margin:8px 0 0;color:var(--muted);font-size:13px}.library-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.library-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.library-copy b{font-weight:750}.library-meta{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}.library-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}.library-actions button{border-radius:999px;min-height:34px;padding:0 12px;font-size:12px;font-weight:750}.library-actions .edit{border:1px solid #d8e1f0;background:#fff;color:#455874}.library-actions .practice{border:0;background:var(--blue);color:#fff}.library-actions .danger{border:0;background:none;padding:0 4px;color:var(--red)}
+.library{margin-top:22px}.library h2{margin:0 0 4px;font-size:16px;letter-spacing:-.02em}.library-empty{margin:8px 0 0;color:var(--muted);font-size:13px}.library-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.library-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.library-copy b{font-weight:750}.library-meta{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}.library-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}.library-actions button{border-radius:999px;min-height:34px;padding:0 12px;font-size:12px;font-weight:750}.library-actions .edit,.library-actions .listen{border:1px solid #d8e1f0;background:#fff;color:#455874}.library-actions .practice{border:0;background:var(--blue);color:#fff}.library-actions .danger{border:0;background:none;padding:0 4px;color:var(--red)}
+.player-board{display:grid;grid-template-columns:260px minmax(0,1fr);gap:16px;align-items:start}.player-board h2{margin:2px 8px 10px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:750}.player-lines{display:flex;flex-direction:column;gap:2px;max-height:min(68vh,640px);overflow:auto}.player-line,.player-bit{display:block;width:100%;border:0;background:transparent;border-radius:10px;min-height:38px;padding:8px 10px;text-align:left;line-height:1.4}.player-line{font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.player-bit{color:var(--muted);font-size:16px}.player-bit.now{color:var(--text);font-size:26px;font-weight:750;letter-spacing:-.02em}.player-line.now{background:var(--blue-soft);color:var(--blue)}.player-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline;padding:2px 8px 0}.player-head h2{margin:0;font-size:18px;letter-spacing:-.02em;text-transform:none;color:var(--text);font-weight:750;overflow-wrap:anywhere}.player-count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}.player-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:0 8px}.player-focus{display:flex;flex-direction:column;gap:2px;margin-top:8px}.player-hidden{margin:16px 8px;color:var(--muted)}
 .fine{margin:18px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
+@media(max-width:800px){.player-board{grid-template-columns:1fr}.player-lines{max-height:180px}.player-bit.now{font-size:22px}}
 @media(max-width:640px){.wrap{padding:22px 14px 40px}.panel{padding:18px 14px}.start-bar{align-items:stretch;flex-direction:column}.start-bar .primary,.start-bar .secondary,.work-actions .secondary{width:100%}.library-item{align-items:flex-start;flex-direction:column}.library-actions{width:100%}.practice-layout{flex-direction:column}.sentence-nav{width:100%;max-height:132px;flex-direction:row}.jump{width:auto;flex:none}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
@@ -107,14 +109,15 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
  <nav class="pager" aria-label="Pages">
   <a href="index.html">← Home</a>
   <ol class="steps">
-   <li><button type="button" data-step="upload" aria-current="page">Recordings</button></li>
-   <li><button type="button" data-step="review" disabled>Sentences</button></li>
+   <li><button type="button" data-step="upload" aria-current="page">File List</button></li>
+   <li><button type="button" data-step="review" disabled>Edit</button></li>
+   <li><button type="button" data-step="player" disabled>Player</button></li>
    <li><button type="button" data-step="practice" disabled>Dictation</button></li>
   </ol>
  </nav>
  <div class="eyebrow">IELTS LISTENING TRAINER</div>
  <h1>Intensive Listening</h1>
- <p class="sub">Upload an MP3. This page transcribes it in the browser, splits it into sentences, and repeats one sentence until your dictation matches.</p>
+ <p class="sub">Upload an MP3. This page transcribes it in the browser and splits it into sentences. Player plays each sentence once, then the next. Dictation repeats one sentence until your typing matches.</p>
  <div id="fileBar" class="filebar" hidden>
   <span id="fileNow" class="file-time">0:00</span>
   <div id="fileScrub" class="scrub" role="slider" tabindex="0" aria-label="Recording position" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
@@ -149,6 +152,26 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
   <div class="start-bar">
    <button type="button" id="another" class="secondary">Choose another file</button>
    <button type="button" id="begin" class="primary">Start dictation</button>
+  </div>
+ </section>
+ <section id="stagePlayer" class="panel" hidden aria-label="Player">
+  <div class="player-board">
+   <div>
+    <h2>Lines</h2>
+    <div id="playerLines" class="player-lines"></div>
+   </div>
+   <div>
+    <div class="player-head"><h2 id="playerName">Player</h2><p id="playerCount" class="player-count"></p></div>
+    <div class="track" aria-hidden="true"><div id="playerFill" class="track-fill"></div></div>
+    <div class="player-controls">
+     <button type="button" id="playerPrev" class="secondary" disabled>Previous</button>
+     <button type="button" id="playerPlay" class="primary" disabled>Play</button>
+     <button type="button" id="playerNext" class="secondary" disabled>Next</button>
+     <button type="button" id="playerText" class="secondary" aria-pressed="true">Hide text</button>
+    </div>
+    <div id="playerFocus" class="player-focus" aria-live="polite"></div>
+    <p id="playerHidden" class="player-hidden" hidden>Text hidden</p>
+   </div>
   </div>
  </section>
  <section id="stagePractice" class="panel" hidden aria-label="Dictation">
@@ -196,7 +219,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <button type="button" id="doneAnother" class="secondary">Choose another file</button>
   </div>
  </section>
- <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. A correct sentence, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Repeats sets how many times a sentence plays before it stops. Infinite keeps going until you move on.</p>
+ <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. Player plays each sentence once, then the next. Space plays or pauses. Shift replays the current sentence. Left and right arrows change the sentence. A correct dictation, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Repeats sets how many times a sentence plays before it stops. Infinite keeps going until you move on.</p>
  <div id="toast" class="toast" hidden role="dialog" aria-modal="true" aria-labelledby="toastTitle">
   <div class="toast-card">
    <h2 id="toastTitle">Transcribing</h2>
@@ -728,6 +751,8 @@ let betweenRepeats=false;
 let loopFrom=0;
 let loopTo=0;
 let phase='upload';
+let playerRun=false;
+let playerText=localStorage.getItem('ielts-intensive-player-text')!=='0';
 let navLock=false;
 let previewIndex=-1;
 let scrubbing=false;
@@ -857,13 +882,14 @@ function readOpen(){
  try{
   const data=JSON.parse(localStorage.getItem(OPEN_KEY)||'null');
   if(!data||typeof data.id!=='string'||!data.id)return null;
-  const stage=data.stage==='practice'||data.stage==='review'||data.stage==='done'?data.stage:'review';
+  const stage=data.stage==='practice'||data.stage==='review'||data.stage==='done'||data.stage==='player'?data.stage:'review';
   return {id:data.id,stage};
  }catch(_){return null}
 }
 function saveOpen(){
  if(!currentId||phase==='upload'||phase==='work')return;
- try{localStorage.setItem(OPEN_KEY,JSON.stringify({id:currentId,stage:phase==='done'?'done':phase==='practice'?'practice':'review'}))}catch(_){}
+ const stage=phase==='done'?'done':phase==='practice'?'practice':phase==='player'?'player':'review';
+ try{localStorage.setItem(OPEN_KEY,JSON.stringify({id:currentId,stage}))}catch(_){}
 }
 function clearOpen(){try{localStorage.removeItem(OPEN_KEY)}catch(_){}}
 function savedIndex(id,fallback){
@@ -950,6 +976,11 @@ async function renderLibrary(){
   edit.className='edit';
   edit.textContent='Edit';
   edit.addEventListener('click',()=>openRecording(record.id));
+  const listen=document.createElement('button');
+  listen.type='button';
+  listen.className='listen';
+  listen.textContent='Player';
+  listen.addEventListener('click',()=>openRecording(record.id,'player'));
   const practice=document.createElement('button');
   practice.type='button';
   practice.className='practice';
@@ -967,7 +998,7 @@ async function renderLibrary(){
    if(currentId===record.id){currentId=null;sentences=[];syncPager()}
    renderLibrary();
   });
-  actions.append(edit,practice,remove);
+  actions.append(edit,listen,practice,remove);
   row.append(copy,actions);
   host.append(row);
  });
@@ -979,7 +1010,7 @@ async function openRecording(id,mode){
   writePlace(cursor);
   await flushRecording();
  }
- const stage=mode==='practice'?'practice':mode==='done'?'done':'review';
+ const stage=mode==='practice'?'practice':mode==='done'?'done':mode==='player'?'player':'review';
  try{localStorage.setItem(OPEN_KEY,JSON.stringify({id,stage}))}catch(_){}
  show('work');
  setWork('Opening the saved recording…',null);
@@ -1039,6 +1070,7 @@ async function openRecording(id,mode){
   renderReview();
   if(mode==='practice')beginPractice(cursor);
   else if(mode==='done')finish();
+  else if(mode==='player')beginPlayer(cursor);
   else{show('review');revealSentence()}
  }catch(error){
   if(mine!==job)return;
@@ -1058,7 +1090,7 @@ function noteHistory(stage){
  else history.pushState({stage:token},'',url);
 }
 function syncPager(){
- const current=phase==='practice'||phase==='done'?'practice':phase==='review'?'review':'upload';
+ const current=phase==='player'?'player':phase==='practice'||phase==='done'?'practice':phase==='review'?'review':'upload';
  const hasReview=sentences.some(sentence=>sentence.text.trim());
  const hasDictation=sentences.some(sentence=>!sentence.prompt&&sentence.text.trim());
  document.querySelectorAll('[data-step]').forEach(button=>{
@@ -1067,6 +1099,7 @@ function syncPager(){
   else button.removeAttribute('aria-current');
   if(step==='upload')button.disabled=false;
   if(step==='review')button.disabled=!hasReview;
+  if(step==='player')button.disabled=!hasReview;
   if(step==='practice')button.disabled=!hasDictation;
  });
 }
@@ -1076,6 +1109,7 @@ function show(stage){
  el('stageUpload').hidden=stage!=='upload';
  el('stageWork').hidden=stage!=='work';
  el('stageReview').hidden=stage!=='review';
+ el('stagePlayer').hidden=stage!=='player';
  el('stagePractice').hidden=stage!=='practice';
  el('stageDone').hidden=stage!=='done';
  syncPager();
@@ -1094,6 +1128,11 @@ function restoreStage(stage){
   renderReview();
   show('review');
   revealSentence();
+  return;
+ }
+ if(stage==='player'){
+  if(!sentences.some(sentence=>sentence.text.trim()||sentence.blank)){resetToUpload();return}
+  beginPlayer(cursor);
   return;
  }
  if(stage==='practice'){
@@ -1122,12 +1161,19 @@ function goStep(step){
   revealSentence();
   return;
  }
+ if(step==='player'){
+  if(phase==='player'||!sentences.some(sentence=>sentence.text.trim()||sentence.blank))return;
+  storeDraft();
+  beginPlayer(cursor);
+  return;
+ }
  if(step==='practice'){
   if(phase==='practice'||phase==='done'||!sentences.some(sentence=>!sentence.prompt&&sentence.text.trim()))return;
   beginPractice(cursor);
  }
 }
 function stopAudio(){
+ playerRun=false;
  loopToken++;
  clearTimeout(loopTimer);
  previewIndex=-1;
@@ -1167,6 +1213,10 @@ function commitSeek(time){
  if(phase==='practice'){
   const index=sentenceIndexAt(at);
   if(index>=0){enter(index,at);paintFileBar(at);return}
+ }
+ if(phase==='player'){
+  const index=sentenceIndexAt(at);
+  if(index>=0){playPlayerLine(index,at);paintFileBar(at);return}
  }
  const inside=loopTo>loopFrom&&at>=loopFrom&&at<loopTo-0.05;
  if(!inside){
@@ -1890,6 +1940,154 @@ function moveTo(index,startAt,dir){
  loopSentence(sentence,startAt);
  el('answer').focus();
 }
+function lineLabel(sentence){
+ if(!sentence||sentence.blank||!String(sentence.text||'').trim())return '·';
+ return sentence.text;
+}
+function paintPlayerButton(){
+ const audio=el('track');
+ const on=phase==='player'&&playerRun&&!audio.paused;
+ el('playerPlay').textContent=on?'Pause':'Play';
+ el('playerPlay').setAttribute('aria-pressed',on?'true':'false');
+}
+function paintPlayerProgress(){
+ const sentence=sentences[cursor];
+ if(!sentence||phase!=='player'){el('playerFill').style.width='0';return}
+ const bounds=playbackBounds(sentence);
+ const span=Math.max(0.01,bounds.to-bounds.from);
+ const ratio=Math.min(1,Math.max(0,(el('track').currentTime-bounds.from)/span));
+ el('playerFill').style.width=(ratio*100)+'%';
+}
+function renderPlayer(){
+ const host=el('playerLines');
+ host.replaceChildren();
+ sentences.forEach((sentence,index)=>{
+  const button=document.createElement('button');
+  button.type='button';
+  button.className='player-line'+(index===cursor?' now':'');
+  button.textContent=lineLabel(sentence);
+  button.addEventListener('click',()=>playPlayerLine(index));
+  host.append(button);
+ });
+ const current=host.querySelector('.now');
+ if(current){
+  const top=current.offsetTop-host.offsetTop;
+  if(top<host.scrollTop||top+current.offsetHeight>host.scrollTop+host.clientHeight)host.scrollTop=Math.max(0,top-host.clientHeight/3);
+ }
+ el('playerName').textContent=currentName();
+ el('playerCount').textContent=sentences.length?(cursor+1)+' / '+sentences.length:'';
+ el('playerPrev').disabled=cursor<=0;
+ el('playerNext').disabled=!sentences.length||cursor>=sentences.length-1;
+ el('playerPlay').disabled=!sentences.length;
+ el('playerLines').hidden=!playerText;
+ el('playerFocus').hidden=!playerText;
+ el('playerHidden').hidden=playerText;
+ el('playerText').setAttribute('aria-pressed',playerText?'true':'false');
+ el('playerText').textContent=playerText?'Hide text':'Show text';
+ const focus=el('playerFocus');
+ focus.replaceChildren();
+ if(playerText){
+  for(let index=Math.max(0,cursor-1);index<=Math.min(sentences.length-1,cursor+1);index++){
+   const button=document.createElement('button');
+   button.type='button';
+   button.className='player-bit'+(index===cursor?' now':'');
+   button.textContent=lineLabel(sentences[index]);
+   button.addEventListener('click',()=>playPlayerLine(index));
+   focus.append(button);
+  }
+ }
+ paintPlayerButton();
+ paintPlayerProgress();
+}
+function atPlayerEnd(){
+ const sentence=sentences[cursor];
+ if(!sentence)return true;
+ return el('track').currentTime>=playbackBounds(sentence).to-0.04;
+}
+function watchPlayer(token){
+ const step=()=>{
+  if(token!==loopToken||phase!=='player'||!playerRun)return;
+  if(el('track').paused||scrubbing){loopTimer=setTimeout(step,40);return}
+  paintPlayerProgress();
+  paintFileBar();
+  const sentence=sentences[cursor];
+  if(!sentence)return;
+  if(el('track').currentTime>=playbackBounds(sentence).to-0.04||el('track').ended){
+   if(cursor<sentences.length-1)playPlayerLine(cursor+1);
+   else{playerRun=false;el('track').pause();paintPlayerButton();paintPlayerProgress()}
+   return;
+  }
+  loopTimer=setTimeout(step,40);
+ };
+ step();
+}
+function playPlayerLine(index,startAt){
+ if(phase!=='player'||!sentences.length)return;
+ resetPause();
+ const token=++loopToken;
+ clearTimeout(loopTimer);
+ cursor=clampIndex(index);
+ writePlace(cursor);
+ const sentence=sentences[cursor];
+ const bounds=playbackBounds(sentence);
+ const first=Number.isFinite(startAt)?Math.min(bounds.to-0.08,Math.max(bounds.from,startAt)):bounds.from;
+ playerRun=true;
+ renderPlayer();
+ const audio=el('track');
+ seekAndPlay(audio,first,token,ok=>{
+  if(token!==loopToken||!playerRun){el('track').pause();return}
+  if(!ok)playerRun=false;
+  paintPlayerButton();
+  if(ok)watchPlayer(token);
+ });
+}
+function togglePlayer(){
+ if(phase!=='player'||!sentences.length)return;
+ const audio=el('track');
+ if(playerRun&&!audio.paused){
+  playerRun=false;
+  clearTimeout(loopTimer);
+  audio.pause();
+  paintPlayerButton();
+  return;
+ }
+ if(audio.src&&!atPlayerEnd()){
+  const token=loopToken;
+  clearTimeout(loopTimer);
+  playerRun=true;
+  resetPause();
+  audio.playbackRate=rate();
+  audio.play().then(()=>{if(token!==loopToken)return;paintPlayerButton();watchPlayer(token)}).catch(()=>{playerRun=false;paintPlayerButton()});
+  return;
+ }
+ playPlayerLine(cursor);
+}
+function stepPlayer(delta){
+ if(phase!=='player'||!sentences.length)return;
+ const next=cursor+delta;
+ if(next<0||next>=sentences.length)return;
+ playPlayerLine(next);
+}
+function beginPlayer(index){
+ stopAudio();
+ if(!sentences.length)return;
+ resetPause();
+ cursor=clampIndex(index);
+ show('player');
+ playPlayerLine(cursor);
+}
+function togglePlayerText(){
+ playerText=!playerText;
+ try{localStorage.setItem('ielts-intensive-player-text',playerText?'1':'0')}catch(_){}
+ renderPlayer();
+}
+function followPlayer(time){
+ if(phase!=='player'||!sentences.length)return;
+ const index=sentenceIndexAt(time);
+ if(index<0||index===cursor){paintPlayerProgress();return}
+ cursor=index;
+ renderPlayer();
+}
 function beginPractice(index){
  stopAudio();
  sentences=sentences.map(sentence=>sentence.blank?{text:'',start:sentence.start,end:sentence.end,blank:true,prompt:false}:{...sentence,text:cleanText(sentence.text)}).filter(sentence=>sentence.blank||sentence.text);
@@ -2382,6 +2580,7 @@ el('fileScrub').addEventListener('pointerdown',event=>{
  paintFileBar(time);
  el('track').currentTime=time;
  followPractice(time);
+ followPlayer(time);
 });
 el('fileScrub').addEventListener('pointermove',event=>{
  if(!scrubbing)return;
@@ -2389,6 +2588,7 @@ el('fileScrub').addEventListener('pointermove',event=>{
  paintFileBar(time);
  el('track').currentTime=time;
  followPractice(time);
+ followPlayer(time);
 });
 function endScrub(event){
  if(!scrubbing)return;
@@ -2398,12 +2598,16 @@ function endScrub(event){
 el('fileScrub').addEventListener('pointerup',endScrub);
 el('fileScrub').addEventListener('pointercancel',()=>{scrubbing=false;paintFileBar()});
 el('fileScrub').addEventListener('keydown',event=>{
- if(phase==='practice')return;
+ if(phase==='practice'||phase==='player')return;
  const step=event.key==='ArrowRight'?5:event.key==='ArrowLeft'?-5:0;
  if(!step||!el('track').src)return;
  event.preventDefault();
  commitSeek((el('track').currentTime||0)+step);
 });
+el('playerPrev').addEventListener('click',()=>stepPlayer(-1));
+el('playerNext').addEventListener('click',()=>stepPlayer(1));
+el('playerPlay').addEventListener('click',togglePlayer);
+el('playerText').addEventListener('click',togglePlayerText);
 el('prevSentence').addEventListener('click',()=>stepSentence(-1));
 el('nextSentence').addEventListener('click',()=>stepSentence(1));
 let shiftAlone=false;
@@ -2415,13 +2619,26 @@ document.addEventListener('keyup',event=>{
  if(event.key!=='Shift')return;
  const alone=shiftAlone;
  shiftAlone=false;
- if(!alone||phase!=='practice'||event.altKey||event.ctrlKey||event.metaKey)return;
+ if(!alone||event.altKey||event.ctrlKey||event.metaKey)return;
  if(event.target&&event.target.tagName==='SELECT')return;
+ if(phase==='player'){
+  if(event.target&&event.target.closest&&event.target.closest('input,textarea'))return;
+  playPlayerLine(cursor);
+  return;
+ }
+ if(phase!=='practice')return;
  showOriginal(!originalVisible());
 });
+document.addEventListener('keydown',event=>{
+ if(phase!=='player')return;
+ if(event.target&&event.target.closest&&event.target.closest('input,select,textarea'))return;
+ if(event.key===' '||event.code==='Space'){event.preventDefault();togglePlayer()}
+ else if(event.key==='ArrowLeft'&&!event.shiftKey&&!event.altKey&&!event.ctrlKey&&!event.metaKey){event.preventDefault();stepPlayer(-1)}
+ else if(event.key==='ArrowRight'&&!event.shiftKey&&!event.altKey&&!event.ctrlKey&&!event.metaKey){event.preventDefault();stepPlayer(1)}
+},true);
 el('track').addEventListener('play',()=>{if(phase!=='practice')return;betweenRepeats=false;paintTransport()});
 el('track').addEventListener('pause',()=>{if(phase==='practice')paintTransport()});
-el('track').addEventListener('timeupdate',()=>{if(!scrubbing)paintFileBar()});
+el('track').addEventListener('timeupdate',()=>{if(!scrubbing)paintFileBar();if(phase==='player')paintPlayerProgress()});
 el('track').addEventListener('loadedmetadata',()=>paintFileBar());
 el('track').addEventListener('ended',()=>paintFileBar());
 document.querySelectorAll('[data-step]').forEach(button=>button.addEventListener('click',()=>goStep(button.dataset.step)));
@@ -2447,7 +2664,7 @@ window.addEventListener('pagehide',()=>{if(phase==='practice')storeDraft();write
 if(!history.state)history.replaceState({stage:'upload'},'',location.pathname+location.search);
 syncPager();
 const opening=readOpen();
-if(opening)openRecording(opening.id,opening.stage==='done'?'done':opening.stage==='practice'?'practice':undefined);
+if(opening)openRecording(opening.id,opening.stage==='done'?'done':opening.stage==='practice'?'practice':opening.stage==='player'?'player':undefined);
 renderLibrary();
 })();
 </script>
