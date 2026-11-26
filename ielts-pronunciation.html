@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Free IELTS pronunciation practice for sounds many Chinese speakers change. Hear the word, record it, then hear the model and your recording one after the other. A recognizer says what it heard.">
+<meta name="description" content="Free IELTS pronunciation practice for sounds many Chinese speakers change. Hear each word with a short sentence, record both, then compare the waveforms.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/ielts-pronunciation.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="IELTS Pronunciation Compare">
-<meta property="og:description" content="Hear a word, record it, then hear the model and your recording one after the other.">
+<meta property="og:description" content="Hear each word with a short sentence, record both, then compare the waveforms.">
 <meta property="og:url" content="https://lvkai.github.io/ielts/ielts-pronunciation.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Pronunciation Compare","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-pronunciation.html","description":"Free IELTS pronunciation practice. Hear a word, record it, then hear the model and your recording one after the other.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Pronunciation Compare","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-pronunciation.html","description":"Free IELTS pronunciation practice. Hear each word with a short sentence, record both, then compare the waveforms.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
 <title>IELTS Pronunciation Compare</title>
@@ -27,7 +27,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 .chip{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:720}.chip[aria-selected="true"]{color:var(--blue);border-color:#c5d4ff;background:var(--blue-soft)}.chip:hover{color:var(--text)}
 .layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,1fr);gap:18px;align-items:start}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 9px 36px rgba(35,49,79,.035)}
 .practice{padding:26px 29px 28px;min-height:520px;display:flex;flex-direction:column}.top{display:flex;justify-content:space-between;align-items:center;gap:16px}.overline{color:var(--muted);font-size:13px;font-weight:650}.progress-count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}.progress-count b{font-size:22px;color:var(--text);font-weight:800}
-.stage{display:flex;flex-direction:column;align-items:center;text-align:center;padding:28px 0 8px}.sound{height:74px;width:74px;border-radius:22px;border:1px solid #dbe4ff;background:var(--blue-soft);display:flex;align-items:center;justify-content:center;color:var(--blue)}.sound svg{width:30px;height:30px}.sound.playing{background:#dbe5ff}.word{margin:18px 0 0;font-size:clamp(40px,6vw,64px);line-height:1;letter-spacing:-.04em;font-weight:760}.ipa{margin:10px 0 0;font-size:20px;color:#31466d;font-weight:650}.hint{margin:8px 0 0;font-size:14px;color:var(--muted);line-height:1.5}
+.stage{display:flex;flex-direction:column;align-items:center;text-align:center;padding:28px 0 8px}.sound{height:74px;width:74px;border-radius:22px;border:1px solid #dbe4ff;background:var(--blue-soft);display:flex;align-items:center;justify-content:center;color:var(--blue)}.sound svg{width:30px;height:30px}.sound.playing{background:#dbe5ff}.word{margin:18px 0 0;font-size:clamp(40px,6vw,64px);line-height:1;letter-spacing:-.04em;font-weight:760}.ipa{margin:10px 0 0;font-size:20px;color:#31466d;font-weight:650}.hint{margin:8px 0 0;font-size:14px;color:var(--muted);line-height:1.5}.sentence{margin:14px 0 0;max-width:34em;font-size:18px;line-height:1.45;font-weight:650;color:#243352}.sentence b{font-weight:800;color:var(--text)}
 .steps{display:flex;justify-content:center;gap:8px;list-style:none;margin:22px 0 0;padding:0}.steps li{min-width:92px;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:750;color:var(--muted);background:#f3f6fb}.steps li.active{color:#fff;background:var(--blue)}.steps li.done{color:var(--green);background:#e7f6ef}
 .status{min-height:22px;margin:14px 0 0;font-size:13px;color:var(--muted);font-weight:700}.review{min-height:22px;margin:8px 0 0;max-width:36em;font-size:14px;line-height:1.45;font-weight:720;color:var(--muted)}.review.ok{color:var(--green)}.review.no{color:var(--red)}.notes{list-style:none;margin:12px auto 0;padding:0;display:grid;gap:6px;width:min(100%,460px);text-align:left}.notes li{font-size:13px;line-height:1.45;color:#31466d;background:#f6f8fc;border-radius:10px;padding:8px 10px}.notes li.ok{background:#e7f6ef;color:var(--green)}.notes li.no{background:#fdecee;color:var(--red)}.waves{width:min(100%,460px);margin:12px auto 0;display:grid;gap:8px}.wave-row{display:grid;grid-template-columns:48px minmax(0,1fr);gap:8px;align-items:center}.wave-label{font-size:11px;font-weight:750;color:var(--muted);text-align:right}.wave{display:block;height:52px;max-width:100%;background:#f6f8fc;border-radius:10px}.replay{display:flex;justify-content:center;gap:8px;margin-top:12px}.replay-btn{border:1px solid #d8e1f0;background:#fff;color:#31466d;font-size:13px;font-weight:730;border-radius:999px;padding:8px 14px;min-height:40px}.replay-btn:hover:not(:disabled){background:#f6f8fc}.replay-btn.active{color:#fff;background:var(--blue);border-color:var(--blue)}.count{margin:6px 0 0;font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.03em;color:var(--text)}.count.idle{color:transparent}
 .actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:18px}.primary{border:0;background:var(--blue);color:#fff;font-size:14px;font-weight:750;border-radius:13px;padding:0 27px;min-height:51px}.primary:hover:not(:disabled){background:#264fd0}.secondary{border:1px solid #d8e1f0;background:#fff;color:#455874;font-size:13px;font-weight:730;border-radius:12px;padding:11px 16px;min-height:51px}.secondary:hover:not(:disabled){background:#f6f8fc}.stop{color:var(--red);border-color:#f0d0d0}.stop:hover:not(:disabled){background:#fdecee}.hide{display:none!important}
@@ -44,7 +44,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
   <div>
    <div class="eyebrow">IELTS SPEAKING TRAINER</div>
    <h1 class="heading">Pronunciation Compare</h1>
-   <p class="sub">These are sounds many Chinese speakers change in English. Each round plays the word, records you, then plays the model and your recording one after the other. The model waveform and yours use the same time scale. Notes compare what was heard, the length, and the target sound.</p>
+   <p class="sub">These are sounds many Chinese speakers change in English. Each round reads the word and a short sentence, records you saying both, then plays the model and your recording one after the other.</p>
   </div>
  </header>
  <div class="groups" id="groups" role="tablist" aria-label="Sound groups"></div>
@@ -56,12 +56,13 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
     <h2 class="word" id="word">think</h2>
     <p class="ipa" id="ipa">/θɪŋk/</p>
     <p class="hint" id="hint">Not sink.</p>
+    <p class="sentence" id="sentence">I think so.</p>
     <ol class="steps" aria-label="Round">
      <li id="stepListen">1 Listen</li>
      <li id="stepRecord">2 Record</li>
      <li id="stepCompare">3 Compare</li>
     </ol>
-    <p class="status" id="status" role="status">Press Start. The model plays, then you say the word.</p>
+    <p class="status" id="status" role="status">Press Start. The model reads the word and a sentence, then you say both.</p>
     <p class="review" id="review" role="status"></p>
     <ul class="notes" id="notes"></ul>
     <div class="waves" id="waves">
@@ -87,105 +88,110 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="words" id="words"></div>
   </aside>
  </main>
- <p class="bottom">The model is a British English recording of the word, and its waveform is that recording. Your recording stays on this device and is not uploaded. Press Again to do the same word once more.</p>
+ <p class="bottom">The model reads the word, then a short sentence, and that recording is the waveform. Say both. Your recording stays on this device and is not uploaded.</p>
 </div>
 <script>
 (()=>{'use strict';
 const GROUPS=[
  {id:'think',label:'think th',blurb:'A soft th, not s.',words:[
-  {w:'think',ipa:'/θɪŋk/',hint:'Not sink.',hear:['sink']},
-  {w:'three',ipa:'/θriː/',hint:'Not sree.',hear:['tree','free','sree']},
-  {w:'thank',ipa:'/θæŋk/',hint:'Not sank.',hear:['sank','tank']},
-  {w:'birthday',ipa:'/ˈbɜːθdeɪ/',hint:'th in the middle.',hear:['birsday','birfday']},
-  {w:'month',ipa:'/mʌnθ/',hint:'Final th.',hear:['muns','munf']},
-  {w:'something',ipa:'/ˈsʌmθɪŋ/',hint:'th, not s.',hear:['somesing']}
+  {w:'think',ipa:'/θɪŋk/',hint:'Not sink.',hear:['sink'],say:'I think so.'},
+  {w:'three',ipa:'/θriː/',hint:'Not sree.',hear:['tree','free','sree'],say:'I see three birds.'},
+  {w:'thank',ipa:'/θæŋk/',hint:'Not sank.',hear:['sank','tank'],say:'We thank the teacher.'},
+  {w:'birthday',ipa:'/ˈbɜːθdeɪ/',hint:'th in the middle.',hear:['birsday','birfday'],say:'My birthday is in May.'},
+  {w:'month',ipa:'/mʌnθ/',hint:'Final th.',hear:['muns','munf'],say:'This month is cold.'},
+  {w:'something',ipa:'/ˈsʌmθɪŋ/',hint:'th, not s.',hear:['somesing'],say:'I want something hot.'}
  ]},
  {id:'this',label:'this th',blurb:'A voiced th, not d or z.',words:[
-  {w:'this',ipa:'/ðɪs/',hint:'Not dis.',hear:['dis','zis']},
-  {w:'they',ipa:'/ðeɪ/',hint:'Not dey.',hear:['day','dey','zay']},
-  {w:'mother',ipa:'/ˈmʌðə/',hint:'Voiced th.',hear:['moder']},
-  {w:'weather',ipa:'/ˈweðə/',hint:'Not weder.',hear:['weder']},
-  {w:'brother',ipa:'/ˈbrʌðə/',hint:'Voiced th.',hear:['broder']},
-  {w:'although',ipa:'/ɔːlˈðəʊ/',hint:'Voiced th.',hear:['aldo']}
+  {w:'this',ipa:'/ðɪs/',hint:'Not dis.',hear:['dis','zis'],say:'I know this song.'},
+  {w:'they',ipa:'/ðeɪ/',hint:'Not dey.',hear:['day','dey','zay'],say:'They like the park.'},
+  {w:'mother',ipa:'/ˈmʌðə/',hint:'Voiced th.',hear:['moder'],say:'My mother can cook.'},
+  {w:'weather',ipa:'/ˈweðə/',hint:'Not weder.',hear:['weder'],say:'The weather is nice.'},
+  {w:'brother',ipa:'/ˈbrʌðə/',hint:'Voiced th.',hear:['broder'],say:'My brother can swim.'},
+  {w:'although',ipa:'/ɔːlˈðəʊ/',hint:'Voiced th.',hear:['aldo'],say:'Although it is late.'}
  ]},
  {id:'vw',label:'v / w',blurb:'v touches the teeth. w does not.',words:[
-  {w:'very',ipa:'/ˈveri/',hint:'Teeth on the lip for v.',hear:['wery']},
-  {w:'vest',ipa:'/vest/',hint:'Not west.',hear:['west']},
-  {w:'vine',ipa:'/vaɪn/',hint:'Not wine.',hear:['wine']},
-  {w:'video',ipa:'/ˈvɪdiəʊ/',hint:'v, not w.',hear:['wideo']},
-  {w:'available',ipa:'/əˈveɪləbl/',hint:'The v.',hear:['awailable']},
-  {w:'review',ipa:'/rɪˈvjuː/',hint:'v, not w.',hear:['rewiew']}
+  {w:'very',ipa:'/ˈveri/',hint:'Teeth on the lip for v.',hear:['wery'],say:'It is very cold.'},
+  {w:'vest',ipa:'/vest/',hint:'Not west.',hear:['west'],say:'He wore a red vest.'},
+  {w:'vine',ipa:'/vaɪn/',hint:'Not wine.',hear:['wine'],say:'Grapes grow on a vine.'},
+  {w:'video',ipa:'/ˈvɪdiəʊ/',hint:'v, not w.',hear:['wideo'],say:'This video is short.'},
+  {w:'available',ipa:'/əˈveɪləbl/',hint:'The v.',hear:['awailable'],say:'A room is available.'},
+  {w:'review',ipa:'/rɪˈvjuː/',hint:'v, not w.',hear:['rewiew'],say:'Please review the list.'}
  ]},
  {id:'lr',label:'l / r',blurb:'The tongue is different for l and r.',words:[
-  {w:'rice',ipa:'/raɪs/',hint:'Not lice.',hear:['lice']},
-  {w:'right',ipa:'/raɪt/',hint:'Not light.',hear:['light']},
-  {w:'really',ipa:'/ˈrɪəli/',hint:'The r is not l.',hear:['leally']},
-  {w:'library',ipa:'/ˈlaɪbrəri/',hint:'Both l and r.',hear:['libary']},
-  {w:'problem',ipa:'/ˈprɒbləm/',hint:'The r after p.',hear:['ploblem']},
-  {w:'grow',ipa:'/ɡrəʊ/',hint:'gr together.',hear:['glow']}
+  {w:'rice',ipa:'/raɪs/',hint:'Not lice.',hear:['lice'],say:'I cooked some rice.'},
+  {w:'right',ipa:'/raɪt/',hint:'Not light.',hear:['light'],say:'Please turn right.'},
+  {w:'really',ipa:'/ˈrɪəli/',hint:'The r is not l.',hear:['leally'],say:'I really like it.'},
+  {w:'library',ipa:'/ˈlaɪbrəri/',hint:'Both l and r.',hear:['libary'],say:'The library is open.'},
+  {w:'problem',ipa:'/ˈprɒbləm/',hint:'The r after p.',hear:['ploblem'],say:'We solved the problem.'},
+  {w:'grow',ipa:'/ɡrəʊ/',hint:'gr together.',hear:['glow'],say:'The trees grow fast.'}
  ]},
  {id:'ln',label:'l / n',blurb:'l is often heard as n.',words:[
-  {w:'light',ipa:'/laɪt/',hint:'l, not n.',hear:['night']},
-  {w:'night',ipa:'/naɪt/',hint:'n, not l.',hear:['light']},
-  {w:'line',ipa:'/laɪn/',hint:'l, not n.',hear:['nine']},
-  {w:'nine',ipa:'/naɪn/',hint:'n, not l.',hear:['line']},
-  {w:'slow',ipa:'/sləʊ/',hint:'l, not n.',hear:['snow']},
-  {w:'snow',ipa:'/snəʊ/',hint:'n, not l.',hear:['slow']}
+  {w:'light',ipa:'/laɪt/',hint:'l, not n.',hear:['night'],say:'Leave the light on.'},
+  {w:'night',ipa:'/naɪt/',hint:'n, not l.',hear:['light'],say:'We walked at night.'},
+  {w:'line',ipa:'/laɪn/',hint:'l, not n.',hear:['nine'],say:'Draw a straight line.'},
+  {w:'nine',ipa:'/naɪn/',hint:'n, not l.',hear:['line'],say:'The shop opens at nine.'},
+  {w:'slow',ipa:'/sləʊ/',hint:'l, not n.',hear:['snow'],say:'The traffic is slow.'},
+  {w:'snow',ipa:'/snəʊ/',hint:'n, not l.',hear:['slow'],say:'The snow is deep.'}
  ]},
  {id:'ie',label:'ship / sheep',blurb:'ship is short. sheep is long.',words:[
-  {w:'ship',ipa:'/ʃɪp/',hint:'Short i.',hear:['sheep']},
-  {w:'sheep',ipa:'/ʃiːp/',hint:'Long ee.',hear:['ship']},
-  {w:'live',ipa:'/lɪv/',hint:'Short i. The verb.',hear:['leave']},
-  {w:'leave',ipa:'/liːv/',hint:'Long ee.',hear:['live']},
-  {w:'sit',ipa:'/sɪt/',hint:'Short i.',hear:['seat']},
-  {w:'seat',ipa:'/siːt/',hint:'Long ee.',hear:['sit']}
+  {w:'ship',ipa:'/ʃɪp/',hint:'Short i.',hear:['sheep'],say:'The ship is large.'},
+  {w:'sheep',ipa:'/ʃiːp/',hint:'Long ee.',hear:['ship'],say:'Ten sheep are here.'},
+  {w:'live',ipa:'/lɪv/',hint:'Short i. The verb.',hear:['leave'],say:'They live near me.'},
+  {w:'leave',ipa:'/liːv/',hint:'Long ee.',hear:['live'],say:'We leave at noon.'},
+  {w:'sit',ipa:'/sɪt/',hint:'Short i.',hear:['seat'],say:'Please sit down.'},
+  {w:'seat',ipa:'/siːt/',hint:'Long ee.',hear:['sit'],say:'This seat is free.'}
  ]},
  {id:'ae',label:'bad / bed',blurb:'bad uses a lower vowel than bed.',words:[
-  {w:'bad',ipa:'/bæd/',hint:'Low a, as in cat.',hear:['bed']},
-  {w:'bed',ipa:'/bed/',hint:'e, as in bed.',hear:['bad']},
-  {w:'man',ipa:'/mæn/',hint:'Low a.',hear:['men']},
-  {w:'men',ipa:'/men/',hint:'e.',hear:['man']},
-  {w:'sat',ipa:'/sæt/',hint:'Low a.',hear:['set']},
-  {w:'set',ipa:'/set/',hint:'e.',hear:['sat']}
+  {w:'bad',ipa:'/bæd/',hint:'Low a, as in cat.',hear:['bed'],say:'The weather is bad.'},
+  {w:'bed',ipa:'/bed/',hint:'e, as in bed.',hear:['bad'],say:'The bed is warm.'},
+  {w:'man',ipa:'/mæn/',hint:'Low a.',hear:['men'],say:'That man is tall.'},
+  {w:'men',ipa:'/men/',hint:'e.',hear:['man'],say:'The men are ready.'},
+  {w:'sat',ipa:'/sæt/',hint:'Low a.',hear:['set'],say:'I sat by the door.'},
+  {w:'set',ipa:'/set/',hint:'e.',hear:['sat'],say:'Please set it down.'}
  ]},
  {id:'end',label:'endings',blurb:'Keep the last consonant. It is often dropped.',words:[
-  {w:'bed',ipa:'/bed/',hint:'Keep the final d.',tail:true},
-  {w:'bag',ipa:'/bæɡ/',hint:'Keep the final g.',tail:true},
-  {w:'back',ipa:'/bæk/',hint:'Keep the final k.',tail:true},
-  {w:'five',ipa:'/faɪv/',hint:'Keep the final v.',tail:true,hear:['fife']},
-  {w:'asked',ipa:'/ɑːskt/',hint:'Keep both the k and the t.',tail:true,hear:['ask']},
-  {w:'clothes',ipa:'/kləʊðz/',hint:'The end is voiced th plus z.',tail:true,hear:['close','cloth']}
+  {w:'bed',ipa:'/bed/',hint:'Keep the final d.',tail:true,say:'The bed is warm.'},
+  {w:'bag',ipa:'/bæɡ/',hint:'Keep the final g.',tail:true,say:'Her bag is heavy.'},
+  {w:'back',ipa:'/bæk/',hint:'Keep the final k.',tail:true,say:'She came back early.'},
+  {w:'five',ipa:'/faɪv/',hint:'Keep the final v.',tail:true,hear:['fife'],say:'Give me five minutes.'},
+  {w:'asked',ipa:'/ɑːskt/',hint:'Keep both the k and the t.',tail:true,hear:['ask'],say:'She asked for help.'},
+  {w:'clothes',ipa:'/kləʊðz/',hint:'The end is voiced th plus z.',tail:true,hear:['close','cloth'],say:'I washed my clothes.'}
  ]},
  {id:'ng',label:'sing',blurb:'sing ends with ng. thin ends with n.',words:[
-  {w:'sing',ipa:'/sɪŋ/',hint:'ng, not n.',hear:['sin']},
-  {w:'thing',ipa:'/θɪŋ/',hint:'Ends with ng.',hear:['thin']},
-  {w:'bang',ipa:'/bæŋ/',hint:'ng, not n.',hear:['ban']},
-  {w:'ring',ipa:'/rɪŋ/',hint:'ng, not n.',hear:['rin']},
-  {w:'thin',ipa:'/θɪn/',hint:'Ends with n.',hear:['thing']},
-  {w:'ban',ipa:'/bæn/',hint:'Ends with n, not ng.',hear:['bang']}
+  {w:'sing',ipa:'/sɪŋ/',hint:'ng, not n.',hear:['sin'],say:'The birds sing.'},
+  {w:'thing',ipa:'/θɪŋ/',hint:'Ends with ng.',hear:['thin'],say:'That is the thing.'},
+  {w:'bang',ipa:'/bæŋ/',hint:'ng, not n.',hear:['ban'],say:'I heard a loud bang.'},
+  {w:'ring',ipa:'/rɪŋ/',hint:'ng, not n.',hear:['rin'],say:'He lost his ring.'},
+  {w:'thin',ipa:'/θɪn/',hint:'Ends with n.',hear:['thing'],say:'The rope is thin.'},
+  {w:'ban',ipa:'/bæn/',hint:'Ends with n, not ng.',hear:['bang'],say:'They announced a ban.'}
  ]},
  {id:'nor',label:'no final r',blurb:'The last vowel is plain. Do not add an r.',words:[
-  {w:'idea',ipa:'/aɪˈdɪə/',hint:'Not idear.',hear:['idear']},
-  {w:'china',ipa:'/ˈtʃaɪnə/',hint:'Not chinar.',hear:['chinar']},
-  {w:'america',ipa:'/əˈmerɪkə/',hint:'Not americar.',hear:['americar']},
-  {w:'sofa',ipa:'/ˈsəʊfə/',hint:'Not sofar.',hear:['sofar']},
-  {w:'banana',ipa:'/bəˈnɑːnə/',hint:'Not bananar.',hear:['bananar']},
-  {w:'panda',ipa:'/ˈpændə/',hint:'Not pandar.',hear:['pandar']}
+  {w:'idea',ipa:'/aɪˈdɪə/',hint:'Not idear.',hear:['idear'],say:'That is my idea.'},
+  {w:'china',ipa:'/ˈtʃaɪnə/',hint:'Not chinar.',hear:['chinar'],say:'This bowl is from China.'},
+  {w:'america',ipa:'/əˈmerɪkə/',hint:'Not americar.',hear:['americar'],say:'He lives in America.'},
+  {w:'sofa',ipa:'/ˈsəʊfə/',hint:'Not sofar.',hear:['sofar'],say:'The sofa is blue.'},
+  {w:'banana',ipa:'/bəˈnɑːnə/',hint:'Not bananar.',hear:['bananar'],say:'I ate a banana.'},
+  {w:'panda',ipa:'/ˈpændə/',hint:'Not pandar.',hear:['pandar'],say:'The panda is sleepy.'}
  ]},
  {id:'stress',label:'stress',blurb:'The loud syllable is the one marked.',words:[
-  {w:'comfortable',ipa:'/ˈkʌmftəbl/',hint:'Stress the first syllable.',stress:true},
-  {w:'interesting',ipa:'/ˈɪntrəstɪŋ/',hint:'Stress the first syllable.',stress:true},
-  {w:'vegetable',ipa:'/ˈvedʒtəbl/',hint:'Stress the first syllable.',stress:true},
-  {w:'develop',ipa:'/dɪˈveləp/',hint:'Stress the second syllable.',stress:true},
-  {w:'photograph',ipa:'/ˈfəʊtəɡrɑːf/',hint:'Stress the first syllable.',stress:true},
-  {w:'photographer',ipa:'/fəˈtɒɡrəfə/',hint:'Stress the second syllable.',stress:true}
+  {w:'comfortable',ipa:'/ˈkʌmftəbl/',hint:'Stress the first syllable.',stress:true,say:'The chair is comfortable.'},
+  {w:'interesting',ipa:'/ˈɪntrəstɪŋ/',hint:'Stress the first syllable.',stress:true,say:'The class is interesting.'},
+  {w:'vegetable',ipa:'/ˈvedʒtəbl/',hint:'Stress the first syllable.',stress:true,say:'I like this vegetable.'},
+  {w:'develop',ipa:'/dɪˈveləp/',hint:'Stress the second syllable.',stress:true,say:'We develop the plan.'},
+  {w:'photograph',ipa:'/ˈfəʊtəɡrɑːf/',hint:'Stress the first syllable.',stress:true,say:'I kept the photograph.'},
+  {w:'photographer',ipa:'/fəˈtɒɡrəfə/',hint:'Stress the second syllable.',stress:true,say:'The photographer waited.'}
  ]}
 ];
 const GROUP_KEY='ielts-pronunciation-group';
-const RECORD_MS=2000,READY_MS=400,GAP_MS=400;
+const READY='Press Start. The model reads the word and a sentence, then you say both.';
+const READY_MS=400,GAP_MS=400;
 const el=id=>document.getElementById(id);
 let groupIndex=0,wordIndex=0,generation=0,stream=null,recorder=null,recognizer=null,listenTimer=null,bufferSource=null,recordTimer=null,countTimer=null,waitTimer=null,ctx=null,completed=false,running=false,replaying=false,saved=null,modelBuffer=null,modelToken=0;
 const modelCache=new Map();
+function takeMs(buffer){
+ const seconds=buffer&&buffer.length>0&&buffer.sampleRate>0?buffer.length/buffer.sampleRate:2.5;
+ return Math.round(Math.min(11000,Math.max(2500,seconds*1000+1400)));
+}
 function group(){return GROUPS[groupIndex]}
 function item(){return group().words[wordIndex]}
 function audioContext(){
@@ -238,6 +244,17 @@ function showControls(){
  document.querySelectorAll('.chip,.word-btn').forEach(node=>{node.disabled=running});
  el('replay').classList.toggle('hide',running||!saved);
 }
+function showSentence(sentence,word){
+ const node=el('sentence');
+ node.replaceChildren();
+ const match=String(sentence).match(new RegExp('\\b'+word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i'));
+ if(!match){node.textContent=sentence;return}
+ node.append(sentence.slice(0,match.index));
+ const mark=document.createElement('b');
+ mark.textContent=match[0];
+ node.append(mark);
+ node.append(sentence.slice(match.index+match[0].length));
+}
 function showWord(){
  const current=item();
  el('groupLabel').textContent=group().label;
@@ -248,6 +265,7 @@ function showWord(){
  el('word').textContent=current.w;
  el('ipa').textContent=current.ipa;
  el('hint').textContent=current.hint;
+ showSentence(current.say||'',current.w);
  document.querySelectorAll('.chip').forEach((node,index)=>node.setAttribute('aria-selected',index===groupIndex?'true':'false'));
  document.querySelectorAll('.word-btn').forEach((node,index)=>node.setAttribute('aria-current',index===wordIndex?'true':'false'));
  const word=current.w;
@@ -273,7 +291,7 @@ function renderWords(){
   const hint=document.createElement('span');
   hint.textContent=word.hint;
   button.append(name,hint);
-  button.addEventListener('click',()=>{if(running||replaying)return;wordIndex=index;completed=false;clearTake();showWord();showControls();setStep('');setReview('');setCount('',false);setStatus('Press Start. The model plays, then you say the word.')});
+  button.addEventListener('click',()=>{if(running||replaying)return;wordIndex=index;completed=false;clearTake();showWord();showControls();setStep('');setReview('');setCount('',false);setStatus(READY)});
   host.append(button);
  });
 }
@@ -292,7 +310,7 @@ function renderGroups(){
    groupIndex=index;wordIndex=0;completed=false;
    try{localStorage.setItem(GROUP_KEY,entry.id)}catch(_){}
    clearTake();renderWords();showWord();showControls();setStep('');setCount('',false);setReview('');
-   setStatus('Press Start. The model plays, then you say the word.');
+   setStatus(READY);
   });
   host.append(button);
  });
@@ -521,44 +539,16 @@ function measure(buffer){
  }
  return {duration,peakPos,endRatio,highRatio,voiced:true};
 }
-function contrastNote(id,word,stats){
- const seconds=stats.duration.toFixed(2)+'s';
- if(id==='think'||id==='this'){
-  if(stats.highRatio==null)return {kind:'',text:'Play Model and You to compare the th. This recording is too narrow to measure the hiss.'};
-  if(stats.highRatio>0.28)return {kind:'no',text:'There is a strong high hiss, closer to s than to th. Keep the tongue light.'};
-  if(stats.highRatio<0.08)return {kind:'ok',text:'The high hiss is soft, which fits th better than s.'};
-  return {kind:'',text:'The hiss sits between s and th. Play Model, then You.'};
- }
- if(id==='vw'){
-  if(stats.highRatio==null)return {kind:'',text:'Play Model and You. v has friction from the teeth; w does not.'};
-  if(stats.highRatio>0.18)return {kind:'ok',text:'There is some high friction, which fits v better than w.'};
-  return {kind:'no',text:'Little high friction. For v, touch the lower lip with the top teeth.'};
- }
- if(id==='ie'){
-  const long=/ː/.test(word.ipa);
-  if(long&&stats.duration<0.32)return {kind:'no',text:'At '+seconds+', this is short for a long vowel. Hold the ee.'};
-  if(!long&&stats.duration>0.62)return {kind:'no',text:'At '+seconds+', this is long for a short i. Keep it brief.'};
-  return {kind:long?'':'ok',text:long?'At '+seconds+', give the long vowel room.':'At '+seconds+', the short vowel is not being held too long.'};
- }
- if(id==='end'){
-  if(stats.endRatio<0.22)return {kind:'no',text:'The end is much quieter than the middle. The last consonant may be missing.'};
-  return {kind:'ok',text:'The end still has sound. Check that it is the right consonant.'};
- }
- if(id==='ng'){
-  const nasal=word.ipa.includes('ŋ');
-  if(nasal&&stats.endRatio<0.2)return {kind:'no',text:'The ending is quiet. ng should leave a hum after the vowel.'};
-  if(!nasal&&stats.endRatio>0.6)return {kind:'no',text:'The ending stays loud. n should finish more cleanly than ng.'};
-  return {kind:'ok',text:nasal?'The ending has some sound left for ng.':'The ending is not stuck as a long hum.'};
- }
- if(id==='stress'){
-  const early=word.hint.includes('first');
-  if(early&&stats.peakPos>0.62)return {kind:'no',text:'The loudest part is late. Stress the first syllable.'};
-  if(!early&&stats.peakPos<0.28)return {kind:'no',text:'The loudest part is at the start. Stress the second syllable.'};
-  return {kind:'ok',text:early?'The loudest part is early, which fits the stress.':'The loudest part is not stuck at the start, which fits the stress.'};
- }
- if(id==='ae')return {kind:'',text:'bad is a lower vowel than bed. Play Model, then You, and listen for the jaw.'};
- if(id==='nor')return {kind:'',text:'The model ends on a plain vowel. If yours adds an r, leave that r off.'};
- return {kind:'',text:'Play Model, then You. The difference is in the tongue, so compare those two takes.'};
+function contrastNote(id,word){
+ if(id==='think'||id==='this')return {kind:'',text:'Listen for the th in the word, then again in the sentence.'};
+ if(id==='vw')return {kind:'',text:'In the sentence, v touches the top teeth. w does not.'};
+ if(id==='ie')return {kind:'',text:/ː/.test(word.ipa)?'In the sentence, hold the long vowel.':'In the sentence, keep this vowel short.'};
+ if(id==='end')return {kind:'',text:'In the sentence, keep the last consonant of the word.'};
+ if(id==='ng')return {kind:'',text:word.ipa.includes('ŋ')?'In the sentence, the word should end with ng.':'In the sentence, the word should end with n, not ng.'};
+ if(id==='stress')return {kind:'',text:word.hint.includes('first')?'In the sentence, stress the first syllable of the word.':'In the sentence, stress the second syllable of the word.'};
+ if(id==='ae')return {kind:'',text:'In the sentence, listen for the vowel. bad is a lower vowel than bed.'};
+ if(id==='nor')return {kind:'',text:'In the sentence, the word should end on a vowel, with no r after it.'};
+ return {kind:'',text:'In the sentence, compare the word with the model. The difference is in the tongue.'};
 }
 function speechSpan(buffer){
  const data=buffer.getChannelData(0),rate=buffer.sampleRate||48000;
@@ -697,9 +687,10 @@ async function run(token){
   await wait(READY_MS,token);
   if(token!==generation)return;
   setStep('record');
-  setStatus('Say the word.');
-  const heardPromise=listen(RECORD_MS,token);
-  const blob=await record(RECORD_MS,token);
+  setStatus('Say the word and the sentence.');
+  const ms=takeMs(modelBuffer);
+  const heardPromise=listen(ms,token);
+  const blob=await record(ms,token);
   if(token!==generation)return;
   setCount('',false);
   if(!blob.size)throw new Error('play');
@@ -723,7 +714,7 @@ async function run(token){
    const stats=measure(trimmed.buffer);
    if(stats&&stats.voiced){
     notes.push({kind:'',text:'Speech in your recording lasts '+stats.duration.toFixed(2)+'s.'});
-    const extra=contrastNote(group().id,word,stats);
+    const extra=contrastNote(group().id,word);
     if(extra)notes.push(extra);
    }
    const guesses=(heard&&heard.alts||[]).map(cleanWords).filter(text=>text&&text!==cleanWords(heard.text)).slice(0,2);
