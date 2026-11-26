@@ -50,7 +50,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
  <div class="groups" id="groups" role="tablist" aria-label="Sound groups"></div>
  <main class="layout">
   <section class="panel practice" aria-label="Pronunciation practice">
-   <div class="top"><div class="overline" id="groupLabel">think th</div><div class="progress-count"><b id="qIndex">1</b> / <span id="qTotal">6</span></div></div>
+   <div class="top"><div class="overline" id="groupLabel">θ/s</div><div class="progress-count"><b id="qIndex">1</b> / <span id="qTotal">6</span></div></div>
    <div class="stage">
     <div class="sound" id="sound" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></div>
     <h2 class="word" id="word">think</h2>
@@ -83,7 +83,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    </div>
   </section>
   <aside class="panel list" aria-label="Words in this sound">
-   <h2 id="listTitle">think th</h2>
+   <h2 id="listTitle">θ/s</h2>
    <p class="blurb" id="blurb">A soft th, not s.</p>
    <div class="words" id="words"></div>
   </aside>
@@ -93,7 +93,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 <script>
 (()=>{'use strict';
 const GROUPS=[
- {id:'think',label:'think th',blurb:'A soft th, not s.',words:[
+ {id:'think',label:'θ/s',blurb:'A soft th, not s.',words:[
   {w:'think',ipa:'/θɪŋk/',hint:'Not sink.',hear:['sink'],say:'I think so.'},
   {w:'three',ipa:'/θriː/',hint:'Not sree.',hear:['tree','free','sree'],say:'I see three birds.'},
   {w:'thank',ipa:'/θæŋk/',hint:'Not sank.',hear:['sank','tank'],say:'We thank the teacher.'},
@@ -101,7 +101,7 @@ const GROUPS=[
   {w:'month',ipa:'/mʌnθ/',hint:'Final th.',hear:['muns','munf'],say:'This month is cold.'},
   {w:'something',ipa:'/ˈsʌmθɪŋ/',hint:'th, not s.',hear:['somesing'],say:'I want something hot.'}
  ]},
- {id:'this',label:'this th',blurb:'A voiced th, not d or z.',words:[
+ {id:'this',label:'ð/z',blurb:'A voiced th, not d or z.',words:[
   {w:'this',ipa:'/ðɪs/',hint:'Not dis.',hear:['dis','zis'],say:'I know this song.'},
   {w:'they',ipa:'/ðeɪ/',hint:'Not dey.',hear:['day','dey','zay'],say:'They like the park.'},
   {w:'mother',ipa:'/ˈmʌðə/',hint:'Voiced th.',hear:['moder'],say:'My mother can cook.'},
@@ -109,7 +109,7 @@ const GROUPS=[
   {w:'brother',ipa:'/ˈbrʌðə/',hint:'Voiced th.',hear:['broder'],say:'My brother can swim.'},
   {w:'although',ipa:'/ɔːlˈðəʊ/',hint:'Voiced th.',hear:['aldo'],say:'Although it is late.'}
  ]},
- {id:'vw',label:'v / w',blurb:'v touches the teeth. w does not.',words:[
+ {id:'vw',label:'v/w',blurb:'v touches the teeth. w does not.',words:[
   {w:'very',ipa:'/ˈveri/',hint:'Teeth on the lip for v.',hear:['wery'],say:'It is very cold.'},
   {w:'vest',ipa:'/vest/',hint:'Not west.',hear:['west'],say:'He wore a red vest.'},
   {w:'vine',ipa:'/vaɪn/',hint:'Not wine.',hear:['wine'],say:'Grapes grow on a vine.'},
@@ -117,7 +117,7 @@ const GROUPS=[
   {w:'available',ipa:'/əˈveɪləbl/',hint:'The v.',hear:['awailable'],say:'A room is available.'},
   {w:'review',ipa:'/rɪˈvjuː/',hint:'v, not w.',hear:['rewiew'],say:'Please review the list.'}
  ]},
- {id:'ae',label:'bad / bed',blurb:'bad uses a lower vowel than bed.',words:[
+ {id:'ae',label:'æ/e',blurb:'bad uses a lower vowel than bed.',words:[
   {w:'bad',ipa:'/bæd/',hint:'Low a, as in cat.',hear:['bed'],say:'The weather is bad.'},
   {w:'bed',ipa:'/bed/',hint:'e, as in bed.',hear:['bad'],say:'The bed is warm.'},
   {w:'man',ipa:'/mæn/',hint:'Low a.',hear:['men'],say:'That man is tall.'},
@@ -125,7 +125,7 @@ const GROUPS=[
   {w:'sat',ipa:'/sæt/',hint:'Low a.',hear:['set'],say:'I sat by the door.'},
   {w:'set',ipa:'/set/',hint:'e.',hear:['sat'],say:'Please set it down.'}
  ]},
- {id:'uu',label:'/ʊ/ /uː/',blurb:'ʊ is short. uː is long.',words:[
+ {id:'uu',label:'ʊ/uː',blurb:'ʊ is short. uː is long.',words:[
   {w:'full',ipa:'/fʊl/',hint:'Short ʊ. Not fool.',hear:['fool'],say:'The glass is full.'},
   {w:'fool',ipa:'/fuːl/',hint:'Long uː. Not full.',hear:['full'],say:'He is a fool.'},
   {w:'pull',ipa:'/pʊl/',hint:'Short ʊ. Not pool.',hear:['pool'],say:'Pull the handle.'},
@@ -133,7 +133,7 @@ const GROUPS=[
   {w:'foot',ipa:'/fʊt/',hint:'Short ʊ. Not food.',hear:['food'],say:'I hurt my foot.'},
   {w:'food',ipa:'/fuːd/',hint:'Long uː. Not foot.',hear:['foot'],say:'The food is ready.'}
  ]},
- {id:'aa',label:'/ʌ/ /ɑː/',blurb:'ʌ is short and central. ɑː is long and open.',words:[
+ {id:'aa',label:'ʌ/ɑː',blurb:'ʌ is short and central. ɑː is long and open.',words:[
   {w:'cut',ipa:'/kʌt/',hint:'Short ʌ. Not cart.',hear:['cart'],say:'Please cut the cake.'},
   {w:'cart',ipa:'/kɑːt/',hint:'Long ɑː. Not cut.',hear:['cut'],say:'Push the cart.'},
   {w:'come',ipa:'/kʌm/',hint:'Short ʌ. Not calm.',hear:['calm'],say:'Please come in.'},
@@ -141,7 +141,7 @@ const GROUPS=[
   {w:'duck',ipa:'/dʌk/',hint:'Short ʌ. Not dark.',hear:['dark'],say:'A duck can swim.'},
   {w:'dark',ipa:'/dɑːk/',hint:'Long ɑː. Not duck.',hear:['duck'],say:'It is dark.'}
  ]},
- {id:'nor',label:'no final r',blurb:'The last vowel is plain. Do not add an r.',words:[
+ {id:'nor',label:'ə/ər',blurb:'The last vowel is plain. Do not add an r.',words:[
   {w:'idea',ipa:'/aɪˈdɪə/',hint:'Not idear.',hear:['idear'],say:'That is my idea.'},
   {w:'china',ipa:'/ˈtʃaɪnə/',hint:'Not chinar.',hear:['chinar'],say:'This bowl is from China.'},
   {w:'america',ipa:'/əˈmerɪkə/',hint:'Not americar.',hear:['americar'],say:'He lives in America.'},
