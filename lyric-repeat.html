@@ -4,18 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Choose a folder of MP3 and LRC files, then loop one lyric line at a time. Arrow keys move between lines. Shift shows or hides the lyrics.">
+<meta name="description" content="Choose a folder of MP3 and LRC files and play one line after another. Space plays or pauses. Shift replays the current line. Arrow keys move between lines.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/lyric-repeat.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Lyric Repeat">
-<meta property="og:description" content="Choose a folder of MP3 and LRC files, then loop one lyric line at a time.">
+<meta property="og:title" content="English Listening Player">
+<meta property="og:description" content="Choose a folder of MP3 and LRC files and play one line after another.">
 <meta property="og:url" content="https://lvkai.github.io/ielts/lyric-repeat.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Lyric Repeat","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/lyric-repeat.html","description":"Choose a folder of MP3 and LRC files, then loop one lyric line at a time.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"English Listening Player","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/lyric-repeat.html","description":"Choose a folder of MP3 and LRC files and play one line after another.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
-<title>Lyric Repeat</title>
+<title>English Listening Player</title>
 <style>
 :root{--bg:#f6f8fb;--surface:#fff;--text:#182339;--muted:#738097;--line:#e4eaf2;--blue:#315eea;--blue-soft:#edf1ff;--r:19px}
 *{box-sizing:border-box}html{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif}body{margin:0;background:var(--bg);color:var(--text);min-height:100vh}button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,select:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}
@@ -53,9 +53,9 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 <body>
 <div class="wrap">
  <nav class="pager" aria-label="Pages"><a href="index.html">← Home</a></nav>
- <div class="eyebrow">LYRIC REPEAT</div>
- <h1>Lyric Repeat</h1>
- <p class="sub">Choose a folder of MP3 and LRC files. The folder becomes a playlist. The player loops the current line. Left and right arrows move between lines. Shift shows or hides the lyrics.</p>
+ <div class="eyebrow">LISTENING</div>
+ <h1>English Listening Player</h1>
+ <p class="sub">Choose a folder of MP3 and LRC files. The folder becomes a playlist. Each line plays once, then the next line starts. Space plays or pauses. Shift replays the current line. Left and right arrows move between lines.</p>
  <div class="toolbar">
   <select id="playlist" aria-label="Playlist"></select>
   <label id="add" class="primary folder-pick">Add folder<input id="folder" type="file" webkitdirectory directory multiple aria-label="Add folder"></label>
@@ -67,7 +67,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
    <h2>Songs</h2>
    <div id="songs" class="song-list" data-empty="This playlist has no songs."></div>
   </section>
-  <section class="pane" aria-label="Repeat player">
+  <section class="pane" aria-label="Listening player">
    <div class="player-head"><h2 id="songTitle">Choose a song</h2><p id="lineCount" class="count"></p></div>
    <div class="track" aria-hidden="true"><div id="lineFill" class="track-fill"></div></div>
    <div class="controls">
@@ -82,7 +82,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
    <p id="lyricHidden" class="hidden-note" hidden>Lyrics hidden</p>
   </section>
  </div>
- <p class="fine">Files stay in this browser and are not uploaded. When a line ends, playback pauses for one second, then starts that line again. Left and right arrows change the line. Shift shows or hides the lyrics.</p>
+ <p class="fine">Files stay in this browser and are not uploaded. Space plays or pauses. Shift replays the current line. Left and right arrows change the line.</p>
 </div>
 <audio id="track" preload="auto" playsinline></audio>
 <script>
@@ -99,8 +99,7 @@ let trackUrl='';
 let ticking=false;
 let timer=0;
 let playToken=0;
-let holding=false;
-let repeatTimer=0;
+let shiftAlone=false;
 let lyricsOn=localStorage.getItem('lyric-repeat-lyrics')!=='0';
 
 function openDb(){
@@ -167,7 +166,7 @@ function lineEnd(index){
  const next=lines[index+1]?lines[index+1].time:(duration||start+2);
  return next>start+0.12?next:start+0.4;
 }
-function stopTick(){ticking=false;holding=false;clearTimeout(timer);clearTimeout(repeatTimer)}
+function stopTick(){ticking=false;clearTimeout(timer)}
 function paintPlay(){
  const on=ticking&&!audio.paused;
  el('play').textContent=on?'Pause':'Play';
@@ -242,22 +241,27 @@ function renderPlaylistSelect(){
   select.append(option);
  }
 }
+function atLineEnd(){
+ if(!lines[lineIndex])return false;
+ return audio.currentTime>=lineEnd(lineIndex)-0.04;
+}
+function togglePlay(){
+ if(!currentSong)return;
+ if(ticking&&!audio.paused){audio.pause();stopTick();paintPlay();return}
+ if(audio.src&&!atLineEnd()){
+  ticking=true;
+  audio.play().then(()=>{paintPlay();tick()}).catch(()=>{ticking=false;paintPlay()});
+  return;
+ }
+ startLine(lineIndex);
+}
 function tick(){
  if(!ticking)return;
  paintProgress();
  const end=lines[lineIndex]?lineEnd(lineIndex):0;
  if(!audio.paused&&end&&audio.currentTime>=end-0.04){
-  const token=playToken;
-  audio.pause();
-  ticking=false;
-  holding=true;
-  paintPlay();
-  clearTimeout(repeatTimer);
-  repeatTimer=setTimeout(()=>{
-   holding=false;
-   if(token!==playToken)return;
-   startLine(lineIndex);
-  },1000);
+  if(lineIndex<lines.length-1)startLine(lineIndex+1);
+  else{audio.pause();stopTick();paintPlay();paintProgress()}
   return;
  }
  timer=setTimeout(tick,50);
@@ -438,20 +442,23 @@ el('playlist').addEventListener('change',()=>{
 el('remove').addEventListener('click',removeSelected);
 el('prev').addEventListener('click',()=>step(-1));
 el('next').addEventListener('click',()=>step(1));
-el('play').addEventListener('click',()=>{
- if(!currentSong)return;
- if(holding){startLine(lineIndex);return}
- if(ticking&&!audio.paused){audio.pause();stopTick();paintPlay();return}
- if(!ticking&&audio.src){ticking=true;audio.play().then(()=>{paintPlay();tick()}).catch(()=>{ticking=false;paintPlay()});return}
- startLine(lineIndex);
-});
+el('play').addEventListener('click',togglePlay);
 el('lyrics').addEventListener('click',toggleLyrics);
+audio.addEventListener('ended',()=>{stopTick();paintPlay();paintProgress()});
 document.addEventListener('keydown',event=>{
- if(event.target.closest('input,select,textarea'))return;
- if(event.key==='ArrowLeft'&&!event.shiftKey){event.preventDefault();step(-1)}
- else if(event.key==='ArrowRight'&&!event.shiftKey){event.preventDefault();step(1)}
- else if(event.key==='Shift'&&!event.repeat&&!event.ctrlKey&&!event.altKey&&!event.metaKey){event.preventDefault();toggleLyrics()}
-});
+ if(event.target&&event.target.closest&&event.target.closest('input,select,textarea'))return;
+ if(event.key==='Shift'&&!event.repeat&&!event.ctrlKey&&!event.altKey&&!event.metaKey)shiftAlone=true;
+ else if(event.shiftKey)shiftAlone=false;
+ if(event.key===' '||event.code==='Space'){event.preventDefault();togglePlay()}
+ else if(event.key==='ArrowLeft'&&!event.shiftKey&&!event.altKey&&!event.ctrlKey&&!event.metaKey){event.preventDefault();step(-1)}
+ else if(event.key==='ArrowRight'&&!event.shiftKey&&!event.altKey&&!event.ctrlKey&&!event.metaKey){event.preventDefault();step(1)}
+},true);
+document.addEventListener('keyup',event=>{
+ if(event.key!=='Shift')return;
+ const replay=shiftAlone&&!event.ctrlKey&&!event.altKey&&!event.metaKey&&!(event.target&&event.target.closest&&event.target.closest('input,select,textarea'));
+ shiftAlone=false;
+ if(replay){event.preventDefault();startLine(lineIndex)}
+},true);
 applyLyricsOnLoad();
 function applyLyricsOnLoad(){
  el('lyrics').setAttribute('aria-pressed',lyricsOn?'true':'false');
