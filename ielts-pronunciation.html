@@ -125,6 +125,22 @@ const GROUPS=[
   {w:'sat',ipa:'/sæt/',hint:'Low a.',hear:['set'],say:'I sat by the door.'},
   {w:'set',ipa:'/set/',hint:'e.',hear:['sat'],say:'Please set it down.'}
  ]},
+ {id:'uu',label:'/ʊ/ /uː/',blurb:'ʊ is short. uː is long.',words:[
+  {w:'full',ipa:'/fʊl/',hint:'Short ʊ. Not fool.',hear:['fool'],say:'The glass is full.'},
+  {w:'fool',ipa:'/fuːl/',hint:'Long uː. Not full.',hear:['full'],say:'He is a fool.'},
+  {w:'pull',ipa:'/pʊl/',hint:'Short ʊ. Not pool.',hear:['pool'],say:'Pull the handle.'},
+  {w:'pool',ipa:'/puːl/',hint:'Long uː. Not pull.',hear:['pull'],say:'The pool is warm.'},
+  {w:'foot',ipa:'/fʊt/',hint:'Short ʊ. Not food.',hear:['food'],say:'I hurt my foot.'},
+  {w:'food',ipa:'/fuːd/',hint:'Long uː. Not foot.',hear:['foot'],say:'The food is ready.'}
+ ]},
+ {id:'aa',label:'/ʌ/ /ɑː/',blurb:'ʌ is short and central. ɑː is long and open.',words:[
+  {w:'cut',ipa:'/kʌt/',hint:'Short ʌ. Not cart.',hear:['cart'],say:'Please cut the cake.'},
+  {w:'cart',ipa:'/kɑːt/',hint:'Long ɑː. Not cut.',hear:['cut'],say:'Push the cart.'},
+  {w:'come',ipa:'/kʌm/',hint:'Short ʌ. Not calm.',hear:['calm'],say:'Please come in.'},
+  {w:'calm',ipa:'/kɑːm/',hint:'Long ɑː. Not come.',hear:['come'],say:'Stay calm.'},
+  {w:'duck',ipa:'/dʌk/',hint:'Short ʌ. Not dark.',hear:['dark'],say:'A duck can swim.'},
+  {w:'dark',ipa:'/dɑːk/',hint:'Long ɑː. Not duck.',hear:['duck'],say:'It is dark.'}
+ ]},
  {id:'nor',label:'no final r',blurb:'The last vowel is plain. Do not add an r.',words:[
   {w:'idea',ipa:'/aɪˈdɪə/',hint:'Not idear.',hear:['idear'],say:'That is my idea.'},
   {w:'china',ipa:'/ˈtʃaɪnə/',hint:'Not chinar.',hear:['chinar'],say:'This bowl is from China.'},
@@ -495,6 +511,8 @@ function contrastNote(id){
  if(id==='think'||id==='this')return {kind:'',text:'Listen for the th in the word, then again in the sentence.'};
  if(id==='vw')return {kind:'',text:'In the sentence, v touches the top teeth. w does not.'};
  if(id==='ae')return {kind:'',text:'In the sentence, listen for the vowel. bad is a lower vowel than bed.'};
+ if(id==='uu')return {kind:'',text:'In the sentence, ʊ is short and uː is long.'};
+ if(id==='aa')return {kind:'',text:'In the sentence, ʌ is short and central. ɑː is long and open.'};
  if(id==='nor')return {kind:'',text:'In the sentence, the word should end on a vowel, with no r after it.'};
  return {kind:'',text:'In the sentence, compare the word with the model.'};
 }
