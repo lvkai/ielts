@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Free IELTS listening practice for digits, flight numbers, and UK postcodes. Switch between them. Pattern 334 speaks 3 digits, then 3, then 4. A flight number is two letters, then the digits. A postcode is spoken one character at a time.">
+<meta name="description" content="Free IELTS listening practice for digits, flight numbers, and UK postcodes. Switch between them. Pattern 334 speaks 3 digits, then 3, then 4. A flight number and a postcode are each spoken as one phrase.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/ielts-listening-digits.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="IELTS Listening Digit, Flight and Postcode Dictation">
-<meta property="og:description" content="Switch between digit groups, flight numbers, and UK postcodes. Pattern 334 speaks 3 digits, then 3, then 4. A flight number is two letters, then the digits. A postcode is spoken one character at a time.">
+<meta property="og:description" content="Switch between digit groups, flight numbers, and UK postcodes. Pattern 334 speaks 3 digits, then 3, then 4. A flight number and a postcode are each spoken as one phrase.">
 <meta property="og:url" content="https://lvkai.github.io/ielts/ielts-listening-digits.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Listening Digit, Flight and Postcode Dictation","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-digits.html","description":"Free IELTS listening practice. Switch between digit groups, flight numbers, and UK postcodes. Pattern 334 speaks 3 digits, then 3, then 4. A flight number is two letters, then the digits. A postcode is spoken one character at a time.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Listening Digit, Flight and Postcode Dictation","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-digits.html","description":"Free IELTS listening practice. Switch between digit groups, flight numbers, and UK postcodes. Pattern 334 speaks 3 digits, then 3, then 4. A flight number and a postcode are each spoken as one phrase.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
 <title>IELTS Listening Digit, Flight and Postcode Dictation</title>
@@ -49,21 +49,19 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="eyebrow">IELTS LISTENING TRAINER</div>
    <h1 class="heading" id="pageTitle">Digit Dictation</h1>
    <p class="sub" id="subDigits">Each round has 10 questions. Pattern 334 is spoken as 3 digits, then 3, then 4. The same digit repeated inside a group is spoken as double or triple. Type while they play. 0 is spoken as oh.</p>
-   <p class="sub hide" id="subFlight">Each round has 10 questions. A flight number is two letters, then 3 digits. Choose 4, or 3 or 4, when you want a longer number. Letters are spoken one by one. 0 is oh, and a repeated digit is double or triple. Type while they play.</p>
-   <p class="sub hide" id="subPostcode">Each round has 10 UK postcodes. Choose a form, or Mixed. W1A 0AX also brings SW1A, EC1A, and WC1A. You hear every letter and digit. 0 is oh, and a repeated character is double. Type while they play.</p>
+   <p class="sub hide" id="subFlight">Each round has 10 questions. A flight number is two letters, then 3 digits. Choose 4, or 3 or 4, when you want a longer number. It is spoken as one phrase, like B A, two oh seven. 0 is oh, and a repeated digit is double or triple. Type while they play.</p>
+   <p class="sub hide" id="subPostcode">Each round has 10 UK postcodes. Choose a form, or Mixed. W1A 0AX also brings SW1A, EC1A, and WC1A. Each one is spoken as a phrase, with a short pause before the last three characters. 0 is oh, and a repeated character is double. Type while they play.</p>
   </div>
   <div class="settings" id="settingsDigits" aria-label="Voice, pattern, and gap">
    <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
    <label class="setting"><span>Pattern</span><input id="pattern" type="text" inputmode="numeric" maxlength="30" value="334" autocomplete="off" spellcheck="false" aria-label="Pattern"></label>
    <label class="setting"><span>Gap</span><select id="gap" aria-label="Gap between groups"><option value="0">0 s</option><option value="100">0.1 s</option><option value="200">0.2 s</option><option value="300">0.3 s</option><option value="500" selected>0.5 s</option></select></label>
   </div>
-  <div class="settings hide" id="settingsFlight" aria-label="Voice, digits, and gap"><label class="setting"><span>Voice</span><select id="f-voice" aria-label="Voice"></select></label>
+  <div class="settings hide" id="settingsFlight" aria-label="Voice and digits"><label class="setting"><span>Voice</span><select id="f-voice" aria-label="Voice"></select></label>
    <label class="setting short"><span>Digits</span><select id="f-digits" aria-label="Digits in the flight number"><option value="3" selected>3</option><option value="4">4</option><option value="mixed">3 or 4</option></select></label>
-   <label class="setting short"><span>Gap</span><select id="f-gap" aria-label="Gap between letters and the number"><option value="0">0 s</option><option value="100">0.1 s</option><option value="200">0.2 s</option><option value="300" selected>0.3 s</option><option value="500">0.5 s</option></select></label>
   </div>
-  <div class="settings hide" id="settingsPostcode" aria-label="Voice, form, and gap"><label class="setting"><span>Voice</span><select id="p-voice" aria-label="Voice"></select></label>
+  <div class="settings hide" id="settingsPostcode" aria-label="Voice and form"><label class="setting"><span>Voice</span><select id="p-voice" aria-label="Voice"></select></label>
    <label class="setting form"><span>Form</span><select id="p-form" aria-label="Postcode form"><option value="mixed" selected>Mixed</option><option value="a9">M1 1AE</option><option value="a99">B33 8TH</option><option value="aa9">CR2 6XH</option><option value="aa99">DN55 1PT</option><option value="central">W1A 0AX</option></select></label>
-   <label class="setting short"><span>Gap</span><select id="p-gap" aria-label="Gap between characters"><option value="0">0 s</option><option value="100">0.1 s</option><option value="200">0.2 s</option><option value="300" selected>0.3 s</option><option value="500">0.5 s</option></select></label>
   </div>
  </header>
  <div id="panelDigits">
@@ -121,7 +119,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
   </aside>
  </main>
  
- <p class="bottom">Letters are spoken one by one, then the digits. 0 is oh. A repeated digit is double or triple. Missed flight numbers and answer times stay in this browser. Three correct answers remove one miss.</p>
+ <p class="bottom">Spoken as one phrase, like B A, two oh seven. The same letter twice is double. 0 is oh. A repeated digit is double or triple. Missed flight numbers and answer times stay in this browser. Three correct answers remove one miss.</p>
 
 </div>
 <div id="panelPostcode" class="hide">
@@ -150,7 +148,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <p class="footnote" id="p-summary">The postcode stays hidden until you check.</p>
   </aside>
  </main>
- <p class="bottom">The space sits before the last three characters. Letters and digits are spoken one by one. 0 is oh. A repeated character is double. Missed postcodes and answer times stay in this browser. Three correct answers remove one miss.</p>
+ <p class="bottom">Spoken as one phrase, with a short pause before the last three characters. 0 is oh. A repeated character is double. Missed postcodes and answer times stay in this browser. Three correct answers remove one miss.</p>
 </div>
 </div>
 <dialog id="missDialog" class="stats-dialog" aria-labelledby="missTitle">
@@ -818,7 +816,7 @@ showControls();
 const el=id=>document.getElementById('f-'+id);
 const DIGIT=['oh','one','two','three','four','five','six','seven','eight','nine'];
 const AIRLINES=[...new Set('BA VS EK QR EY SQ CX QF NZ AC AA UA DL AF LH KL SK AY IB TK AI TG MH GA JL NH KE OZ CA MU CZ HU CI BR PR UL SA ET MS SV WY GF KU LY OS LX SN TP FI LO AZ AM LA AR CM AV FJ VN BI KQ AT AH RJ JQ VA HA AS WN PK BG ME'.split(' '))];
-const ROUND=10,VOICE_KEY='ielts-flight-voice',GAP_KEY='ielts-flight-gap',DIGITS_KEY='ielts-flight-digits',STATS_KEY='ielts-flight-stats';
+const ROUND=10,VOICE_KEY='ielts-flight-voice',DIGITS_KEY='ielts-flight-digits',STATS_KEY='ielts-flight-stats';
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
 let items=[],answers=[],position=0,phase='idle',speechGeneration=0,gapTimer=null,held=null,heardAt=null,clockTimer=null;
 function randomBelow(n){
@@ -888,7 +886,8 @@ function speakDigits(text){
  return words.join(' ');
 }
 function spokenChunks(flight){
- return [flight[0],flight[1],speakDigits(flight.slice(2))];
+ const letters=flight[0]===flight[1]?'double '+flight[0]:flight[0]+' '+flight[1];
+ return [letters+', '+speakDigits(flight.slice(2))];
 }
 function loadStats(){
  try{
@@ -1005,12 +1004,7 @@ function fillVoices(){
  const british=voices.find(voice=>/^en-GB/i.test(voice.lang));
  select.value=voices.some(voice=>voice.voiceURI===previous)?previous:(british||voices[0]).voiceURI;
 }
-function gapMs(){
- const value=Number(el('gap').value);
- return value===0||value===100||value===200||value===300||value===500?value:300;
-}
 function rememberVoice(){try{localStorage.setItem(VOICE_KEY,el('voice').value)}catch(_){}}
-function rememberGap(){try{localStorage.setItem(GAP_KEY,el('gap').value)}catch(_){}}
 function chosenVoice(){return usableVoices().find(voice=>voice.voiceURI===el('voice').value)||null}
 function clearClock(){if(clockTimer!==null){clearInterval(clockTimer);clockTimer=null}}
 function resetClock(){clearClock();heardAt=null}
@@ -1081,9 +1075,7 @@ function playFlight(){
    moved=true;
    clearTimeout(watch);
    if(index+1>=chunks.length){finish();return}
-   const gap=gapMs();
-   if(!gap){speakAt(index+1);return}
-   gapTimer=setTimeout(()=>speakAt(index+1),gap);
+   speakAt(index+1);
   };
   utterance.onstart=()=>{
    if(token!==speechGeneration)return;
@@ -1165,7 +1157,6 @@ function showControls(){
  const locked=running||!usableVoices().length;
  el('voice').disabled=locked;
  el('digits').disabled=running;
- el('gap').disabled=running;
 }
 function openQuestion(){
  phase='speaking';
@@ -1247,9 +1238,7 @@ function nextQuestion(){
  openQuestion();
 }
 el('voice').addEventListener('change',rememberVoice);
-el('gap').addEventListener('change',rememberGap);
 el('digits').addEventListener('change',rememberDigits);
-try{const savedGap=localStorage.getItem(GAP_KEY);if(savedGap&&el('gap').querySelector(`option[value="${savedGap}"]`))el('gap').value=savedGap}catch(_){}
 try{const savedDigits=localStorage.getItem(DIGITS_KEY);if(savedDigits&&el('digits').querySelector(`option[value="${savedDigits}"]`))el('digits').value=savedDigits}catch(_){}
 el('start').addEventListener('click',startRound);
 el('openMissed').addEventListener('click',()=>openStatsDialog(el('missDialog'),renderMissDialog));
@@ -1311,7 +1300,7 @@ const DIGIT=['oh','one','two','three','four','five','six','seven','eight','nine'
 const UNIT='ABDEFGHJLNPQRSTUWXYZ';
 const SINGLE=['B','E','G','L','M','N','S','W'];
 const DOUBLE='AB AL BA BB BD BH BL BN BR BS BT CA CB CF CH CM CO CR CT CV CW DA DD DE DG DH DL DN DT DY EH EN EX FK FY GL GU HA HD HG HP HR HS HU HX IG IP IV KA KT KW KY LA LD LE LL LN LS LU ME MK ML NE NG NN NP NR NW OL OX PA PE PH PL PO PR RG RH RM SA SE SG SK SL SM SN SO SP SR SS ST SW SY TA TD TF TN TQ TR TS TW UB WA WD WF WN WR WS WV YO ZE'.split(' ');
-const ROUND=10,VOICE_KEY='ielts-postcode-voice',GAP_KEY='ielts-postcode-gap',FORM_KEY='ielts-postcode-form',STATS_KEY='ielts-postcode-stats';
+const ROUND=10,VOICE_KEY='ielts-postcode-voice',FORM_KEY='ielts-postcode-form',STATS_KEY='ielts-postcode-stats';
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
 let items=[],answers=[],position=0,phase='idle',speechGeneration=0,gapTimer=null,held=null,heardAt=null,clockTimer=null;
 function randomBelow(n){
@@ -1394,16 +1383,19 @@ function makeRound(){
  }
  return codes;
 }
-function spokenChunks(code){
- const chunks=[];
- for(let i=0;i<code.length;){
+function speakPart(text){
+ const words=[];
+ for(let i=0;i<text.length;){
   let run=1;
-  while(i+run<code.length&&code[i+run]===code[i]&&run<3)run++;
-  const word=/\d/.test(code[i])?DIGIT[Number(code[i])]:code[i];
-  chunks.push(run===3?'triple '+word:run===2?'double '+word:word);
+  while(i+run<text.length&&text[i+run]===text[i]&&run<3)run++;
+  const word=/\d/.test(text[i])?DIGIT[Number(text[i])]:text[i];
+  words.push(run===3?'triple '+word:run===2?'double '+word:word);
   i+=run;
  }
- return chunks;
+ return words.join(' ');
+}
+function spokenChunks(code){
+ return [speakPart(code.slice(0,-3))+', '+speakPart(code.slice(-3))];
 }
 function loadStats(){
  try{
@@ -1517,12 +1509,7 @@ function fillVoices(){
  const british=voices.find(voice=>/^en-GB/i.test(voice.lang));
  select.value=voices.some(voice=>voice.voiceURI===previous)?previous:(british||voices[0]).voiceURI;
 }
-function gapMs(){
- const value=Number(el('gap').value);
- return value===0||value===100||value===200||value===300||value===500?value:300;
-}
 function rememberVoice(){try{localStorage.setItem(VOICE_KEY,el('voice').value)}catch(_){}}
-function rememberGap(){try{localStorage.setItem(GAP_KEY,el('gap').value)}catch(_){}}
 function chosenVoice(){return usableVoices().find(voice=>voice.voiceURI===el('voice').value)||null}
 function clearClock(){if(clockTimer!==null){clearInterval(clockTimer);clockTimer=null}}
 function resetClock(){clearClock();heardAt=null}
@@ -1593,9 +1580,7 @@ function playPostcode(){
    moved=true;
    clearTimeout(watch);
    if(index+1>=chunks.length){finish();return}
-   const gap=gapMs();
-   if(!gap){speakAt(index+1);return}
-   gapTimer=setTimeout(()=>speakAt(index+1),gap);
+   speakAt(index+1);
   };
   utterance.onstart=()=>{
    if(token!==speechGeneration)return;
@@ -1677,7 +1662,6 @@ function showControls(){
  const locked=running||!usableVoices().length;
  el('voice').disabled=locked;
  el('form').disabled=running;
- el('gap').disabled=running;
 }
 function openQuestion(){
  phase='speaking';
@@ -1759,9 +1743,7 @@ function nextQuestion(){
  openQuestion();
 }
 el('voice').addEventListener('change',rememberVoice);
-el('gap').addEventListener('change',rememberGap);
 el('form').addEventListener('change',rememberForm);
-try{const savedGap=localStorage.getItem(GAP_KEY);if(savedGap&&el('gap').querySelector(`option[value="${savedGap}"]`))el('gap').value=savedGap}catch(_){}
 try{const savedForm=localStorage.getItem(FORM_KEY);if(savedForm&&el('form').querySelector(`option[value="${savedForm}"]`))el('form').value=savedForm}catch(_){}
 el('start').addEventListener('click',startRound);
 el('openMissed').addEventListener('click',()=>openStatsDialog(el('missDialog'),renderMissDialog));
