@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f8fb">
+<meta name="description" content="Free IELTS pronunciation practice for sounds many Chinese speakers change. Hear the word, record it, then hear the model and your recording one after the other.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://lvkai.github.io/ielts/ielts-pronunciation.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="IELTS Pronunciation Compare">
+<meta property="og:description" content="Hear a word, record it, then hear the model and your recording one after the other.">
+<meta property="og:url" content="https://lvkai.github.io/ielts/ielts-pronunciation.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Pronunciation Compare","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-pronunciation.html","description":"Free IELTS pronunciation practice. Hear a word, record it, then hear the model and your recording one after the other.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
+<title>IELTS Pronunciation Compare</title>
+<style>
+:root{--bg:#f6f8fb;--surface:#fff;--text:#182339;--muted:#738097;--line:#e4eaf2;--blue:#315eea;--blue-soft:#edf1ff;--green:#168363;--red:#c54d4d;--r:19px}
+*{box-sizing:border-box}html{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif}body{margin:0;background:var(--bg);color:var(--text);min-height:100vh}button,select{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.44}button:focus-visible,select:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}
+.wrap{max-width:1100px;margin:0 auto;padding:43px 22px 56px}
+.home-nav{margin:0 0 10px}.home-nav a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.home-nav a:hover{text-decoration:underline}
+header{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:22px}.eyebrow{color:var(--blue);font-size:11px;letter-spacing:.15em;font-weight:800;margin-bottom:9px}.heading{font-size:clamp(25px,3.7vw,36px);letter-spacing:-.045em;line-height:1.15;margin:0}.sub{font-size:13px;color:var(--muted);margin:10px 0 0;max-width:46em}
+.settings{display:flex;gap:12px;align-items:end}.setting{display:grid;gap:6px}.setting span{font-size:11px;color:var(--muted);font-weight:650}.setting select{appearance:none;border:1px solid var(--line);border-radius:10px;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;width:280px;padding:11px 30px 11px 13px;font-weight:700;color:var(--text);font-size:13px}
+.groups{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.chip{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:720}.chip[aria-selected="true"]{color:var(--blue);border-color:#c5d4ff;background:var(--blue-soft)}.chip:hover{color:var(--text)}
+.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,1fr);gap:18px;align-items:start}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 9px 36px rgba(35,49,79,.035)}
+.practice{padding:26px 29px 28px;min-height:520px;display:flex;flex-direction:column}.top{display:flex;justify-content:space-between;align-items:center;gap:16px}.overline{color:var(--muted);font-size:13px;font-weight:650}.progress-count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}.progress-count b{font-size:22px;color:var(--text);font-weight:800}
+.stage{display:flex;flex-direction:column;align-items:center;text-align:center;padding:28px 0 8px}.sound{height:74px;width:74px;border-radius:22px;border:1px solid #dbe4ff;background:var(--blue-soft);display:flex;align-items:center;justify-content:center;color:var(--blue)}.sound svg{width:30px;height:30px}.sound.playing{background:#dbe5ff}.word{margin:18px 0 0;font-size:clamp(40px,6vw,64px);line-height:1;letter-spacing:-.04em;font-weight:760}.ipa{margin:10px 0 0;font-size:20px;color:#31466d;font-weight:650}.hint{margin:8px 0 0;font-size:14px;color:var(--muted);line-height:1.5}
+.steps{display:flex;justify-content:center;gap:8px;list-style:none;margin:22px 0 0;padding:0}.steps li{min-width:92px;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:750;color:var(--muted);background:#f3f6fb}.steps li.active{color:#fff;background:var(--blue)}.steps li.done{color:var(--green);background:#e7f6ef}
+.status{min-height:22px;margin:14px 0 0;font-size:13px;color:var(--muted);font-weight:700}.count{margin:6px 0 0;font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.03em;color:var(--text)}.count.idle{color:transparent}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:18px}.primary{border:0;background:var(--blue);color:#fff;font-size:14px;font-weight:750;border-radius:13px;padding:0 27px;min-height:51px}.primary:hover:not(:disabled){background:#264fd0}.secondary{border:1px solid #d8e1f0;background:#fff;color:#455874;font-size:13px;font-weight:730;border-radius:12px;padding:11px 16px;min-height:51px}.secondary:hover:not(:disabled){background:#f6f8fc}.stop{color:var(--red);border-color:#f0d0d0}.stop:hover:not(:disabled){background:#fdecee}.hide{display:none!important}
+.list{padding:18px 18px 16px}.list h2{margin:0 0 4px;font-size:17px;letter-spacing:-.02em}.blurb{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.5}.words{display:grid;gap:8px}.word-btn{display:flex;justify-content:space-between;gap:12px;align-items:baseline;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px}.word-btn b{font-size:15px;font-weight:760}.word-btn span{color:var(--muted);font-size:12px;line-height:1.4}.word-btn[aria-current="true"]{border-color:#c5d4ff;background:var(--blue-soft)}.word-btn:hover{border-color:#c5d4ff}
+.bottom{margin-top:22px;text-align:center;font-size:12px;line-height:1.7;color:var(--muted)}
+@media(max-width:800px){.wrap{padding:27px 16px 34px}header{align-items:start;flex-direction:column}.settings,.setting,.setting select{width:100%}.layout{grid-template-columns:1fr}.practice{min-height:0;padding:22px 18px 20px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <nav class="home-nav" aria-label="Site"><a href="index.html">← Home</a></nav>
+ <header>
+  <div>
+   <div class="eyebrow">IELTS SPEAKING TRAINER</div>
+   <h1 class="heading">Pronunciation Compare</h1>
+   <p class="sub">These are sounds many Chinese speakers change in English. Each round plays the word, records you, then plays the model and your recording one after the other.</p>
+  </div>
+  <div class="settings" aria-label="Voice">
+   <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
+  </div>
+ </header>
+ <div class="groups" id="groups" role="tablist" aria-label="Sound groups"></div>
+ <main class="layout">
+  <section class="panel practice" aria-label="Pronunciation practice">
+   <div class="top"><div class="overline" id="groupLabel">think th</div><div class="progress-count"><b id="qIndex">1</b> / <span id="qTotal">6</span></div></div>
+   <div class="stage">
+    <div class="sound" id="sound" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg></div>
+    <h2 class="word" id="word">think</h2>
+    <p class="ipa" id="ipa">/θɪŋk/</p>
+    <p class="hint" id="hint">Not sink.</p>
+    <ol class="steps" aria-label="Round">
+     <li id="stepListen">1 Listen</li>
+     <li id="stepRecord">2 Record</li>
+     <li id="stepCompare">3 Compare</li>
+    </ol>
+    <p class="status" id="status" role="status">Press Start. The model plays, then you say the word.</p>
+    <p class="count idle" id="count" aria-hidden="true">2.0</p>
+   </div>
+   <div class="actions">
+    <button type="button" class="primary" id="start">Start</button>
+    <button type="button" class="secondary" id="next">Next</button>
+    <button type="button" class="secondary stop hide" id="stop">Stop</button>
+   </div>
+  </section>
+  <aside class="panel list" aria-label="Words in this sound">
+   <h2 id="listTitle">think th</h2>
+   <p class="blurb" id="blurb">A soft th, not s.</p>
+   <div class="words" id="words"></div>
+  </aside>
+ </main>
+ <p class="bottom">The model uses an English voice in this browser. Your recording stays on this device and is not uploaded. Press Again to do the same word once more.</p>
+</div>
+<script>
+(()=>{'use strict';
+const GROUPS=[
+ {id:'think',label:'think th',blurb:'A soft th, not s.',words:[
+  {w:'think',ipa:'/θɪŋk/',hint:'Not sink.'},
+  {w:'three',ipa:'/θriː/',hint:'Not sree.'},
+  {w:'thank',ipa:'/θæŋk/',hint:'Not sank.'},
+  {w:'birthday',ipa:'/ˈbɜːθdeɪ/',hint:'th in the middle.'},
+  {w:'month',ipa:'/mʌnθ/',hint:'Final th.'},
+  {w:'something',ipa:'/ˈsʌmθɪŋ/',hint:'th, not s.'}
+ ]},
+ {id:'this',label:'this th',blurb:'A voiced th, not d or z.',words:[
+  {w:'this',ipa:'/ðɪs/',hint:'Not dis.'},
+  {w:'they',ipa:'/ðeɪ/',hint:'Not dey.'},
+  {w:'mother',ipa:'/ˈmʌðə/',hint:'Voiced th.'},
+  {w:'weather',ipa:'/ˈweðə/',hint:'Not weder.'},
+  {w:'brother',ipa:'/ˈbrʌðə/',hint:'Voiced th.'},
+  {w:'although',ipa:'/ɔːlˈðəʊ/',hint:'Voiced th.'}
+ ]},
+ {id:'vw',label:'v / w',blurb:'v touches the teeth. w does not.',words:[
+  {w:'very',ipa:'/ˈveri/',hint:'Teeth on the lip for v.'},
+  {w:'vest',ipa:'/vest/',hint:'Not west.'},
+  {w:'vine',ipa:'/vaɪn/',hint:'Not wine.'},
+  {w:'video',ipa:'/ˈvɪdiəʊ/',hint:'v, not w.'},
+  {w:'available',ipa:'/əˈveɪləbl/',hint:'The v.'},
+  {w:'review',ipa:'/rɪˈvjuː/',hint:'v, not w.'}
+ ]},
+ {id:'lr',label:'l / r',blurb:'The tongue is different for l and r.',words:[
+  {w:'rice',ipa:'/raɪs/',hint:'Not lice.'},
+  {w:'right',ipa:'/raɪt/',hint:'Not light.'},
+  {w:'really',ipa:'/ˈrɪəli/',hint:'The r is not l.'},
+  {w:'library',ipa:'/ˈlaɪbrəri/',hint:'Both l and r.'},
+  {w:'problem',ipa:'/ˈprɒbləm/',hint:'The r after p.'},
+  {w:'grow',ipa:'/ɡrəʊ/',hint:'gr together.'}
+ ]},
+ {id:'ln',label:'l / n',blurb:'l is often heard as n.',words:[
+  {w:'light',ipa:'/laɪt/',hint:'l, not n.'},
+  {w:'night',ipa:'/naɪt/',hint:'n, not l.'},
+  {w:'line',ipa:'/laɪn/',hint:'l, not n.'},
+  {w:'nine',ipa:'/naɪn/',hint:'n, not l.'},
+  {w:'slow',ipa:'/sləʊ/',hint:'l, not n.'},
+  {w:'snow',ipa:'/snəʊ/',hint:'n, not l.'}
+ ]},
+ {id:'ie',label:'ship / sheep',blurb:'ship is short. sheep is long.',words:[
+  {w:'ship',ipa:'/ʃɪp/',hint:'Short i.'},
+  {w:'sheep',ipa:'/ʃiːp/',hint:'Long ee.'},
+  {w:'live',ipa:'/lɪv/',hint:'Short i. The verb.'},
+  {w:'leave',ipa:'/liːv/',hint:'Long ee.'},
+  {w:'sit',ipa:'/sɪt/',hint:'Short i.'},
+  {w:'seat',ipa:'/siːt/',hint:'Long ee.'}
+ ]},
+ {id:'ae',label:'bad / bed',blurb:'bad uses a lower vowel than bed.',words:[
+  {w:'bad',ipa:'/bæd/',hint:'Low a, as in cat.'},
+  {w:'bed',ipa:'/bed/',hint:'e, as in bed.'},
+  {w:'man',ipa:'/mæn/',hint:'Low a.'},
+  {w:'men',ipa:'/men/',hint:'e.'},
+  {w:'sat',ipa:'/sæt/',hint:'Low a.'},
+  {w:'set',ipa:'/set/',hint:'e.'}
+ ]},
+ {id:'end',label:'endings',blurb:'Keep the last consonant. It is often dropped.',words:[
+  {w:'bed',ipa:'/bed/',hint:'Keep the final d.'},
+  {w:'bag',ipa:'/bæɡ/',hint:'Keep the final g.'},
+  {w:'back',ipa:'/bæk/',hint:'Keep the final k.'},
+  {w:'five',ipa:'/faɪv/',hint:'Keep the final v.'},
+  {w:'asked',ipa:'/ɑːskt/',hint:'Keep both the k and the t.'},
+  {w:'clothes',ipa:'/kləʊðz/',hint:'The end is voiced th plus z.'}
+ ]},
+ {id:'ng',label:'sing',blurb:'sing ends with ng. thin ends with n.',words:[
+  {w:'sing',ipa:'/sɪŋ/',hint:'ng, not n.'},
+  {w:'thing',ipa:'/θɪŋ/',hint:'Ends with ng.'},
+  {w:'bang',ipa:'/bæŋ/',hint:'ng, not n.'},
+  {w:'ring',ipa:'/rɪŋ/',hint:'ng, not n.'},
+  {w:'thin',ipa:'/θɪn/',hint:'Ends with n.'},
+  {w:'ban',ipa:'/bæn/',hint:'Ends with n, not ng.'}
+ ]},
+ {id:'stress',label:'stress',blurb:'The loud syllable is the one marked.',words:[
+  {w:'comfortable',ipa:'/ˈkʌmftəbl/',hint:'Stress the first syllable.'},
+  {w:'interesting',ipa:'/ˈɪntrəstɪŋ/',hint:'Stress the first syllable.'},
+  {w:'vegetable',ipa:'/ˈvedʒtəbl/',hint:'Stress the first syllable.'},
+  {w:'develop',ipa:'/dɪˈveləp/',hint:'Stress the second syllable.'},
+  {w:'photograph',ipa:'/ˈfəʊtəɡrɑːf/',hint:'Stress the first syllable.'},
+  {w:'photographer',ipa:'/fəˈtɒɡrəfə/',hint:'Stress the second syllable.'}
+ ]}
+];
+const VOICE_KEY='ielts-pronunciation-voice',GROUP_KEY='ielts-pronunciation-group';
+const RECORD_MS=2000,READY_MS=400,GAP_MS=400;
+const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
+const el=id=>document.getElementById(id);
+let groupIndex=0,wordIndex=0,generation=0,stream=null,recorder=null,bufferSource=null,speechWatch=null,recordTimer=null,countTimer=null,waitTimer=null,ctx=null,completed=false,running=false;
+function group(){return GROUPS[groupIndex]}
+function item(){return group().words[wordIndex]}
+function audioContext(){
+ const AC=window.AudioContext||window.webkitAudioContext;
+ if(!AC)throw new Error('audio');
+ if(!ctx)ctx=new AC();
+ return ctx;
+}
+function mechanical(voice){
+ const name=voice&&voice.name||'';
+ return /microsoft/i.test(name)&&!/natural|online/i.test(name);
+}
+function accentName(lang){
+ if(/^en-GB/i.test(lang))return 'British';
+ if(/^en-US/i.test(lang))return 'American';
+ if(/^en-AU/i.test(lang))return 'Australian';
+ if(/^en-IE/i.test(lang))return 'Irish';
+ if(/^en-IN/i.test(lang))return 'Indian';
+ return 'English';
+}
+function voiceRank(voice){return (/^en-GB/i.test(voice.lang)?0:1)*2+(/google/i.test(voice.name)?0:1)}
+function usableVoices(){
+ if(!speechOK)return [];
+ return window.speechSynthesis.getVoices().filter(voice=>/^en([-_]|$)/i.test(voice.lang)&&!mechanical(voice)).sort((a,b)=>voiceRank(a)-voiceRank(b)||a.name.localeCompare(b.name));
+}
+function fillVoices(){
+ const select=el('voice');
+ const previous=select.value||localStorage.getItem(VOICE_KEY)||'';
+ const voices=usableVoices();
+ select.replaceChildren();
+ if(!voices.length){
+  const option=document.createElement('option');
+  option.value='';
+  option.textContent=speechOK?'No clearer English voice':'Speech unavailable';
+  select.append(option);
+  select.disabled=true;
+  return;
+ }
+ select.disabled=running;
+ voices.forEach(voice=>{
+  const option=document.createElement('option');
+  option.value=voice.voiceURI;
+  option.textContent=voice.name+' · '+accentName(voice.lang);
+  select.append(option);
+ });
+ const british=voices.find(voice=>/^en-GB/i.test(voice.lang));
+ select.value=voices.some(voice=>voice.voiceURI===previous)?previous:(british||voices[0]).voiceURI;
+}
+function chosenVoice(){return usableVoices().find(voice=>voice.voiceURI===el('voice').value)||null}
+function rememberVoice(){try{localStorage.setItem(VOICE_KEY,el('voice').value)}catch(_){}}
+function setStatus(text){el('status').textContent=text}
+function setCount(text,on){
+ el('count').textContent=text;
+ el('count').classList.toggle('idle',!on);
+}
+function setStep(name){
+ const order={listen:1,record:2,compare:3};
+ ['listen','record','compare'].forEach(step=>{
+  const node=el('step'+step[0].toUpperCase()+step.slice(1));
+  node.classList.toggle('active',step===name);
+  node.classList.toggle('done',!!name&&order[step]<order[name]);
+ });
+}
+function showControls(){
+ el('start').classList.toggle('hide',running);
+ el('next').classList.toggle('hide',running);
+ el('stop').classList.toggle('hide',!running);
+ el('start').textContent=completed?'Again':'Start';
+ el('voice').disabled=running||!usableVoices().length;
+ document.querySelectorAll('.chip,.word-btn').forEach(node=>{node.disabled=running});
+}
+function showWord(){
+ const current=item();
+ el('groupLabel').textContent=group().label;
+ el('listTitle').textContent=group().label;
+ el('blurb').textContent=group().blurb;
+ el('qIndex').textContent=String(wordIndex+1);
+ el('qTotal').textContent=String(group().words.length);
+ el('word').textContent=current.w;
+ el('ipa').textContent=current.ipa;
+ el('hint').textContent=current.hint;
+ document.querySelectorAll('.chip').forEach((node,index)=>node.setAttribute('aria-selected',index===groupIndex?'true':'false'));
+ document.querySelectorAll('.word-btn').forEach((node,index)=>node.setAttribute('aria-current',index===wordIndex?'true':'false'));
+}
+function renderWords(){
+ const host=el('words');
+ host.replaceChildren();
+ group().words.forEach((word,index)=>{
+  const button=document.createElement('button');
+  button.type='button';
+  button.className='word-btn';
+  button.setAttribute('aria-current',index===wordIndex?'true':'false');
+  const name=document.createElement('b');
+  name.textContent=word.w;
+  const hint=document.createElement('span');
+  hint.textContent=word.hint;
+  button.append(name,hint);
+  button.addEventListener('click',()=>{if(running)return;wordIndex=index;completed=false;showWord();showControls();setStatus('Press Start. The model plays, then you say the word.');setStep('')});
+  host.append(button);
+ });
+}
+function renderGroups(){
+ const host=el('groups');
+ host.replaceChildren();
+ GROUPS.forEach((entry,index)=>{
+  const button=document.createElement('button');
+  button.type='button';
+  button.className='chip';
+  button.setAttribute('role','tab');
+  button.setAttribute('aria-selected',index===groupIndex?'true':'false');
+  button.textContent=entry.label;
+  button.addEventListener('click',()=>{
+   if(running||index===groupIndex)return;
+   groupIndex=index;wordIndex=0;completed=false;
+   try{localStorage.setItem(GROUP_KEY,entry.id)}catch(_){}
+   renderWords();showWord();showControls();setStep('');setCount('',false);
+   setStatus('Press Start. The model plays, then you say the word.');
+  });
+  host.append(button);
+ });
+}
+function cancelAudio(){
+ if(waitTimer){clearTimeout(waitTimer);waitTimer=null}
+ if(bufferSource){try{bufferSource.stop()}catch(_){}bufferSource=null}
+}
+function cancelRecord(){
+ if(recordTimer){clearTimeout(recordTimer);recordTimer=null}
+ if(countTimer){clearTimeout(countTimer);countTimer=null}
+ if(recorder&&recorder.state==='recording'){try{recorder.stop()}catch(_){}}
+}
+function cancelSpeech(){
+ if(speechWatch){clearTimeout(speechWatch);speechWatch=null}
+ if(speechOK){try{window.speechSynthesis.cancel()}catch(_){}}
+ el('sound').classList.remove('playing');
+}
+function cancel(){
+ generation++;
+ cancelSpeech();
+ cancelRecord();
+ cancelAudio();
+ setCount('',false);
+}
+function wait(ms,token){
+ return new Promise((resolve,reject)=>{
+  waitTimer=setTimeout(()=>{waitTimer=null;token===generation?resolve():reject(new Error('cancel'))},ms);
+ });
+}
+function speak(text,token){
+ return new Promise((resolve,reject)=>{
+  if(!speechOK||!usableVoices().length){reject(new Error('speech'));return}
+  const utterance=new SpeechSynthesisUtterance(text);
+  const voice=chosenVoice();
+  if(voice){try{utterance.voice=voice}catch(_){}utterance.lang=voice.lang||'en-GB'}
+  else utterance.lang='en-GB';
+  utterance.rate=0.92;
+  let settled=false;
+  const done=ok=>{
+   if(settled)return;
+   settled=true;
+   if(speechWatch){clearTimeout(speechWatch);speechWatch=null}
+   el('sound').classList.remove('playing');
+   if(token!==generation){reject(new Error('cancel'));return}
+   ok?resolve():reject(new Error('speech'));
+  };
+  let finishing=false;
+  utterance.onstart=()=>{if(token===generation)el('sound').classList.add('playing')};
+  utterance.onend=()=>done(true);
+  utterance.onerror=()=>{if(!finishing)done(false)};
+  speechWatch=setTimeout(()=>{finishing=true;try{window.speechSynthesis.cancel()}catch(_){}done(true)},4000);
+  try{window.speechSynthesis.resume();window.speechSynthesis.speak(utterance)}catch(_){done(false)}
+ });
+}
+async function ensureMic(){
+ if(stream&&stream.getTracks().some(track=>track.readyState==='live'))return stream;
+ if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder)throw new Error('mic');
+ stream=await navigator.mediaDevices.getUserMedia({audio:true});
+ return stream;
+}
+function record(ms,token){
+ return new Promise(async(resolve,reject)=>{
+  let mic;
+  try{mic=await ensureMic()}catch(_){reject(new Error('mic'));return}
+  if(token!==generation){reject(new Error('cancel'));return}
+  const chunks=[];
+  const types=['audio/webm;codecs=opus','audio/webm','audio/mp4'];
+  const mime=types.find(type=>window.MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(type));
+  let rec;
+  try{rec=new MediaRecorder(mic,mime?{mimeType:mime}:undefined)}catch(_){reject(new Error('mic'));return}
+  recorder=rec;
+  rec.ondataavailable=event=>{if(event.data&&event.data.size)chunks.push(event.data)};
+  rec.onerror=()=>{if(token===generation)reject(new Error('mic'))};
+  rec.onstop=()=>{
+   if(recordTimer){clearTimeout(recordTimer);recordTimer=null}
+   if(countTimer){clearTimeout(countTimer);countTimer=null}
+   if(recorder===rec)recorder=null;
+   if(token!==generation){reject(new Error('cancel'));return}
+   resolve(new Blob(chunks,{type:rec.mimeType||mime||'audio/webm'}));
+  };
+  try{rec.start(200)}catch(_){reject(new Error('mic'));return}
+  const started=performance.now();
+  const tick=()=>{
+   if(token!==generation||recorder!==rec)return;
+   const left=Math.max(0,ms-(performance.now()-started));
+   setCount((left/1000).toFixed(1),true);
+   if(left>0)countTimer=setTimeout(tick,100);
+  };
+  tick();
+  recordTimer=setTimeout(()=>{if(rec.state==='recording')rec.stop()},ms);
+ });
+}
+function playBlob(blob,token){
+ return new Promise(async(resolve,reject)=>{
+  try{
+   const raw=await blob.arrayBuffer();
+   if(token!==generation){reject(new Error('cancel'));return}
+   const decoded=await audioContext().decodeAudioData(raw);
+   if(token!==generation){reject(new Error('cancel'));return}
+   const source=audioContext().createBufferSource();
+   bufferSource=source;
+   source.buffer=decoded;
+   source.connect(audioContext().destination);
+   source.onended=()=>{if(bufferSource===source)bufferSource=null;token===generation?resolve():reject(new Error('cancel'))};
+   el('sound').classList.add('playing');
+   source.start();
+  }catch(_){
+   el('sound').classList.remove('playing');
+   if(token!==generation)reject(new Error('cancel'));
+   else reject(new Error('play'));
+  }
+ });
+}
+function failMessage(error){
+ if(error&&error.message==='mic')return 'Allow the microphone in this browser, then press Start again.';
+ if(error&&error.message==='audio')return 'This browser cannot play the recording back.';
+ if(error&&error.message==='play')return 'The recording could not be played. Press Again.';
+ return 'Add a Google voice in Chrome, or a Windows Natural voice such as Sonia or Ryan.';
+}
+async function run(token){
+ const word=item();
+ running=true;
+ showControls();
+ try{
+  await audioContext().resume();
+  if(token!==generation)return;
+  await ensureMic();
+  if(token!==generation)return;
+  setStep('listen');
+  setStatus('Listen.');
+  setCount('',false);
+  await speak(word.w,token);
+  if(token!==generation)return;
+  setStatus('Get ready.');
+  await wait(READY_MS,token);
+  if(token!==generation)return;
+  setStep('record');
+  setStatus('Say the word.');
+  const blob=await record(RECORD_MS,token);
+  if(token!==generation)return;
+  setCount('',false);
+  if(!blob.size)throw new Error('play');
+  setStep('compare');
+  setStatus('Model.');
+  await speak(word.w,token);
+  if(token!==generation)return;
+  await wait(GAP_MS,token);
+  if(token!==generation)return;
+  setStatus('Your recording.');
+  await playBlob(blob,token);
+  if(token!==generation)return;
+  el('sound').classList.remove('playing');
+  completed=true;
+  setStep('');
+  setStatus('Model, then you. Press Again to repeat.');
+ }catch(error){
+  if(token!==generation)return;
+  setStep('');
+  setCount('',false);
+  el('sound').classList.remove('playing');
+  setStatus(failMessage(error));
+ }finally{
+  if(token===generation){running=false;showControls()}
+ }
+}
+function begin(){
+ if(running)return;
+ cancel();
+ const token=generation;
+ void run(token);
+}
+function stop(){
+ cancel();
+ running=false;
+ setStep('');
+ setStatus('Stopped. Press Start when you are ready.');
+ showControls();
+}
+function nextWord(){
+ if(running)return;
+ wordIndex=(wordIndex+1)%group().words.length;
+ completed=false;
+ showWord();
+ begin();
+}
+el('voice').addEventListener('change',rememberVoice);
+el('start').addEventListener('click',begin);
+el('stop').addEventListener('click',stop);
+el('next').addEventListener('click',nextWord);
+try{
+ const saved=localStorage.getItem(GROUP_KEY);
+ const found=GROUPS.findIndex(entry=>entry.id===saved);
+ if(found>=0)groupIndex=found;
+}catch(_){}
+renderGroups();
+renderWords();
+showWord();
+fillVoices();
+if(speechOK)window.speechSynthesis.addEventListener('voiceschanged',fillVoices);
+showControls();
+})();
+</script>
+</body>
+</html>
