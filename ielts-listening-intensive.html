@@ -99,7 +99,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
 .note{margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.6}.note.warn{color:var(--red)}
 .name-field{display:flex;align-items:center;gap:8px;margin-top:10px}.name-field span{font-size:12px;color:var(--muted);font-weight:750}.name-field input{width:min(360px,100%);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-weight:700}
 .library{margin-top:22px}.library h2{margin:0 0 4px;font-size:16px;letter-spacing:-.02em}.library-empty{margin:8px 0 0;color:var(--muted);font-size:13px}.library-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.library-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.library-copy b{font-weight:750}.library-meta{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}.library-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}.library-actions button{border-radius:999px;min-height:34px;padding:0 12px;font-size:12px;font-weight:750}.library-actions .edit,.library-actions .listen{border:1px solid #d8e1f0;background:#fff;color:#455874}.library-actions .practice{border:0;background:var(--blue);color:#fff}.library-actions .danger{border:0;background:none;padding:0 4px;color:var(--red)}
-.player-bit{display:block;width:100%;border:0;background:transparent;border-radius:10px;min-height:76px;padding:10px 12px;text-align:left;line-height:1.45;color:var(--muted);font-size:30px;font-weight:650}.player-bit.now{color:var(--text)}.player-roll{will-change:transform}.player-head{display:flex;justify-content:flex-end;padding:0 0 8px}.player-count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}.player-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.player-focus{position:relative;overflow:hidden;height:min(70vh,560px);margin-top:48px}.player-hidden{margin:16px 0;color:var(--muted)}
+.player-bit{display:block;width:100%;border:0;background:transparent;border-radius:10px;min-height:76px;padding:10px 12px;text-align:left;line-height:1.45;color:var(--muted);font-size:30px;font-weight:650}.player-bit.now{color:var(--text)}.player-roll{will-change:transform}.player-head{display:flex;justify-content:flex-end;padding:0 0 8px}.player-count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}.player-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:16px}.player-focus{position:relative;overflow:hidden;height:min(70vh,560px);margin-top:48px}.player-hidden{margin:16px 0;color:var(--muted)}
 .fine{margin:18px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
 @media(max-width:640px){.wrap{padding:22px 14px 40px}.panel{padding:18px 14px}.start-bar{align-items:stretch;flex-direction:column}.start-bar .primary,.start-bar .secondary,.work-actions .secondary{width:100%}.library-item{align-items:flex-start;flex-direction:column}.library-actions{width:100%}.practice-layout{flex-direction:column}.sentence-nav{width:100%;max-height:132px;flex-direction:row}.jump{width:auto;flex:none}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
@@ -167,6 +167,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
      <button type="button" id="playerPlay" class="primary" disabled>Play</button>
      <button type="button" id="playerNext" class="secondary" disabled>Next</button>
      <button type="button" id="playerText" class="secondary" aria-pressed="true">Hide text</button>
+     <label class="setting"><span>Gap</span><select id="playerGap" aria-label="Seconds between sentences"><option value="0" selected>0s</option><option value="1">1s</option><option value="2">2s</option><option value="3">3s</option><option value="5">5s</option><option value="10">10s</option></select></label>
     </div>
     <div id="playerFocus" class="player-focus" aria-live="polite"></div>
     <p id="playerHidden" class="player-hidden" hidden>Text hidden</p>
@@ -218,7 +219,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <button type="button" id="doneAnother" class="secondary">Choose another file</button>
   </div>
  </section>
- <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. Player plays each sentence once, then the next. Space plays or pauses. Shift replays the current sentence. Left and right arrows change the sentence. A correct dictation, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Repeats sets how many times a sentence plays before it stops. Infinite keeps going until you move on.</p>
+ <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. Player plays each sentence once. Gap waits before the next sentence. Space plays or pauses. Shift replays the current sentence. Left and right arrows change the sentence. A correct dictation, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Repeats sets how many times a sentence plays before it stops. Infinite keeps going until you move on.</p>
  <div id="toast" class="toast" hidden role="dialog" aria-modal="true" aria-labelledby="toastTitle">
   <div class="toast-card">
    <h2 id="toastTitle">Transcribing</h2>
@@ -752,6 +753,9 @@ let loopFrom=0;
 let loopTo=0;
 let phase='upload';
 let playerRun=false;
+let gapTimer=0;
+let gapLeft=0;
+let gapHold=false;
 let playerText=localStorage.getItem('ielts-intensive-player-text')!=='0';
 let navLock=false;
 let previewIndex=-1;
@@ -1175,10 +1179,37 @@ function goStep(step){
   beginPractice(cursor);
  }
 }
+function clearPlayerGap(){
+ clearTimeout(gapTimer);
+ gapTimer=0;
+ gapLeft=0;
+ gapHold=false;
+}
+function playerGapSeconds(){
+ const value=Number(el('playerGap').value);
+ return value===1||value===2||value===3||value===5||value===10?value:0;
+}
+function holdPlayerGap(token,seconds,done){
+ gapLeft=seconds*1000;
+ gapHold=false;
+ let mark=Date.now();
+ const tick=()=>{
+  if(token!==loopToken||phase!=='player'||!playerRun)return;
+  if(!gapHold){
+   const now=Date.now();
+   gapLeft-=now-mark;
+   mark=now;
+   if(gapLeft<=0){gapLeft=0;done();return}
+  }else mark=Date.now();
+  gapTimer=setTimeout(tick,Math.min(80,Math.max(30,gapLeft)));
+ };
+ tick();
+}
 function stopAudio(){
  playerRun=false;
  loopToken++;
  clearTimeout(loopTimer);
+ clearPlayerGap();
  previewIndex=-1;
  playbackLive=false;
  betweenRepeats=false;
@@ -2099,7 +2130,7 @@ function lineLabel(sentence){
 }
 function paintPlayerButton(){
  const audio=el('track');
- const on=phase==='player'&&playerRun&&!audio.paused;
+ const on=phase==='player'&&playerRun&&((gapLeft>0&&!gapHold)||(!audio.paused&&gapLeft<=0));
  el('playerPlay').textContent=on?'Pause':'Play';
  el('playerPlay').setAttribute('aria-pressed',on?'true':'false');
 }
@@ -2169,8 +2200,16 @@ function watchPlayer(token){
   const sentence=sentences[cursor];
   if(!sentence)return;
   if(el('track').currentTime>=playbackBounds(sentence).to-0.04||el('track').ended){
-   if(cursor<sentences.length-1)playPlayerLine(cursor+1);
-   else{playerRun=false;el('track').pause();paintPlayerButton();paintPlayerProgress()}
+   if(cursor<sentences.length-1){
+    el('track').pause();
+    const wait=playerGapSeconds();
+    if(wait<=0){playPlayerLine(cursor+1);return}
+    paintPlayerProgress();
+    paintPlayerButton();
+    holdPlayerGap(token,wait,()=>{if(token!==loopToken||phase!=='player'||!playerRun)return;playPlayerLine(cursor+1)});
+    return;
+   }
+   playerRun=false;el('track').pause();paintPlayerButton();paintPlayerProgress();
    return;
   }
   loopTimer=setTimeout(step,40);
@@ -2182,6 +2221,7 @@ function playPlayerLine(index,startAt){
  resetPause();
  const token=++loopToken;
  clearTimeout(loopTimer);
+ clearPlayerGap();
  cursor=clampIndex(index);
  writePlace(cursor);
  const sentence=sentences[cursor];
@@ -2199,6 +2239,7 @@ function playPlayerLine(index,startAt){
 }
 function togglePlayer(){
  if(phase!=='player'||!sentences.length)return;
+ if(gapLeft>0){gapHold=!gapHold;paintPlayerButton();return}
  const audio=el('track');
  if(playerRun&&!audio.paused){
   playerRun=false;
@@ -2766,6 +2807,8 @@ el('playerPrev').addEventListener('click',()=>stepPlayer(-1));
 el('playerNext').addEventListener('click',()=>stepPlayer(1));
 el('playerPlay').addEventListener('click',togglePlayer);
 el('playerText').addEventListener('click',togglePlayerText);
+try{const savedGap=localStorage.getItem('ielts-intensive-player-gap');if(savedGap&&el('playerGap').querySelector('option[value="'+savedGap+'"]'))el('playerGap').value=savedGap}catch(_){}
+el('playerGap').addEventListener('change',()=>{try{localStorage.setItem('ielts-intensive-player-gap',el('playerGap').value)}catch(_){}});
 let playerResize=0;
 window.addEventListener('resize',()=>{
  if(phase!=='player'||!playerText)return;
