@@ -55,6 +55,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .meta span{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
 .flag{border:1px solid #d8e1f0;background:#fff;color:#455874;border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}
 .flag[aria-pressed="true"]{background:#fff6df;border-color:#efd7a2;color:var(--gold)}
+.waves{display:flex;flex-direction:column;gap:4px;margin-top:10px}.wave-line{height:32px;border-radius:8px;background:#f3f6fb;overflow:hidden}.wave-line canvas{display:block;height:32px}
 .sentence textarea{width:100%;min-height:68px;resize:none;overflow:hidden;border:1px solid #d6deeb;border-radius:10px;padding:10px 12px;line-height:1.5;color:var(--text)}
 .sentence.prompt textarea{color:#607089}
 .tiny{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
@@ -147,7 +148,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
  </section>
  <section id="stageReview" class="panel" hidden aria-label="Check sentences">
   <div class="review-head"><div><h2>Check the sentences</h2><p id="transcribeTime" class="took" hidden></p><label id="nameField" class="name-field" hidden><span>Name</span><input id="recordName" type="text" maxlength="80" autocomplete="off" aria-label="Recording name"></label><p id="saveNote" class="note"></p></div><p id="reviewCount" class="count"></p></div>
-  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Transcribe replaces that one stretch. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined. A, B, and C mark who is speaking on a dictated line. Click the letter to change it. A Blank line is a long silence. Dictation skips it.</p>
+  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Transcribe replaces that one stretch. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined. A, B, and C mark who is speaking on a dictated line. Click the letter to change it. A Blank line is a long silence. Dictation skips it. Each waveform line is 20 seconds.</p>
   <div id="sentences" class="list"></div>
   <div class="start-bar">
    <button type="button" id="another" class="secondary">Choose another file</button>
@@ -1118,7 +1119,7 @@ function show(stage){
  noteHistory(stage);
  if(stage==='upload')clearOpen();
  else saveOpen();
- if(stage==='review')fitAreas();
+ if(stage==='review'){fitAreas();paintWaves()}
  const audio=el('track');
  el('fileBar').hidden=stage==='upload'||stage==='work'||!audio.src;
  if(!el('fileBar').hidden)paintFileBar();
@@ -1453,6 +1454,147 @@ function edgeControls(index){
  };
  return [make('Start','start'),make('End','end')];
 }
+const WAVE_BUCKET=160;
+const WAVE_ROW=20;
+const WAVE_HEIGHT=32;
+let wavePeaks=null;
+let waveGain=1;
+let waveKey=null;
+let waveSerial=0;
+let waveBoxWidth=0;
+function waveSlot(sentence){
+ const box=document.createElement('div');
+ box.className='waves';
+ box.setAttribute('aria-hidden','true');
+ box.dataset.start=String(sentence.start||0);
+ box.dataset.end=String(sentence.end||0);
+ return box;
+}
+function ensureWaveWatch(){
+ if(ensureWaveWatch.ready)return;
+ ensureWaveWatch.ready=true;
+ const host=el('sentences');
+ new ResizeObserver(()=>{
+  if(el('stageReview').hidden||!wavePeaks)return;
+  const next=host.clientWidth;
+  if(!next||next===waveBoxWidth)return;
+  waveBoxWidth=next;
+  drawWaveBoxes();
+ }).observe(host);
+}
+async function buildPeaks(samples,serial){
+ const n=Math.ceil(samples.length/WAVE_BUCKET);
+ const peaks=new Float32Array(n);
+ let max=0;
+ for(let b=0;b<n;b++){
+  if((b&8191)===8191){
+   await new Promise(resolve=>setTimeout(resolve,0));
+   if(serial!==waveSerial)return null;
+  }
+  const from=b*WAVE_BUCKET;
+  const to=Math.min(samples.length,from+WAVE_BUCKET);
+  let peak=0;
+  for(let i=from;i<to;i++){
+   const value=samples[i];
+   const abs=value<0?-value:value;
+   if(abs>peak)peak=abs;
+  }
+  peaks[b]=peak;
+  if(peak>max)max=peak;
+ }
+ if(max<=0)return {peaks,gain:1};
+ const bins=256;
+ const hist=new Uint32Array(bins);
+ let count=0;
+ for(let i=0;i<n;i++){
+  if(peaks[i]<=0)continue;
+  let bin=Math.floor(peaks[i]/max*(bins-1));
+  if(bin<0)bin=0;
+  if(bin>=bins)bin=bins-1;
+  hist[bin]++;
+  count++;
+ }
+ let seen=0;
+ let ref=max;
+ const aim=Math.floor(count*0.98);
+ for(let i=0;i<bins;i++){
+  seen+=hist[i];
+  if(seen>=aim){ref=(i+1)/bins*max;break}
+ }
+ if(ref<0.001)ref=max;
+ return {peaks,gain:1/ref};
+}
+function drawWaveLine(ctx,width,height,t0,t1){
+ const mid=height/2;
+ const span=Math.max(0.001,t1-t0);
+ const bucketSec=WAVE_BUCKET/16000;
+ const cols=Math.max(1,Math.round(width));
+ ctx.clearRect(0,0,width,height);
+ ctx.fillStyle='#315eea';
+ for(let x=0;x<cols;x++){
+  const a=t0+(x/cols)*span;
+  const b=t0+((x+1)/cols)*span;
+  let i0=Math.floor(a/bucketSec);
+  let i1=Math.ceil(b/bucketSec);
+  if(i0<0)i0=0;
+  if(i1>wavePeaks.length)i1=wavePeaks.length;
+  if(i1<=i0)i1=Math.min(wavePeaks.length,i0+1);
+  let peak=0;
+  for(let i=i0;i<i1;i++)if(wavePeaks[i]>peak)peak=wavePeaks[i];
+  const amp=Math.min(1,peak*waveGain);
+  const bar=Math.max(1,amp*(height-6));
+  ctx.fillRect(x,mid-bar/2,1,bar);
+ }
+}
+function drawWaveBoxes(){
+ if(!wavePeaks)return;
+ const dpr=Math.min(2,window.devicePixelRatio||1);
+ document.querySelectorAll('#sentences .waves').forEach(box=>{
+  const start=Math.max(0,Number(box.dataset.start)||0);
+  const end=Math.max(start,Number(box.dataset.end)||start);
+  const duration=end-start;
+  const width=box.clientWidth;
+  box.replaceChildren();
+  if(duration<0.05||width<20)return;
+  const lines=Math.ceil(duration/WAVE_ROW);
+  for(let line=0;line<lines;line++){
+   const from=start+line*WAVE_ROW;
+   const span=Math.min(WAVE_ROW,end-from);
+   const row=document.createElement('div');
+   row.className='wave-line';
+   const cssW=Math.max(2,width*(span/WAVE_ROW));
+   const canvas=document.createElement('canvas');
+   canvas.width=Math.max(1,Math.round(cssW*dpr));
+   canvas.height=Math.round(WAVE_HEIGHT*dpr);
+   canvas.style.width=cssW+'px';
+   const ctx=canvas.getContext('2d');
+   ctx.setTransform(dpr,0,0,dpr,0,0);
+   drawWaveLine(ctx,cssW,WAVE_HEIGHT,from,from+span);
+   row.append(canvas);
+   box.append(row);
+  }
+ });
+ waveBoxWidth=el('sentences').clientWidth;
+}
+async function paintWaves(){
+ if(el('stageReview').hidden)return;
+ if(!document.querySelector('#sentences .waves'))return;
+ ensureWaveWatch();
+ const serial=++waveSerial;
+ let samples;
+ try{samples=await samplesForCurrent()}
+ catch(_){return}
+ if(serial!==waveSerial||el('stageReview').hidden)return;
+ const key=String(currentId)+':'+samples.length;
+ if(waveKey!==key){
+  const built=await buildPeaks(samples,serial);
+  if(!built||serial!==waveSerial)return;
+  wavePeaks=built.peaks;
+  waveGain=built.gain;
+  waveKey=key;
+ }
+ drawWaveBoxes();
+}
 function renderReview(){
  const host=el('sentences');
  host.replaceChildren();
@@ -1481,7 +1623,7 @@ function renderReview(){
    merge.disabled=index===sentences.length-1;
    merge.addEventListener('click',()=>mergeNext(index));
    tools.append(...edgeControls(index),merge);
-   row.append(meta,tools);
+   row.append(meta,waveSlot(sentence),tools);
    host.append(row);
    return;
   }
@@ -1518,11 +1660,12 @@ function renderReview(){
   merge.disabled=index===sentences.length-1;
   merge.addEventListener('click',()=>mergeNext(index));
   tools.append(...edgeControls(index),split,merge);
-  row.append(meta,area,tools);
+  row.append(meta,waveSlot(sentence),area,tools);
   host.append(row);
  });
  updateReviewCount();
  paintTranscribeTime();
+ paintWaves();
  paintPreview();
  paintCurrentSentence();
  fitAreas();
