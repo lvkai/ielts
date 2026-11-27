@@ -9,5 +9,5 @@ After finishing a requested change to this site, publish it to the existing GitH
 - URL: https://lvkai.github.io/ielts/
 - Push to the existing repository. Do not create another repository.
 - Do not create or modify a Netlify site. Do not modify golden-choux-cc4b2a.
-- The published site is index.html, ielts-speaking.html, ielts-pronunciation.html, ielts-intonation.html, ielts-listening-digits.html, ielts-listening-directions.html, ielts-listening-intensive.html, feedback.html, direction-audio, number-audio, pronunciation-audio, robots.txt, sitemap.xml, and favicon.svg. Leave part3-questions.txt out of the repository. Do not publish the removed speaking pages, the English Listening Player, or the old number, phone, and flight addresses.
+- The published site is index.html, ielts-speaking.html, ielts-pronunciation.html, ielts-read-aloud.html, ielts-listening-digits.html, ielts-listening-directions.html, ielts-listening-intensive.html, feedback.html, direction-audio, number-audio, pronunciation-audio, robots.txt, sitemap.xml, and favicon.svg. Leave part3-questions.txt out of the repository. Do not publish the removed speaking pages, the English Listening Player, the old intonation address, or the old number, phone, and flight addresses.
 - After the GitHub Pages deploy is ready, check the live pages that the change affects.
