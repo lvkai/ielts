@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Paste text and have this device read it aloud. Choose an English voice and a speed.">
+<meta name="description" content="Add sentences and have this device read them aloud. Saved sentences stay in this browser.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/ielts-read-aloud.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Read Aloud">
-<meta property="og:description" content="Paste text and have this device read it aloud.">
+<meta property="og:description" content="Add sentences and have this device read them aloud. Saved sentences stay in this browser.">
 <meta property="og:url" content="https://lvkai.github.io/ielts/ielts-read-aloud.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Read Aloud","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-read-aloud.html","description":"Paste text and have this device read it aloud.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Read Aloud","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-read-aloud.html","description":"Add sentences and have this device read them aloud. Saved sentences stay in this browser.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
 <title>Read Aloud</title>
@@ -28,13 +28,21 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .settings{display:flex;flex-wrap:wrap;gap:10px}
 .setting{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1 1 180px;color:#39465d;font-size:12px;font-weight:750}
 .setting select{width:100%;max-width:100%;height:42px;border:1px solid #d6deeb;border-radius:12px;background:#fff;padding:0 12px;color:var(--text)}
-textarea{width:100%;min-height:180px;margin-top:14px;border:1.5px solid #d6deeb;border-radius:13px;padding:12px 14px;font-size:16px;line-height:1.5;resize:vertical;color:var(--text)}
-textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 4px #315eea14}
-.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.primary{border:0;background:var(--blue);color:#fff;font-size:14px;font-weight:750;border-radius:12px;min-height:46px;padding:0 16px}.primary:hover:not(:disabled){background:#264fd0}
-.secondary{border:1px solid #d8e1f0;background:#fff;color:#455874;font-size:13px;font-weight:730;border-radius:12px;min-height:46px;padding:0 14px}.secondary:hover:not(:disabled){background:#f6f8fc}
+.list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.item{display:flex;gap:8px;align-items:flex-start;min-width:0}
+.num{flex:none;width:1.4em;padding-top:11px;color:var(--muted);font-size:13px;font-weight:750;font-variant-numeric:tabular-nums;text-align:right}
+.item textarea{flex:1;min-width:0;width:auto;min-height:46px;margin:0;border:1.5px solid #d6deeb;border-radius:13px;padding:11px 12px;font-size:16px;line-height:1.5;resize:none;overflow:hidden;color:var(--text)}
+.item textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 4px #315eea14}
+.item.on textarea{border-color:#b9cbff}
+.transport{display:flex;gap:6px;flex:none}
+.symbol{width:42px;height:42px;border:1px solid #d8e1f0;border-radius:12px;background:#fff;color:var(--blue);display:inline-flex;align-items:center;justify-content:center;padding:0}
+.symbol svg{width:16px;height:16px;display:block;fill:currentColor}
+.symbol[aria-pressed="true"]{background:var(--blue);color:#fff;border-color:var(--blue)}
+.symbol.danger{color:#c54d4d;border-color:#f0d5d5}
+.bar{display:flex;margin-top:12px}
+.add{width:42px;height:42px}
 .note{margin:12px 0 0;min-height:1.4em;color:var(--muted);font-size:13px;line-height:1.55}
-@media(max-width:700px){.wrap{padding:22px 14px 40px}.panel{padding:16px}}
+@media(max-width:700px){.wrap{padding:22px 14px 40px}.panel{padding:16px}.item{flex-wrap:wrap}.transport{margin-left:auto}}
 </style>
 </head>
 <body>
@@ -42,17 +50,14 @@ textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 4px #315ee
  <a class="home" href="index.html">← Home</a>
  <div class="eyebrow">IELTS</div>
  <h1>Read aloud</h1>
- <p class="sub">Paste text, choose a voice and a speed, and have this device read it.</p>
- <section class="panel" aria-label="Read pasted text">
+ <p class="sub">Add sentences and have this device read them. Saved sentences stay in this browser.</p>
+ <section class="panel" aria-label="Saved sentences">
   <div class="settings">
    <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
    <label class="setting"><span>Speed</span><select id="speed" aria-label="Speed"><option value="0.85">0.85×</option><option value="1" selected>1.0×</option><option value="1.12">1.12×</option></select></label>
   </div>
-  <textarea id="script" placeholder="Paste the text to read." spellcheck="true"></textarea>
-  <div class="actions">
-   <button type="button" id="read" class="primary">Read aloud</button>
-   <button type="button" id="stop" class="secondary">Stop</button>
-  </div>
+  <div id="list" class="list"></div>
+  <div class="bar"><button type="button" id="add" class="symbol add" aria-label="Add a sentence"></button></div>
   <p id="status" class="note" role="status"></p>
  </section>
 </div>
@@ -61,7 +66,25 @@ textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 4px #315ee
 const el=id=>document.getElementById(id);
 const VOICE_KEY='ielts-read-aloud-voice';
 const SPEED_KEY='ielts-read-aloud-speed';
+const LIST_KEY='ielts-read-aloud-items';
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
+const ICONS={
+ play:'M8 5v14l11-7z',
+ pause:'M6 5h4v14H6zm8 0h4v14h-4z',
+ stop:'M6 6h12v12H6z',
+ add:'M11 4h2v7h7v2h-7v7h-2v-7H4v-2h7z',
+ remove:'M6 6l12 12M18 6L6 18'
+};
+function icon(name){
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 24 24');
+ svg.setAttribute('aria-hidden','true');
+ const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+ path.setAttribute('d',ICONS[name]);
+ if(name==='remove'){path.setAttribute('fill','none');path.setAttribute('stroke','currentColor');path.setAttribute('stroke-width','2.4');path.setAttribute('stroke-linecap','round')}
+ svg.append(path);
+ return svg;
+}
 function piecesFrom(source){
  const text=String(source||'').replace(/\uFE0F/g,'').replace(/↘↗|↗|↘/g,'').replace(/[ \t]+\n/g,'\n').replace(/[ \t]{2,}/g,' ').replace(/ +([,.?!;:])/g,'$1').trim();
  if(!text)return [];
@@ -75,8 +98,19 @@ function piecesFrom(source){
  });
  return out;
 }
+function loadItems(){
+ try{
+  const data=JSON.parse(localStorage.getItem(LIST_KEY)||'null');
+  if(Array.isArray(data)&&data.length&&data.every(item=>typeof item==='string'))return data;
+ }catch(_){}
+ return [''];
+}
+let items=loadItems();
+let active=-1;
+let paused=false;
 let token=0;
 let keepAlive=0;
+function saveItems(){try{localStorage.setItem(LIST_KEY,JSON.stringify(items))}catch(_){}}
 function mechanical(voice){
  const name=voice&&voice.name||'';
  return /microsoft/i.test(name)&&!/natural|online/i.test(name);
@@ -116,28 +150,120 @@ function chosenVoice(){
  return voices().find(voice=>voice.voiceURI===uri)||null;
 }
 function rate(){return Number(el('speed').value)||1}
-function stop(){
+function fit(area){
+ area.style.height='auto';
+ area.style.height=area.scrollHeight+'px';
+}
+function paint(){
+ document.querySelectorAll('#list .item').forEach((row,index)=>{
+  row.classList.toggle('on',index===active);
+  const play=row.querySelector('[data-act="play"]');
+  const hold=row.querySelector('[data-act="pause"]');
+  const halt=row.querySelector('[data-act="stop"]');
+  const playing=index===active&&!paused;
+  play.setAttribute('aria-pressed',playing?'true':'false');
+  hold.setAttribute('aria-pressed',index===active&&paused?'true':'false');
+  hold.disabled=index!==active||paused;
+  halt.disabled=index!==active;
+ });
+}
+function render(focusIndex){
+ const host=el('list');
+ const numbered=items.length>1;
+ host.replaceChildren();
+ items.forEach((text,index)=>{
+  const row=document.createElement('div');
+  row.className='item';
+  if(numbered){
+   const num=document.createElement('span');
+   num.className='num';
+   num.textContent=String(index+1);
+   row.append(num);
+  }
+  const area=document.createElement('textarea');
+  area.value=text;
+  area.spellcheck=true;
+  area.setAttribute('aria-label',numbered?'Sentence '+(index+1):'Sentence');
+  area.placeholder='Paste a sentence.';
+  area.addEventListener('input',()=>{items[index]=area.value;saveItems();fit(area)});
+  const controls=document.createElement('div');
+  controls.className='transport';
+  const button=(name,label,act)=>{
+   const control=document.createElement('button');
+   control.type='button';
+   control.className='symbol'+(name==='remove'?' danger':'');
+   control.dataset.act=act;
+   control.setAttribute('aria-label',numbered?label+' sentence '+(index+1):label);
+   control.append(icon(name));
+   return control;
+  };
+  const play=button('play','Play','play');
+  const hold=button('pause','Pause','pause');
+  const halt=button('stop','Stop','stop');
+  play.addEventListener('click',()=>playItem(index));
+  hold.addEventListener('click',pauseItem);
+  halt.addEventListener('click',stopItem);
+  controls.append(play,hold,halt);
+  if(items.length>1){
+   const remove=button('remove','Remove','remove');
+   remove.addEventListener('click',()=>removeItem(index));
+   controls.append(remove);
+  }
+  row.append(area,controls);
+  host.append(row);
+  fit(area);
+ });
+ paint();
+ if(Number.isInteger(focusIndex)){
+  const area=host.querySelectorAll('textarea')[focusIndex];
+  if(area)area.focus();
+ }
+}
+function haltSpeech(){
  token++;
  clearInterval(keepAlive);
- if(speechOK)window.speechSynthesis.cancel();
- el('status').textContent='';
+ if(speechOK){try{window.speechSynthesis.cancel()}catch(_){}}
 }
-function speak(source){
+function stopItem(){
+ haltSpeech();
+ active=-1;
+ paused=false;
+ el('status').textContent='';
+ paint();
+}
+function pauseItem(){
+ if(active<0||paused||!speechOK)return;
+ paused=true;
+ try{window.speechSynthesis.pause()}catch(_){}
+ paint();
+}
+function playItem(index){
  if(!speechOK){el('status').textContent='This browser cannot read aloud.';return}
- const pieces=piecesFrom(source);
+ if(active===index&&paused){
+  paused=false;
+  try{window.speechSynthesis.resume()}catch(_){}
+  el('status').textContent='';
+  paint();
+  return;
+ }
+ if(active===index&&!paused)return;
+ const pieces=piecesFrom(items[index]);
  if(!pieces.length){el('status').textContent='There is no text to read.';return}
- const was=window.speechSynthesis.speaking||window.speechSynthesis.pending;
- stop();
+ const was=speechOK&&(window.speechSynthesis.speaking||window.speechSynthesis.pending||paused);
+ haltSpeech();
+ paused=false;
+ active=index;
  const run=token;
- el('status').textContent='Reading…';
+ el('status').textContent='';
+ paint();
  const voice=chosenVoice();
  const zh=chineseVoice();
  const speed=rate();
- let index=0;
+ let cursor=0;
  const next=()=>{
   if(run!==token)return;
-  if(index>=pieces.length){el('status').textContent='';clearInterval(keepAlive);return}
-  const piece=pieces[index++];
+  if(cursor>=pieces.length){active=-1;paused=false;clearInterval(keepAlive);paint();return}
+  const piece=pieces[cursor++];
   const utterance=new SpeechSynthesisUtterance(piece.text);
   utterance.pitch=1;
   utterance.rate=Math.max(.5,Math.min(1.6,speed));
@@ -149,15 +275,32 @@ function speak(source){
   window.speechSynthesis.speak(utterance);
  };
  if(was)setTimeout(next,70); else next();
- keepAlive=setInterval(()=>{if(run!==token){clearInterval(keepAlive);return}if(window.speechSynthesis.speaking)window.speechSynthesis.resume()},4000);
+ keepAlive=setInterval(()=>{
+  if(run!==token){clearInterval(keepAlive);return}
+  if(paused)return;
+  if(window.speechSynthesis.speaking)window.speechSynthesis.resume();
+ },4000);
 }
-el('read').addEventListener('click',()=>speak(el('script').value));
-el('stop').addEventListener('click',stop);
+function removeItem(index){
+ if(items.length<2)return;
+ if(active===index)stopItem();
+ else if(active>index)active-=1;
+ items.splice(index,1);
+ saveItems();
+ render();
+}
+el('add').append(icon('add'));
+el('add').addEventListener('click',()=>{
+ items.push('');
+ saveItems();
+ render(items.length-1);
+});
 el('voice').addEventListener('change',()=>{try{localStorage.setItem(VOICE_KEY,el('voice').value)}catch(_){}});
 el('speed').addEventListener('change',()=>{try{localStorage.setItem(SPEED_KEY,el('speed').value)}catch(_){}});
 try{const saved=localStorage.getItem(SPEED_KEY);if(saved&&el('speed').querySelector('option[value="'+saved+'"]'))el('speed').value=saved}catch(_){}
 fillVoices();
 if(speechOK)window.speechSynthesis.addEventListener('voiceschanged',fillVoices);
+render();
 })();
 </script>
 </body>
