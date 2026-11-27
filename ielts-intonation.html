@@ -298,13 +298,17 @@ function render(){
 let token=0;
 let activeRow=null;
 let keepAlive=0;
+function mechanical(voice){
+ const name=voice&&voice.name||'';
+ return /microsoft/i.test(name)&&!/natural|online/i.test(name);
+}
 function voices(){
  if(!speechOK)return [];
- return window.speechSynthesis.getVoices().filter(voice=>/^en([-_]|$)/i.test(voice.lang)).sort((a,b)=>(/^en-GB/i.test(a.lang)?0:/^en-CA/i.test(a.lang)?1:2)-( /^en-GB/i.test(b.lang)?0:/^en-CA/i.test(b.lang)?1:2)||a.name.localeCompare(b.name));
+ return window.speechSynthesis.getVoices().filter(voice=>/^en([-_]|$)/i.test(voice.lang)&&!mechanical(voice)).sort((a,b)=>(/^en-GB/i.test(a.lang)?0:/^en-CA/i.test(a.lang)?1:2)-( /^en-GB/i.test(b.lang)?0:/^en-CA/i.test(b.lang)?1:2)||a.name.localeCompare(b.name));
 }
 function chineseVoice(){
  if(!speechOK)return null;
- return window.speechSynthesis.getVoices().find(voice=>/^zh([-_]|$)/i.test(voice.lang))||null;
+ return window.speechSynthesis.getVoices().find(voice=>/^zh([-_]|$)/i.test(voice.lang)&&!mechanical(voice))||null;
 }
 function fillVoices(){
  const select=el('voice');

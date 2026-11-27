@@ -2664,7 +2664,10 @@ function speakPart2Instruction(words,onComplete,onStart){
  if(!synth||!('SpeechSynthesisUtterance'in window)){begin();onComplete();return}
  const utterance=new SpeechSynthesisUtterance(words);
  const selected=englishVoices[Number(els.voice.value)];
- if(selected){utterance.voice=selected;utterance.lang=selected.lang}else utterance.lang='en-CA';
+ const browserDefault=els.voice.value==='-1'&&window.speechSynthesis?window.speechSynthesis.getVoices().find(v=>v.default)||null:null;
+ const fallback=browserDefault&&!mechanicalVoice(browserDefault)?browserDefault:englishVoices[0];
+ const voice=selected||fallback||null;
+ if(voice){utterance.voice=voice;utterance.lang=voice.lang}else utterance.lang='en-CA';
  const rate=Math.max(0.5,Number(els.rate.value)||1);
  utterance.rate=rate;
  let finished=false,watchdog=0,stall=0,started=false;
@@ -2799,9 +2802,13 @@ function releaseMicrophone(){
  if(stream){stream.getTracks().forEach(track=>track.stop());stream=null}
  syncControls();
 }
+function mechanicalVoice(voice){
+ const name=voice&&voice.name||'';
+ return /microsoft/i.test(name)&&!/natural|online/i.test(name);
+}
 function refreshVoices(){
  const synth=window.speechSynthesis;
- englishVoices=synth? synth.getVoices().filter(v=>typeof v.lang==='string'&&v.lang.toLowerCase().startsWith('en')):[];
+ englishVoices=synth? synth.getVoices().filter(v=>typeof v.lang==='string'&&v.lang.toLowerCase().startsWith('en')&&!mechanicalVoice(v)):[];
  const googleIndices=englishVoices.map((v,i)=>({voice:v,index:i})).filter(x=>/google/i.test(x.voice.name));
  // Prioritise a Google English voice, without assuming any fixed installed voice name.
  googleIndices.sort((a,b)=>{
@@ -2816,9 +2823,14 @@ function refreshVoices(){
  else if(previouslyChosenIndex>=0)selectedIndex=previouslyChosenIndex;
  else if(googleIndex>=0) selectedIndex=googleIndex;
  else selectedIndex=englishVoices.findIndex(v=>v.default);
- if(selectedIndex<0&&englishVoices.length&&!(voiceManuallyChosen&&chosenVoiceURI===null))selectedIndex=0;
- const fallback=document.createElement('option');fallback.value='-1';fallback.textContent='System default (English)';
- els.voice.replaceChildren(fallback);
+ const browserDefault=synth?synth.getVoices().find(v=>v.default)||null:null;
+ const defaultOk=!!(browserDefault&&typeof browserDefault.lang==='string'&&browserDefault.lang.toLowerCase().startsWith('en')&&!mechanicalVoice(browserDefault));
+ if(selectedIndex<0&&englishVoices.length&&!(voiceManuallyChosen&&chosenVoiceURI===null&&defaultOk))selectedIndex=0;
+ els.voice.replaceChildren();
+ if(defaultOk){
+  const fallback=document.createElement('option');fallback.value='-1';fallback.textContent='System default (English)';
+  els.voice.append(fallback);
+ }
  englishVoices.forEach((v,i)=>{
   const option=document.createElement('option');option.value=String(i);
   option.textContent=v.name+' · '+v.lang;els.voice.appendChild(option);

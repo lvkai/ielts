@@ -2031,9 +2031,13 @@ function cancelSpeech(){
  activeClip=null;
  el('play').classList.remove('playing');
 }
+function mechanical(voice){
+ const name=voice&&voice.name||'';
+ return /microsoft/i.test(name)&&!/natural|online/i.test(name);
+}
 function systemVoices(){
  if(!speechOK)return [];
- return window.speechSynthesis.getVoices().filter(v=>/^en([-_]|$)/i.test(v.lang)).sort((a,b)=>(/^en-GB/i.test(a.lang)?0:1)-( /^en-GB/i.test(b.lang)?0:1)||a.name.localeCompare(b.name));
+ return window.speechSynthesis.getVoices().filter(v=>/^en([-_]|$)/i.test(v.lang)&&!mechanical(v)).sort((a,b)=>(/^en-GB/i.test(a.lang)?0:1)-( /^en-GB/i.test(b.lang)?0:1)||a.name.localeCompare(b.name));
 }
 function fillVoices(){
  const select=el('voice');
@@ -2410,9 +2414,13 @@ function cancelSpeech(){
  if(speechOK){try{window.speechSynthesis.cancel()}catch(_){}}
  el('play').classList.remove('playing');
 }
+function mechanical(voice){
+ const name=voice&&voice.name||'';
+ return /microsoft/i.test(name)&&!/natural|online/i.test(name);
+}
 function systemVoices(){
  if(!speechOK)return [];
- return window.speechSynthesis.getVoices().filter(v=>/^en([-_]|$)/i.test(v.lang)).sort((a,b)=>(/^en-GB/i.test(a.lang)?0:1)-( /^en-GB/i.test(b.lang)?0:1)||a.name.localeCompare(b.name));
+ return window.speechSynthesis.getVoices().filter(v=>/^en([-_]|$)/i.test(v.lang)&&!mechanical(v)).sort((a,b)=>(/^en-GB/i.test(a.lang)?0:1)-( /^en-GB/i.test(b.lang)?0:1)||a.name.localeCompare(b.name));
 }
 function fillVoices(){
  const select=el('voice');
