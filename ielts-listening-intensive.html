@@ -118,7 +118,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
  </nav>
  <div class="eyebrow">IELTS LISTENING TRAINER</div>
  <h1>Intensive Listening</h1>
- <p class="sub">Upload an MP3. This page transcribes it in the browser and splits it into sentences. Player plays each sentence the number of times you set, then moves on. Dictation repeats one sentence until your typing matches.</p>
+ <p class="sub">Upload an MP3. This page transcribes it in the browser and splits it into sentences. Player plays each sentence the number of times you set, then starts again from the first. Dictation repeats one sentence until your typing matches.</p>
  <div id="fileBar" class="filebar" hidden>
   <span id="fileNow" class="file-time">0:00</span>
   <div id="fileScrub" class="scrub" role="slider" tabindex="0" aria-label="Recording position" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
@@ -221,7 +221,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <button type="button" id="doneAnother" class="secondary">Choose another file</button>
   </div>
  </section>
- <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. Speed sets how fast Player plays. Repeat sets how many times Player plays each sentence. Gap waits before the next play. Space plays or pauses. Shift replays the current sentence. Left and right arrows change the sentence. A correct dictation, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Player reads an instruction once. Repeats sets how many times a sentence plays before it stops. Infinite keeps going until you move on.</p>
+ <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. Speed sets how fast Player plays. Repeat sets how many times Player plays each sentence. Gap waits before the next play. After the last sentence, playback starts again from the first. Space plays or pauses. Shift replays the current sentence. Left and right arrows change the sentence. A correct dictation, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Player reads an instruction once. Repeats sets how many times a sentence plays before it stops. Infinite keeps going until you move on.</p>
  <div id="toast" class="toast" hidden role="dialog" aria-modal="true" aria-labelledby="toastTitle">
   <div class="toast-card">
    <h2 id="toastTitle">Transcribing</h2>
@@ -2222,12 +2222,10 @@ function advancePlayer(token){
  el('track').pause();
  const sentence=sentences[cursor];
  const again=!!sentence&&!sentence.prompt&&playerPass<playerRepeatCount();
- const more=cursor<sentences.length-1;
- if(!again&&!more){playerRun=false;paintPlayerButton();paintPlayerProgress();return}
  const go=()=>{
   if(token!==loopToken||phase!=='player'||!playerRun)return;
   if(again)playPlayerLine(cursor,undefined,playerPass+1);
-  else playPlayerLine(cursor+1);
+  else playPlayerLine(cursor<sentences.length-1?cursor+1:0);
  };
  const wait=playerGapSeconds();
  if(wait<=0){go();return}
