@@ -45,6 +45,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .toast-card h2{margin:0;font-size:18px;letter-spacing:-.02em}
 .review-head{display:flex;justify-content:space-between;gap:12px;align-items:end}
 .review-head h2{margin:0;font-size:18px;letter-spacing:-.02em}
+.took{margin:6px 0 0;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
 .count{color:var(--muted);font-size:13px}
 .list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 .sentence{border:1px solid var(--line);border-radius:14px;padding:12px}.sentence.current{border-color:#b9cbff;box-shadow:0 0 0 3px #315eea18}
@@ -145,7 +146,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
   <div class="work-actions"><button type="button" id="cancel" class="secondary">Cancel</button></div>
  </section>
  <section id="stageReview" class="panel" hidden aria-label="Check sentences">
-  <div class="review-head"><div><h2>Check the sentences</h2><label id="nameField" class="name-field" hidden><span>Name</span><input id="recordName" type="text" maxlength="80" autocomplete="off" aria-label="Recording name"></label><p id="saveNote" class="note"></p></div><p id="reviewCount" class="count"></p></div>
+  <div class="review-head"><div><h2>Check the sentences</h2><p id="transcribeTime" class="took" hidden></p><label id="nameField" class="name-field" hidden><span>Name</span><input id="recordName" type="text" maxlength="80" autocomplete="off" aria-label="Recording name"></label><p id="saveNote" class="note"></p></div><p id="reviewCount" class="count"></p></div>
   <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Transcribe replaces that one stretch. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined. A, B, and C mark who is speaking on a dictated line. Click the letter to change it. A Blank line is a long silence. Dictation skips it.</p>
   <div id="sentences" class="list"></div>
   <div class="start-bar">
@@ -735,6 +736,7 @@ let transcriberPromise=null;
 let trackUrl='';
 let sentences=[];
 let analysisVersion=0;
+let transcribeMs=null;
 let blankPass=0;
 let job=0;
 let cursor=0;
@@ -823,12 +825,14 @@ async function listRecordings(){
  await txDone(tx);
  return records.sort((a,b)=>b.created-a.created);
 }
-function createRecording(file,name,duration){
+function createRecording(file,name,duration,tookMs){
  const id=crypto.randomUUID();
  return queueWrite(async()=>{
   const db=await openDb();
   const tx=db.transaction(['recordings','audio'],'readwrite');
-  tx.objectStore('recordings').put({id,name,fileName:file.name||'recording',created:Date.now(),duration,sentences:snapshot(),analysis:ANALYSIS,blankPass:1});
+  const record={id,name,fileName:file.name||'recording',created:Date.now(),duration,sentences:snapshot(),analysis:ANALYSIS,blankPass:1};
+  if(Number.isFinite(tookMs)&&tookMs>=0)record.transcribeMs=Math.round(tookMs);
+  tx.objectStore('recordings').put(record);
   tx.objectStore('audio').put({id,blob:file,mimeType:file.type||'audio/mpeg'});
   await txDone(tx);
   return id;
@@ -1039,6 +1043,7 @@ async function openRecording(id,mode){
   el('nameField').hidden=false;
   el('saveNote').className='note';
   el('saveNote').textContent='Saved in this browser.';
+  transcribeMs=Number.isFinite(Number(record.transcribeMs))?Number(record.transcribeMs):null;
   const stale=record.analysis!==ANALYSIS;
   if(stale){
    refinePrompts(sentences);
@@ -1350,6 +1355,13 @@ function dropBlankThanks(list,samples,rate){
  }
  return changed;
 }
+function paintTranscribeTime(){
+ const node=el('transcribeTime');
+ const ms=Number(transcribeMs);
+ if(!Number.isFinite(ms)||ms<=0){node.hidden=true;node.textContent='';return}
+ node.hidden=false;
+ node.textContent='Transcription took '+clock(Math.max(1,ms/1000))+'.';
+}
 function updateReviewCount(){
  const dictate=sentences.filter(sentence=>!sentence.blank&&!sentence.prompt&&sentence.text.trim()).length;
  const prompts=sentences.filter(sentence=>sentence.prompt&&sentence.text.trim()).length;
@@ -1510,6 +1522,7 @@ function renderReview(){
   host.append(row);
  });
  updateReviewCount();
+ paintTranscribeTime();
  paintPreview();
  paintCurrentSentence();
  fitAreas();
@@ -2410,6 +2423,7 @@ async function startJob(file){
  }
  clearOpen();
  downloads.clear();
+ transcribeMs=null;
  workReturn='upload';
  sampleCache={id:null,samples:null};
  show('work');
@@ -2462,6 +2476,7 @@ async function startJob(file){
    clearInterval(tick);
   }
   if(mine!==job)return;
+  transcribeMs=performance.now()-started;
   setWork('Splitting into sentences…',100);
   const built=sentencesFromWords(result&&result.chunks);
   sentences=built.length?built:(result&&result.text? [markSentence({text:cleanText(result.text),start:0,end:duration})] : []);
@@ -2475,7 +2490,7 @@ async function startJob(file){
   assignSpeakers(sentences,samples,16000);
   try{
    const name=stem(file);
-   currentId=await createRecording(file,name,duration);
+   currentId=await createRecording(file,name,duration,transcribeMs);
    sampleCache.id=currentId;
    analysisVersion=ANALYSIS;
    if(mine!==job)return;
