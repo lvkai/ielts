@@ -33,6 +33,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .setting select,.setting input{width:100%;max-width:100%;height:42px;border:1px solid #d6deeb;border-radius:12px;background:#fff;padding:0 12px;color:var(--text)}
 .counts,.voices{display:flex;gap:10px;align-items:flex-end}
 .counts .setting{width:7.25rem;flex:none}
+.topic,.voices{width:100%;max-width:22rem}
 .voices .setting{flex:1}
 .voices .speed{flex:0 0 6.75rem}
 .transport{display:flex;gap:6px;margin-top:14px}
@@ -68,7 +69,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
    <button type="button" data-bank="extended" aria-pressed="false">Extended</button>
   </div>
   <div class="settings">
-   <label class="setting"><span>Topic</span><select id="topic" aria-label="Topic"></select></label>
+   <label class="setting topic"><span>Topic</span><select id="topic" aria-label="Topic"></select></label>
    <div class="counts">
     <label class="setting"><span>Times</span><input id="times" type="number" min="1" max="10" step="1" value="2" inputmode="numeric" aria-label="Times to read each question"></label>
     <label class="setting"><span>Gap in seconds</span><input id="gap" type="number" min="0" max="60" step="1" value="3" inputmode="numeric" aria-label="Seconds between readings"></label>
