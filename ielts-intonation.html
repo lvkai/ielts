@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Hear English rising, falling, and fall-rise intonation. Play the examples, or paste marked text and have this device read it.">
+<meta name="description" content="See English rising, falling, and fall-rise intonation. The arrows are for reading. Paste a sentence, with or without them, and have this device read the words.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/ielts-intonation.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="English Rising Intonation">
-<meta property="og:description" content="Hear a rise, a fall, and a fall-rise. Paste marked text and have it read aloud.">
+<meta property="og:description" content="The arrows show the intonation. Paste a sentence, with or without them, and hear the words.">
 <meta property="og:url" content="https://lvkai.github.io/ielts/ielts-intonation.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"English Rising Intonation","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-intonation.html","description":"Hear English rising, falling, and fall-rise intonation. Paste marked text and have it read aloud.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"English Rising Intonation","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-intonation.html","description":"The arrows show English intonation. Paste a sentence, with or without them, and hear the words.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
 <title>English Rising Intonation</title>
@@ -61,12 +61,12 @@ textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 4px #315ee
  <p class="sub">A rise can ask, check, soften, or show that the sentence is not finished. A fall usually closes the point. A fall-rise often leaves something reserved. These are common patterns to practise, not the only possible reading.</p>
  <section class="panel" aria-label="Read pasted text">
   <h2>Read my text</h2>
-  <p class="note">Paste text with ↗ for a rise, ↘ for a fall, and ↘↗ for a fall-rise. This device reads it. The last part of each marked group carries the tone.</p>
+  <p class="note">Paste a sentence with or without the arrows. The arrows are only there to read. They are left out when this device speaks.</p>
   <div class="settings">
    <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
    <label class="setting"><span>Speed</span><select id="speed" aria-label="Speed"><option value="0.85">0.85×</option><option value="1" selected>1.0×</option><option value="1.12">1.12×</option></select></label>
   </div>
-  <textarea id="script" placeholder="I like apples ↗, bananas ↗, and oranges ↘." spellcheck="true"></textarea>
+  <textarea id="script" placeholder="I like apples, bananas, and oranges." spellcheck="true"></textarea>
   <div class="actions">
    <button type="button" id="read" class="primary">Read aloud</button>
    <button type="button" id="stop" class="secondary">Stop</button>
@@ -82,7 +82,7 @@ textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 4px #315ee
   </div>
  </section>
  <div id="catalog"></div>
- <p class="fine">The tone is made by this device’s voice, by lifting, dropping, or dropping and then lifting the end of each marked group. A studio recording can shape the same word more smoothly. Use the patterns as a model, then change them when the context or the word you want to stress is different.</p>
+ <p class="fine">The arrows show the pattern. The voice reads the words and the punctuation, and it does not say the arrows. A question mark, a comma, or a full stop is what the voice uses.</p>
 </div>
 <script>
 (()=>{'use strict';
@@ -162,64 +162,18 @@ function parseScript(raw){
   return Object.assign({},item,{body});
  }).filter(item=>item.body);
 }
-function speechLine(item){
- let text=item.body;
- let punct=item.punct||'';
- if(item.tone==='fall'){text=text.replace(/\?+/g,'');punct=punct.replace(/\?/g,'');if(!/[.。!！]$/.test(text+punct))punct+='.'}
- return (text+punct).replace(/\s+/g,' ').trim();
-}
-function splitFallRise(word){
- const punct=(word.match(/[^A-Za-z]+$/)||[''])[0];
- const bare=word.slice(0,word.length-punct.length);
- const hits=[];
- for(let i=0;i<bare.length;i++){
-  const ch=bare[i];
-  if(!/[aeiouy]/i.test(ch))continue;
-  if(ch.toLowerCase()==='y'&&i===0)continue;
-  const prev=hits[hits.length-1];
-  if(prev&&prev.end===i)prev.end=i+1;
-  else hits.push({start:i,end:i+1});
- }
- if(hits.length<2)return null;
- let cut=hits[hits.length-1].start;
- while(cut>1&&!/[aeiouy]/i.test(bare[cut-1]))cut--;
- if(cut<=0||cut>=bare.length)return null;
- return [bare.slice(0,cut),bare.slice(cut)+punct];
-}
-function pitchPieces(text,tone){
- const words=text.split(/\s+/).filter(Boolean);
- if(!words.length)return [];
- const say=(value,pitch,rateMul)=>({text:value,pitch,rateMul,zh:/[\u3400-\u9fff]/.test(value)});
- if(tone==='plain'||/[\u3400-\u9fff]/.test(text)&&!/[A-Za-z]/.test(text))return [say(words.join(' '),1,1)];
- if(tone==='rise'){
-  if(words.length===1)return [say(words[0],1.62,.88)];
-  return [say(words.slice(0,-1).join(' '),1,1),say(words[words.length-1],1.62,.88)];
- }
- if(tone==='fall'){
-  if(words.length===1)return [say(words[0],.7,.9)];
-  return [say(words.slice(0,-1).join(' '),1.06,1),say(words[words.length-1],.7,.9)];
- }
- const last=words[words.length-1];
- const parts=splitFallRise(last);
- const head=words.slice(0,-1).join(' ');
- if(parts)return head?[say(head,1,1),say(parts[0],.68,.86),say(parts[1],1.58,.86)]:[say(parts[0],.68,.86),say(parts[1],1.58,.86)];
- if(!head)return [say(last,1.12,.9)];
- if(words.length===2)return [say(words[0],.7,.9),say(last,1.58,.88)];
- return [say(words.slice(0,-2).join(' '),1.02,1),say(words[words.length-2],.68,.9),say(last,1.58,.88)];
-}
 function piecesFrom(source){
+ const text=String(source||'').replace(/\uFE0F/g,'').replace(/↘↗|↗|↘/g,'').replace(/[ \t]+\n/g,'\n').replace(/[ \t]{2,}/g,' ').replace(/ +([,.?!;:])/g,'$1').trim();
+ if(!text)return [];
  const out=[];
- parseScript(source).forEach(item=>{
-  const line=speechLine(item);
-  const bits=line.split(/([\u3400-\u9fff\uf900-\ufaff，。！？、；：“”‘’（）【】《》]+)/).map(bit=>bit.trim()).filter(Boolean);
-  bits.forEach(bit=>{
+ text.split(/\n+/).map(part=>part.trim()).filter(Boolean).forEach(paragraph=>{
+  paragraph.split(/([\u3400-\u9fff\uf900-\ufaff，。！？、；：“”‘’（）【】《》]+)/).map(bit=>bit.trim()).filter(Boolean).forEach(bit=>{
    const zh=/[\u3400-\u9fff]/.test(bit)&&!/[A-Za-z]/.test(bit);
-   if(zh){if(/[\u3400-\u9fff]/.test(bit))out.push({text:bit,pitch:1,rateMul:1,zh:true});return}
-   if(!/[A-Za-z]/.test(bit))return;
-   pitchPieces(bit,item.tone).forEach(piece=>out.push(piece));
+   if(zh)out.push({text:bit,pitch:1,rateMul:1,zh:true});
+   else if(/[A-Za-z]/.test(bit))out.push({text:bit.replace(/\s+/g,' ').trim(),pitch:1,rateMul:1,zh:false});
   });
  });
- return out.filter(piece=>/[A-Za-z\u3400-\u9fff]/.test(piece.text));
+ return out;
 }
 function contour(tone){
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
