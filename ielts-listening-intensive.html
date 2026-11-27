@@ -220,7 +220,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <button type="button" id="doneAnother" class="secondary">Choose another file</button>
   </div>
  </section>
- <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. Repeat sets how many times Player plays each sentence. Gap waits before the next play. Space plays or pauses. Shift replays the current sentence. Left and right arrows change the sentence. A correct dictation, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Repeats sets how many times a sentence plays before it stops. Infinite keeps going until you move on.</p>
+ <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. Repeat sets how many times Player plays each sentence. Gap waits before the next play. Space plays or pauses. Shift replays the current sentence. Left and right arrows change the sentence. A correct dictation, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Player reads an instruction once. Repeats sets how many times a sentence plays before it stops. Infinite keeps going until you move on.</p>
  <div id="toast" class="toast" hidden role="dialog" aria-modal="true" aria-labelledby="toastTitle">
   <div class="toast-card">
    <h2 id="toastTitle">Transcribing</h2>
@@ -2151,8 +2151,10 @@ function paintPlayerProgress(){
 function renderPlayer(){
  buildSentenceNav(el('playerNav'),index=>playPlayerLine(index));
  el('playerName').textContent=currentName();
+ const sentenceNow=sentences[cursor];
  const times=playerRepeatCount();
- el('playerCount').textContent=sentences.length?(cursor+1)+' / '+sentences.length+(times>1?' · '+playerPass+' of '+times:''):'';
+ const counted=times>1&&sentenceNow&&!sentenceNow.prompt;
+ el('playerCount').textContent=sentences.length?(cursor+1)+' / '+sentences.length+(counted?' · '+playerPass+' of '+times:''):'';
  el('playerPrev').disabled=cursor<=0;
  el('playerNext').disabled=!sentences.length||cursor>=sentences.length-1;
  el('playerPlay').disabled=!sentences.length;
@@ -2217,7 +2219,8 @@ function watchPlayer(token){
 function advancePlayer(token){
  if(token!==loopToken||phase!=='player'||!playerRun)return;
  el('track').pause();
- const again=playerPass<playerRepeatCount();
+ const sentence=sentences[cursor];
+ const again=!!sentence&&!sentence.prompt&&playerPass<playerRepeatCount();
  const more=cursor<sentences.length-1;
  if(!again&&!more){playerRun=false;paintPlayerButton();paintPlayerProgress();return}
  const go=()=>{
