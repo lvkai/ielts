@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f6f8fb">
+<meta name="description" content="Hear IELTS Part 1 and Part 3 questions. Choose how many times each question is read and how many seconds to wait between readings.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://lvkai.github.io/ielts/ielts-question-read.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Part 1 and Part 3 Questions">
+<meta property="og:description" content="Hear IELTS Part 1 and Part 3 questions. Set the repeats and the pause between readings.">
+<meta property="og:url" content="https://lvkai.github.io/ielts/ielts-question-read.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Part 1 and Part 3 Questions","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-question-read.html","description":"Hear IELTS Part 1 and Part 3 questions. Set the repeats and the pause between readings.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
+<title>Part 1 and Part 3 Questions</title>
+<style>
+:root{--bg:#f6f8fb;--surface:#fff;--text:#182339;--muted:#738097;--line:#e4eaf2;--blue:#315eea;--r:19px}
+*{box-sizing:border-box}html{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif}body{margin:0;background:var(--bg);color:var(--text);min-height:100vh}button,select,input{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding:36px 22px 64px}
+.home{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.home:hover{text-decoration:underline}
+.eyebrow{margin:18px 0 8px;color:var(--blue);font-size:11px;letter-spacing:.15em;font-weight:800}
+h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.15}
+.sub{margin:10px 0 0;max-width:42em;color:var(--muted);font-size:14px;line-height:1.6}
+.panel{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 9px 36px rgba(35,49,79,.035);padding:22px}
+.switch{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.switch button{border:1px solid #d8e1f0;background:#fff;color:#455874;border-radius:999px;min-height:36px;padding:0 14px;font-size:13px;font-weight:750}
+.switch button[aria-pressed="true"]{background:var(--blue);color:#fff;border-color:var(--blue)}
+.settings{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.setting{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1 1 140px;color:#39465d;font-size:12px;font-weight:750}
+.setting select,.setting input{width:100%;max-width:100%;height:42px;border:1px solid #d6deeb;border-radius:12px;background:#fff;padding:0 12px;color:var(--text)}
+.transport{display:flex;gap:6px;margin-top:14px}
+.symbol{width:42px;height:42px;border:1px solid #d8e1f0;border-radius:12px;background:#fff;color:var(--blue);display:inline-flex;align-items:center;justify-content:center;padding:0}
+.symbol svg{width:16px;height:16px;display:block;fill:currentColor}
+.symbol[aria-pressed="true"]{background:var(--blue);color:#fff;border-color:var(--blue)}
+.questions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.q{display:flex;gap:10px;align-items:flex-start;width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 12px;text-align:left;color:inherit}
+.q.on{border-color:#b9cbff;box-shadow:0 0 0 3px #315eea18}
+.num{flex:none;width:1.4em;color:var(--muted);font-size:13px;font-weight:750;font-variant-numeric:tabular-nums;text-align:right}
+.q span:last-child{line-height:1.45}
+.note{margin:12px 0 0;min-height:1.4em;color:var(--muted);font-size:13px;line-height:1.55}
+@media(max-width:700px){.wrap{padding:22px 14px 40px}.panel{padding:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <a class="home" href="index.html">← Home</a>
+ <div class="eyebrow">IELTS SPEAKING</div>
+ <h1>Part 1 and Part 3</h1>
+ <p class="sub">Choose a topic. Each question is read the number of times you set, with the gap you set between readings.</p>
+ <section class="panel" aria-label="Question reading">
+  <div class="switch" role="group" aria-label="Part">
+   <button type="button" data-part="1" aria-pressed="true">Part 1</button>
+   <button type="button" data-part="3" aria-pressed="false">Part 3</button>
+  </div>
+  <div class="switch" role="group" aria-label="Question bank">
+   <button type="button" data-bank="basic" aria-pressed="true">Basic</button>
+   <button type="button" data-bank="extended" aria-pressed="false">Extended</button>
+  </div>
+  <div class="settings">
+   <label class="setting"><span>Topic</span><select id="topic" aria-label="Topic"></select></label>
+   <label class="setting"><span>Times</span><input id="times" type="number" min="1" max="10" step="1" value="2" inputmode="numeric" aria-label="Times to read each question"></label>
+   <label class="setting"><span>Gap in seconds</span><input id="gap" type="number" min="0" max="60" step="1" value="3" inputmode="numeric" aria-label="Seconds between readings"></label>
+   <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
+   <label class="setting"><span>Speed</span><select id="speed" aria-label="Speed"><option value="0.85">0.85×</option><option value="1" selected>1.0×</option><option value="1.12">1.12×</option></select></label>
+  </div>
+  <div class="transport">
+   <button type="button" id="play" class="symbol" aria-label="Play"></button>
+   <button type="button" id="pause" class="symbol" aria-label="Pause" disabled></button>
+   <button type="button" id="stop" class="symbol" aria-label="Stop" disabled></button>
+  </div>
+  <div id="questions" class="questions"></div>
+  <p id="status" class="note" role="status"></p>
+ </section>
+</div>
+<script src="speaking-questions.js"></script>
+<script>
+(()=>{'use strict';
+const el=id=>document.getElementById(id);
+const PART_KEY='ielts-question-read-part';
+const BANK_KEY='ielts-question-read-bank';
+const TOPIC_KEY='ielts-question-read-topic';
+const TIMES_KEY='ielts-question-read-times';
+const GAP_KEY='ielts-question-read-gap';
+const VOICE_KEY='ielts-question-read-voice';
+const SPEED_KEY='ielts-question-read-speed';
+const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
+const ICONS={play:'M8 5v14l11-7z',pause:'M6 5h4v14H6zm8 0h4v14h-4z',stop:'M6 6h12v12H6z'};
+function icon(name){
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 24 24');
+ svg.setAttribute('aria-hidden','true');
+ const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+ path.setAttribute('d',ICONS[name]);
+ svg.append(path);
+ return svg;
+}
+let part=1;
+let bank='basic';
+let active=-1;
+let pass=0;
+let passes=1;
+let paused=false;
+let token=0;
+let keepAlive=0;
+function stored(key,fallback){
+ try{const value=localStorage.getItem(key);if(value!=null&&value!=='')return value}catch(_){}
+ return fallback;
+}
+function save(key,value){try{localStorage.setItem(key,value)}catch(_){}}
+function topicNames(){
+ if(part===1)return bank==='extended'?window.IELTS_PART1_EXTENDED:window.IELTS_PART1_BASIC;
+ const extended=new Set(window.IELTS_PART23_EXTENDED);
+ const names=Object.keys(window.IELTS_PART23);
+ return bank==='extended'?window.IELTS_PART23_EXTENDED.filter(name=>names.includes(name)):names.filter(name=>!extended.has(name));
+}
+function questionTexts(){
+ const name=el('topic').value;
+ if(part===1)return (window.IELTS_PART1[name]||[]).map(item=>item.q);
+ return (window.IELTS_PART23[name]||[]).filter(item=>item.part===3).map(item=>item.q);
+}
+function times(){
+ const value=Math.round(Number(el('times').value));
+ return Math.min(10,Math.max(1,Number.isFinite(value)?value:1));
+}
+function gapMs(){
+ const value=Math.round(Number(el('gap').value));
+ return Math.min(60,Math.max(0,Number.isFinite(value)?value:0))*1000;
+}
+function mechanical(voice){
+ const name=voice&&voice.name||'';
+ return /microsoft/i.test(name)&&!/natural|online/i.test(name);
+}
+function voices(){
+ if(!speechOK)return [];
+ return window.speechSynthesis.getVoices().filter(voice=>/^en([-_]|$)/i.test(voice.lang)&&!mechanical(voice)).sort((a,b)=>(/^en-GB/i.test(a.lang)?0:/^en-CA/i.test(a.lang)?1:2)-( /^en-GB/i.test(b.lang)?0:/^en-CA/i.test(b.lang)?1:2)||a.name.localeCompare(b.name));
+}
+function fillVoices(){
+ const select=el('voice');
+ const previous=select.value||stored(VOICE_KEY,'');
+ const list=voices();
+ select.replaceChildren();
+ if(!list.length){
+  const option=document.createElement('option');
+  option.value='';
+  option.textContent=speechOK?'English voice loading':'Speech unavailable';
+  select.append(option);
+  select.disabled=true;
+  return;
+ }
+ select.disabled=false;
+ list.forEach(voice=>{
+  const option=document.createElement('option');
+  option.value=voice.voiceURI;
+  option.textContent=voice.name;
+  select.append(option);
+ });
+ select.value=[...select.options].some(option=>option.value===previous)?previous:(list.find(voice=>/^en-GB/i.test(voice.lang))||list[0]).voiceURI;
+}
+function chosenVoice(){
+ return voices().find(voice=>voice.voiceURI===el('voice').value)||null;
+}
+function paintParts(){
+ document.querySelectorAll('[data-part]').forEach(button=>button.setAttribute('aria-pressed',Number(button.dataset.part)===part?'true':'false'));
+ document.querySelectorAll('[data-bank]').forEach(button=>button.setAttribute('aria-pressed',button.dataset.bank===bank?'true':'false'));
+}
+function fillTopics(){
+ const select=el('topic');
+ const previous=select.value||stored(TOPIC_KEY,'');
+ const names=topicNames();
+ select.replaceChildren();
+ names.forEach(name=>{
+  const option=document.createElement('option');
+  option.value=name;
+  option.textContent=name;
+  select.append(option);
+ });
+ select.value=names.includes(previous)?previous:(names[0]||'');
+}
+function renderQuestions(){
+ const host=el('questions');
+ const list=questionTexts();
+ const numbered=list.length>1;
+ host.replaceChildren();
+ list.forEach((text,index)=>{
+  const row=document.createElement('button');
+  row.type='button';
+  row.className='q';
+  row.addEventListener('click',()=>play(index));
+  if(numbered){
+   const num=document.createElement('span');
+   num.className='num';
+   num.textContent=String(index+1);
+   row.append(num);
+  }
+  const body=document.createElement('span');
+  body.textContent=text;
+  row.append(body);
+  host.append(row);
+ });
+ paint();
+}
+function paint(){
+ document.querySelectorAll('#questions .q').forEach((row,index)=>row.classList.toggle('on',index===active));
+ const playing=active>=0&&!paused;
+ el('play').setAttribute('aria-pressed',playing?'true':'false');
+ el('pause').setAttribute('aria-pressed',active>=0&&paused?'true':'false');
+ el('pause').disabled=active<0||paused;
+ el('stop').disabled=active<0;
+ const row=document.querySelectorAll('#questions .q')[active];
+ if(row)row.scrollIntoView({block:'nearest'});
+}
+function halt(){
+ token++;
+ clearInterval(keepAlive);
+ if(speechOK){try{window.speechSynthesis.cancel()}catch(_){}}
+}
+function stop(){
+ halt();
+ active=-1;
+ pass=0;
+ paused=false;
+ el('status').textContent='';
+ paint();
+}
+function pause(){
+ if(active<0||paused||!speechOK)return;
+ paused=true;
+ try{window.speechSynthesis.pause()}catch(_){}
+ paint();
+}
+function waitGap(ms,run){
+ return new Promise(resolve=>{
+  if(ms<=0){resolve(run===token);return}
+  let left=ms;
+  let mark=Date.now();
+  const tick=()=>{
+   if(run!==token){resolve(false);return}
+   if(!paused){
+    const now=Date.now();
+    left-=now-mark;
+    mark=now;
+    if(left<=0){resolve(true);return}
+   }else mark=Date.now();
+   setTimeout(tick,Math.min(200,Math.max(30,left)));
+  };
+  tick();
+ });
+}
+function play(from){
+ if(!speechOK){el('status').textContent='This browser cannot read aloud.';return}
+ if(active>=0&&paused&&!Number.isInteger(from)){
+  paused=false;
+  try{window.speechSynthesis.resume()}catch(_){}
+  paint();
+  return;
+ }
+ if(active>=0&&!paused&&!Number.isInteger(from))return;
+ const list=questionTexts();
+ const start=Number.isInteger(from)?from:0;
+ const count=times();
+ const plan=[];
+ for(let index=start;index<list.length;index++){
+  for(let round=1;round<=count;round++)plan.push({index,round,text:list[index]});
+ }
+ if(!plan.length)return;
+ const was=speechOK&&(window.speechSynthesis.speaking||window.speechSynthesis.pending||paused);
+ halt();
+ const run=token;
+ paused=false;
+ passes=count;
+ let cursor=0;
+ const step=()=>{
+  if(run!==token)return;
+  if(cursor>=plan.length){active=-1;pass=0;paused=false;clearInterval(keepAlive);el('status').textContent='';paint();return}
+  const item=plan[cursor++];
+  active=item.index;
+  pass=item.round;
+  el('status').textContent=count>1?item.round+' of '+count:'';
+  paint();
+  const utterance=new SpeechSynthesisUtterance(item.text);
+  utterance.pitch=1;
+  utterance.rate=Math.max(.5,Math.min(1.6,Number(el('speed').value)||1));
+  const voice=chosenVoice();
+  if(voice){utterance.voice=voice;utterance.lang=voice.lang||'en-GB'}
+  else utterance.lang='en-GB';
+  const done=()=>{
+   if(run!==token)return;
+   waitGap(cursor>=plan.length?0:gapMs(),run).then(ok=>{if(ok)step()});
+  };
+  utterance.onend=done;
+  utterance.onerror=done;
+  window.speechSynthesis.speak(utterance);
+ };
+ if(was)setTimeout(step,70);else step();
+ keepAlive=setInterval(()=>{
+  if(run!==token){clearInterval(keepAlive);return}
+  if(paused)return;
+  if(window.speechSynthesis.speaking)window.speechSynthesis.resume();
+ },4000);
+}
+function show(){
+ stop();
+ paintParts();
+ fillTopics();
+ renderQuestions();
+ save(PART_KEY,String(part));
+ save(BANK_KEY,bank);
+ save(TOPIC_KEY,el('topic').value);
+}
+el('play').append(icon('play'));
+el('pause').append(icon('pause'));
+el('stop').append(icon('stop'));
+document.querySelectorAll('[data-part]').forEach(button=>button.addEventListener('click',()=>{
+ const next=Number(button.dataset.part);
+ if(next===part)return;
+ part=next;
+ show();
+}));
+document.querySelectorAll('[data-bank]').forEach(button=>button.addEventListener('click',()=>{
+ if(button.dataset.bank===bank)return;
+ bank=button.dataset.bank;
+ show();
+}));
+el('topic').addEventListener('change',()=>{save(TOPIC_KEY,el('topic').value);stop();renderQuestions()});
+el('times').addEventListener('change',()=>{el('times').value=String(times());save(TIMES_KEY,el('times').value)});
+el('gap').addEventListener('change',()=>{el('gap').value=String(gapMs()/1000);save(GAP_KEY,el('gap').value)});
+el('play').addEventListener('click',()=>play());
+el('pause').addEventListener('click',pause);
+el('stop').addEventListener('click',stop);
+el('voice').addEventListener('change',()=>save(VOICE_KEY,el('voice').value));
+el('speed').addEventListener('change',()=>save(SPEED_KEY,el('speed').value));
+part=stored(PART_KEY,'1')==='3'?3:1;
+bank=stored(BANK_KEY,'basic')==='extended'?'extended':'basic';
+el('times').value=stored(TIMES_KEY,'2');
+el('gap').value=stored(GAP_KEY,'3');
+el('times').value=String(times());
+el('gap').value=String(gapMs()/1000);
+try{const speed=stored(SPEED_KEY,'');if(speed&&el('speed').querySelector('option[value="'+speed+'"]'))el('speed').value=speed}catch(_){}
+fillVoices();
+if(speechOK)window.speechSynthesis.addEventListener('voiceschanged',fillVoices);
+paintParts();
+fillTopics();
+if(topicNames().includes(stored(TOPIC_KEY,'')))el('topic').value=stored(TOPIC_KEY,'');
+renderQuestions();
+})();
+</script>
+</body>
+</html>
