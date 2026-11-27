@@ -28,9 +28,13 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .switch{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .switch button{border:1px solid #d8e1f0;background:#fff;color:#455874;border-radius:999px;min-height:36px;padding:0 14px;font-size:13px;font-weight:750}
 .switch button[aria-pressed="true"]{background:var(--blue);color:#fff;border-color:var(--blue)}
-.settings{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
-.setting{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1 1 140px;color:#39465d;font-size:12px;font-weight:750}
+.settings{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.setting{display:flex;flex-direction:column;gap:6px;min-width:0;color:#39465d;font-size:12px;font-weight:750}
 .setting select,.setting input{width:100%;max-width:100%;height:42px;border:1px solid #d6deeb;border-radius:12px;background:#fff;padding:0 12px;color:var(--text)}
+.counts,.voices{display:flex;gap:10px;align-items:flex-end}
+.counts .setting{width:7.25rem;flex:none}
+.voices .setting{flex:1}
+.voices .speed{flex:0 0 6.75rem}
 .transport{display:flex;gap:6px;margin-top:14px}
 .symbol{width:42px;height:42px;border:1px solid #d8e1f0;border-radius:12px;background:#fff;color:var(--blue);display:inline-flex;align-items:center;justify-content:center;padding:0}
 .symbol svg{width:16px;height:16px;display:block;fill:currentColor}
@@ -65,10 +69,14 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
   </div>
   <div class="settings">
    <label class="setting"><span>Topic</span><select id="topic" aria-label="Topic"></select></label>
-   <label class="setting"><span>Times</span><input id="times" type="number" min="1" max="10" step="1" value="2" inputmode="numeric" aria-label="Times to read each question"></label>
-   <label class="setting"><span>Gap in seconds</span><input id="gap" type="number" min="0" max="60" step="1" value="3" inputmode="numeric" aria-label="Seconds between readings"></label>
-   <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
-   <label class="setting"><span>Speed</span><select id="speed" aria-label="Speed"><option value="0.85">0.85×</option><option value="1" selected>1.0×</option><option value="1.12">1.12×</option></select></label>
+   <div class="counts">
+    <label class="setting"><span>Times</span><input id="times" type="number" min="1" max="10" step="1" value="2" inputmode="numeric" aria-label="Times to read each question"></label>
+    <label class="setting"><span>Gap in seconds</span><input id="gap" type="number" min="0" max="60" step="1" value="3" inputmode="numeric" aria-label="Seconds between readings"></label>
+   </div>
+   <div class="voices">
+    <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
+    <label class="setting speed"><span>Speed</span><select id="speed" aria-label="Speed"><option value="0.85">0.85×</option><option value="1" selected>1.0×</option><option value="1.12">1.12×</option></select></label>
+   </div>
   </div>
   <div class="transport">
    <button type="button" id="play" class="symbol" aria-label="Play"></button>
