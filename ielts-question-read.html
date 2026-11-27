@@ -36,10 +36,14 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .symbol svg{width:16px;height:16px;display:block;fill:currentColor}
 .symbol[aria-pressed="true"]{background:var(--blue);color:#fff;border-color:var(--blue)}
 .questions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
-.q{display:flex;gap:10px;align-items:flex-start;width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 12px;text-align:left;color:inherit}
+.q{display:flex;gap:4px;align-items:flex-start;width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:4px 4px 4px 12px;color:inherit}
 .q.on{border-color:#b9cbff;box-shadow:0 0 0 3px #315eea18}
+.q-main{flex:1;min-width:0;display:flex;gap:10px;align-items:flex-start;border:0;background:transparent;padding:8px 0;text-align:left;color:inherit}
 .num{flex:none;width:1.4em;color:var(--muted);font-size:13px;font-weight:750;font-variant-numeric:tabular-nums;text-align:right}
-.q span:last-child{line-height:1.45}
+.q-text{line-height:1.45}
+.copy{flex:none;width:36px;height:36px;margin-top:2px;border:0;border-radius:10px;background:transparent;color:#8b97ab;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.copy svg{width:16px;height:16px;display:block;fill:currentColor}
+.copy:hover,.copy.done{color:var(--blue);background:#eef3ff}
 .note{margin:12px 0 0;min-height:1.4em;color:var(--muted);font-size:13px;line-height:1.55}
 @media(max-width:700px){.wrap{padding:22px 14px 40px}.panel{padding:16px}}
 </style>
@@ -87,7 +91,7 @@ const GAP_KEY='ielts-question-read-gap';
 const VOICE_KEY='ielts-question-read-voice';
 const SPEED_KEY='ielts-question-read-speed';
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
-const ICONS={play:'M8 5v14l11-7z',pause:'M6 5h4v14H6zm8 0h4v14h-4z',stop:'M6 6h12v12H6z'};
+const ICONS={play:'M8 5v14l11-7z',pause:'M6 5h4v14H6zm8 0h4v14h-4z',stop:'M6 6h12v12H6z',copy:'M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z'};
 function icon(name){
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
  svg.setAttribute('viewBox','0 0 24 24');
@@ -185,22 +189,58 @@ function renderQuestions(){
  const numbered=list.length>1;
  host.replaceChildren();
  list.forEach((text,index)=>{
-  const row=document.createElement('button');
-  row.type='button';
+  const row=document.createElement('div');
   row.className='q';
-  row.addEventListener('click',()=>play(index));
+  const main=document.createElement('button');
+  main.type='button';
+  main.className='q-main';
+  main.addEventListener('click',()=>play(index));
   if(numbered){
    const num=document.createElement('span');
    num.className='num';
    num.textContent=String(index+1);
-   row.append(num);
+   main.append(num);
   }
   const body=document.createElement('span');
+  body.className='q-text';
   body.textContent=text;
-  row.append(body);
+  main.append(body);
+  const copy=document.createElement('button');
+  copy.type='button';
+  copy.className='copy';
+  copy.setAttribute('aria-label','Copy question');
+  copy.append(icon('copy'));
+  copy.addEventListener('click',()=>copyQuestion(text,copy));
+  row.append(main,copy);
   host.append(row);
  });
  paint();
+}
+function copyQuestion(text,button){
+ const done=()=>{
+  button.classList.add('done');
+  button.setAttribute('aria-label','Copied');
+  setTimeout(()=>{button.classList.remove('done');button.setAttribute('aria-label','Copy question')},1200);
+ };
+ const fallback=()=>{
+  const area=document.createElement('textarea');
+  area.value=text;
+  area.setAttribute('readonly','');
+  area.style.position='fixed';
+  area.style.left='-999px';
+  document.body.append(area);
+  area.select();
+  let ok=false;
+  try{ok=document.execCommand('copy')}catch(_){}
+  area.remove();
+  if(ok)done();
+ };
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(done,fallback);
+ else fallback();
+}
+function toggle(){
+ if(active>=0&&!paused)pause();
+ else play();
 }
 function paint(){
  document.querySelectorAll('#questions .q').forEach((row,index)=>row.classList.toggle('on',index===active));
@@ -330,6 +370,13 @@ el('gap').addEventListener('change',()=>{el('gap').value=String(gapMs()/1000);sa
 el('play').addEventListener('click',()=>play());
 el('pause').addEventListener('click',pause);
 el('stop').addEventListener('click',stop);
+document.addEventListener('keydown',event=>{
+ if(event.key!==' '&&event.code!=='Space')return;
+ if(event.repeat||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
+ if(event.target&&event.target.closest&&event.target.closest('input,select,textarea'))return;
+ event.preventDefault();
+ toggle();
+},true);
 el('voice').addEventListener('change',()=>save(VOICE_KEY,el('voice').value));
 el('speed').addEventListener('change',()=>save(SPEED_KEY,el('speed').value));
 part=stored(PART_KEY,'1')==='3'?3:1;
