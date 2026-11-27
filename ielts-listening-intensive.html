@@ -118,7 +118,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
  </nav>
  <div class="eyebrow">IELTS LISTENING TRAINER</div>
  <h1>Intensive Listening</h1>
- <p class="sub">Upload an MP3. This page transcribes it in the browser and splits it into sentences. Player plays each sentence once, then the next. Dictation repeats one sentence until your typing matches.</p>
+ <p class="sub">Upload an MP3. This page transcribes it in the browser and splits it into sentences. Player plays each sentence the number of times you set, then moves on. Dictation repeats one sentence until your typing matches.</p>
  <div id="fileBar" class="filebar" hidden>
   <span id="fileNow" class="file-time">0:00</span>
   <div id="fileScrub" class="scrub" role="slider" tabindex="0" aria-label="Recording position" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
@@ -167,6 +167,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
      <button type="button" id="playerPlay" class="primary" disabled>Play</button>
      <button type="button" id="playerNext" class="secondary" disabled>Next</button>
      <button type="button" id="playerText" class="secondary" aria-pressed="true">Hide text</button>
+     <label class="setting"><span>Repeat</span><select id="playerRepeat" aria-label="Times to play each sentence"><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option></select></label>
      <label class="setting"><span>Gap</span><select id="playerGap" aria-label="Seconds between sentences"><option value="0" selected>0s</option><option value="1">1s</option><option value="2">2s</option><option value="3">3s</option><option value="5">5s</option><option value="10">10s</option></select></label>
     </div>
     <div id="playerFocus" class="player-focus" aria-live="polite"></div>
@@ -219,7 +220,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <button type="button" id="doneAnother" class="secondary">Choose another file</button>
   </div>
  </section>
- <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. Player plays each sentence once. Gap waits before the next sentence. Space plays or pauses. Shift replays the current sentence. Left and right arrows change the sentence. A correct dictation, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Repeats sets how many times a sentence plays before it stops. Infinite keeps going until you move on.</p>
+ <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. Repeat sets how many times Player plays each sentence. Gap waits before the next play. Space plays or pauses. Shift replays the current sentence. Left and right arrows change the sentence. A correct dictation, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Repeats sets how many times a sentence plays before it stops. Infinite keeps going until you move on.</p>
  <div id="toast" class="toast" hidden role="dialog" aria-modal="true" aria-labelledby="toastTitle">
   <div class="toast-card">
    <h2 id="toastTitle">Transcribing</h2>
@@ -753,6 +754,7 @@ let loopFrom=0;
 let loopTo=0;
 let phase='upload';
 let playerRun=false;
+let playerPass=1;
 let gapTimer=0;
 let gapLeft=0;
 let gapHold=false;
@@ -1188,6 +1190,10 @@ function clearPlayerGap(){
 function playerGapSeconds(){
  const value=Number(el('playerGap').value);
  return value===1||value===2||value===3||value===5||value===10?value:0;
+}
+function playerRepeatCount(){
+ const value=Number(el('playerRepeat').value);
+ return value===2||value===3||value===5?value:1;
 }
 function holdPlayerGap(token,seconds,done){
  gapLeft=seconds*1000;
@@ -2145,7 +2151,8 @@ function paintPlayerProgress(){
 function renderPlayer(){
  buildSentenceNav(el('playerNav'),index=>playPlayerLine(index));
  el('playerName').textContent=currentName();
- el('playerCount').textContent=sentences.length?(cursor+1)+' / '+sentences.length:'';
+ const times=playerRepeatCount();
+ el('playerCount').textContent=sentences.length?(cursor+1)+' / '+sentences.length+(times>1?' · '+playerPass+' of '+times:''):'';
  el('playerPrev').disabled=cursor<=0;
  el('playerNext').disabled=!sentences.length||cursor>=sentences.length-1;
  el('playerPlay').disabled=!sentences.length;
@@ -2200,28 +2207,37 @@ function watchPlayer(token){
   const sentence=sentences[cursor];
   if(!sentence)return;
   if(el('track').currentTime>=playbackBounds(sentence).to-0.04||el('track').ended){
-   if(cursor<sentences.length-1){
-    el('track').pause();
-    const wait=playerGapSeconds();
-    if(wait<=0){playPlayerLine(cursor+1);return}
-    paintPlayerProgress();
-    paintPlayerButton();
-    holdPlayerGap(token,wait,()=>{if(token!==loopToken||phase!=='player'||!playerRun)return;playPlayerLine(cursor+1)});
-    return;
-   }
-   playerRun=false;el('track').pause();paintPlayerButton();paintPlayerProgress();
+   advancePlayer(token);
    return;
   }
   loopTimer=setTimeout(step,40);
  };
  step();
 }
-function playPlayerLine(index,startAt){
+function advancePlayer(token){
+ if(token!==loopToken||phase!=='player'||!playerRun)return;
+ el('track').pause();
+ const again=playerPass<playerRepeatCount();
+ const more=cursor<sentences.length-1;
+ if(!again&&!more){playerRun=false;paintPlayerButton();paintPlayerProgress();return}
+ const go=()=>{
+  if(token!==loopToken||phase!=='player'||!playerRun)return;
+  if(again)playPlayerLine(cursor,undefined,playerPass+1);
+  else playPlayerLine(cursor+1);
+ };
+ const wait=playerGapSeconds();
+ if(wait<=0){go();return}
+ paintPlayerProgress();
+ paintPlayerButton();
+ holdPlayerGap(token,wait,go);
+}
+function playPlayerLine(index,startAt,pass){
  if(phase!=='player'||!sentences.length)return;
  resetPause();
  const token=++loopToken;
  clearTimeout(loopTimer);
  clearPlayerGap();
+ playerPass=Number.isInteger(pass)&&pass>0?pass:1;
  cursor=clampIndex(index);
  writePlace(cursor);
  const sentence=sentences[cursor];
@@ -2807,6 +2823,8 @@ el('playerPrev').addEventListener('click',()=>stepPlayer(-1));
 el('playerNext').addEventListener('click',()=>stepPlayer(1));
 el('playerPlay').addEventListener('click',togglePlayer);
 el('playerText').addEventListener('click',togglePlayerText);
+try{const savedRepeat=localStorage.getItem('ielts-intensive-player-repeat');if(savedRepeat&&el('playerRepeat').querySelector('option[value="'+savedRepeat+'"]'))el('playerRepeat').value=savedRepeat}catch(_){}
+el('playerRepeat').addEventListener('change',()=>{try{localStorage.setItem('ielts-intensive-player-repeat',el('playerRepeat').value)}catch(_){};if(phase==='player')renderPlayer()});
 try{const savedGap=localStorage.getItem('ielts-intensive-player-gap');if(savedGap&&el('playerGap').querySelector('option[value="'+savedGap+'"]'))el('playerGap').value=savedGap}catch(_){}
 el('playerGap').addEventListener('change',()=>{try{localStorage.setItem('ielts-intensive-player-gap',el('playerGap').value)}catch(_){}});
 let playerResize=0;
