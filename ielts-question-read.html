@@ -31,11 +31,12 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .settings{display:flex;flex-direction:column;gap:10px;margin-top:14px}
 .setting{display:flex;flex-direction:column;gap:6px;min-width:0;color:#39465d;font-size:12px;font-weight:750}
 .setting select,.setting input{width:100%;max-width:100%;height:42px;border:1px solid #d6deeb;border-radius:12px;background:#fff;padding:0 12px;color:var(--text)}
-.counts,.voices{display:flex;gap:10px;align-items:flex-end}
-.counts .setting{width:7.25rem;flex:none}
-.topic,.voices{width:100%;max-width:22rem}
-.voices .setting{flex:1}
-.voices .speed{flex:0 0 6.75rem}
+.line{display:flex;flex-wrap:nowrap;gap:8px;align-items:flex-end;max-width:100%}
+.topic{width:16rem;max-width:100%}
+.line .voice{flex:0 1 10rem;width:10rem;max-width:10rem}
+.line .speed{flex:0 0 4.5rem;width:4.5rem}
+.line .count{flex:0 0 3.75rem;width:3.75rem}
+.line select,.line input{padding:0 6px}
 .transport{display:flex;gap:6px;margin-top:14px}
 .symbol{width:42px;height:42px;border:1px solid #d8e1f0;border-radius:12px;background:#fff;color:var(--blue);display:inline-flex;align-items:center;justify-content:center;padding:0}
 .symbol svg{width:16px;height:16px;display:block;fill:currentColor}
@@ -70,13 +71,11 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
   </div>
   <div class="settings">
    <label class="setting topic"><span>Topic</span><select id="topic" aria-label="Topic"></select></label>
-   <div class="counts">
-    <label class="setting"><span>Times</span><input id="times" type="number" min="1" max="10" step="1" value="2" inputmode="numeric" aria-label="Times to read each question"></label>
-    <label class="setting"><span>Gap in seconds</span><input id="gap" type="number" min="0" max="60" step="1" value="3" inputmode="numeric" aria-label="Seconds between readings"></label>
-   </div>
-   <div class="voices">
-    <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
+   <div class="line">
+    <label class="setting voice"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
     <label class="setting speed"><span>Speed</span><select id="speed" aria-label="Speed"><option value="0.85">0.85×</option><option value="1" selected>1.0×</option><option value="1.12">1.12×</option></select></label>
+    <label class="setting count"><span>Times</span><input id="times" type="number" min="1" max="10" step="1" value="2" inputmode="numeric" aria-label="Times to read each question"></label>
+    <label class="setting count"><span>Gaps</span><input id="gap" type="number" min="0" max="60" step="1" value="3" inputmode="numeric" aria-label="Gaps in seconds"></label>
    </div>
   </div>
   <div class="transport">
@@ -98,6 +97,7 @@ const TIMES_KEY='ielts-question-read-times';
 const GAP_KEY='ielts-question-read-gap';
 const VOICE_KEY='ielts-question-read-voice';
 const SPEED_KEY='ielts-question-read-speed';
+const QUESTION_KEY='ielts-question-read-question';
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
 const ICONS={play:'M8 5v14l11-7z',pause:'M6 5h4v14H6zm8 0h4v14h-4z',stop:'M6 6h12v12H6z',copy:'M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z'};
 function icon(name){
@@ -112,6 +112,7 @@ function icon(name){
 let part=1;
 let bank='basic';
 let active=-1;
+let place=0;
 let pass=0;
 let passes=1;
 let paused=false;
@@ -255,15 +256,20 @@ function nextTopicName(){
  const index=names.indexOf(el('topic').value);
  return index<0?'':names[index+1]||'';
 }
+function remember(index){
+ place=index;
+ save(QUESTION_KEY,String(index));
+}
 function paint(){
- document.querySelectorAll('#questions .q').forEach((row,index)=>row.classList.toggle('on',index===active));
+ const mark=active>=0?active:place;
+ document.querySelectorAll('#questions .q').forEach((row,index)=>row.classList.toggle('on',index===mark));
  const playing=active>=0&&!paused;
  const path=el('play').querySelector('path');
  if(path)path.setAttribute('d',ICONS[playing?'pause':'play']);
  el('play').setAttribute('aria-label',playing?'Pause':'Play');
  el('play').setAttribute('aria-pressed',playing?'true':'false');
  el('stop').disabled=active<0;
- const row=document.querySelectorAll('#questions .q')[active];
+ const row=document.querySelectorAll('#questions .q')[mark];
  if(row)row.scrollIntoView({block:'nearest'});
 }
 function halt(){
@@ -312,7 +318,7 @@ function play(from){
   return;
  }
  if(active>=0&&!paused&&!Number.isInteger(from))return;
- const start=Number.isInteger(from)?from:0;
+ const start=Number.isInteger(from)?from:Math.max(0,place);
  let count=times();
  const queue=(fromIndex)=>{
   const list=questionTexts();
@@ -349,6 +355,7 @@ function play(from){
   }
   const item=plan[cursor++];
   active=item.index;
+  remember(item.index);
   pass=item.round;
   el('status').textContent=count>1?item.round+' of '+count:'';
   paint();
@@ -374,6 +381,8 @@ function play(from){
  },4000);
 }
 function show(){
+ place=0;
+ save(QUESTION_KEY,'0');
  stop();
  paintParts();
  fillTopics();
@@ -395,7 +404,7 @@ document.querySelectorAll('[data-bank]').forEach(button=>button.addEventListener
  bank=button.dataset.bank;
  show();
 }));
-el('topic').addEventListener('change',()=>{save(TOPIC_KEY,el('topic').value);stop();renderQuestions()});
+el('topic').addEventListener('change',()=>{save(TOPIC_KEY,el('topic').value);place=0;save(QUESTION_KEY,'0');stop();renderQuestions()});
 el('times').addEventListener('change',()=>{el('times').value=String(times());save(TIMES_KEY,el('times').value)});
 el('gap').addEventListener('change',()=>{el('gap').value=String(gapMs()/1000);save(GAP_KEY,el('gap').value)});
 el('play').addEventListener('click',toggle);
@@ -421,6 +430,9 @@ if(speechOK)window.speechSynthesis.addEventListener('voiceschanged',fillVoices);
 paintParts();
 fillTopics();
 if(topicNames().includes(stored(TOPIC_KEY,'')))el('topic').value=stored(TOPIC_KEY,'');
+const savedQuestion=Math.round(Number(stored(QUESTION_KEY,'0')));
+place=Number.isFinite(savedQuestion)&&savedQuestion>=0?savedQuestion:0;
+if(place>=questionTexts().length)place=0;
 renderQuestions();
 })();
 </script>
