@@ -72,7 +72,6 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
   </div>
   <div class="transport">
    <button type="button" id="play" class="symbol" aria-label="Play"></button>
-   <button type="button" id="pause" class="symbol" aria-label="Pause" disabled></button>
    <button type="button" id="stop" class="symbol" aria-label="Stop" disabled></button>
   </div>
   <div id="questions" class="questions"></div>
@@ -242,12 +241,18 @@ function toggle(){
  if(active>=0&&!paused)pause();
  else play();
 }
+function nextTopicName(){
+ const names=topicNames();
+ const index=names.indexOf(el('topic').value);
+ return index<0?'':names[index+1]||'';
+}
 function paint(){
  document.querySelectorAll('#questions .q').forEach((row,index)=>row.classList.toggle('on',index===active));
  const playing=active>=0&&!paused;
+ const path=el('play').querySelector('path');
+ if(path)path.setAttribute('d',ICONS[playing?'pause':'play']);
+ el('play').setAttribute('aria-label',playing?'Pause':'Play');
  el('play').setAttribute('aria-pressed',playing?'true':'false');
- el('pause').setAttribute('aria-pressed',active>=0&&paused?'true':'false');
- el('pause').disabled=active<0||paused;
  el('stop').disabled=active<0;
  const row=document.querySelectorAll('#questions .q')[active];
  if(row)row.scrollIntoView({block:'nearest'});
@@ -298,13 +303,17 @@ function play(from){
   return;
  }
  if(active>=0&&!paused&&!Number.isInteger(from))return;
- const list=questionTexts();
  const start=Number.isInteger(from)?from:0;
- const count=times();
- const plan=[];
- for(let index=start;index<list.length;index++){
-  for(let round=1;round<=count;round++)plan.push({index,round,text:list[index]});
- }
+ let count=times();
+ const queue=(fromIndex)=>{
+  const list=questionTexts();
+  const items=[];
+  for(let index=fromIndex;index<list.length;index++){
+   for(let round=1;round<=count;round++)items.push({index,round,text:list[index]});
+  }
+  return items;
+ };
+ let plan=queue(start);
  if(!plan.length)return;
  const was=speechOK&&(window.speechSynthesis.speaking||window.speechSynthesis.pending||paused);
  halt();
@@ -314,7 +323,21 @@ function play(from){
  let cursor=0;
  const step=()=>{
   if(run!==token)return;
-  if(cursor>=plan.length){active=-1;pass=0;paused=false;clearInterval(keepAlive);el('status').textContent='';paint();return}
+  if(cursor>=plan.length){
+   const next=nextTopicName();
+   if(!next){active=-1;pass=0;paused=false;clearInterval(keepAlive);el('status').textContent='';paint();return}
+   el('topic').value=next;
+   save(TOPIC_KEY,next);
+   count=times();
+   passes=count;
+   plan=queue(0);
+   cursor=0;
+   active=-1;
+   if(!plan.length){pass=0;paused=false;clearInterval(keepAlive);el('status').textContent='';paint();return}
+   renderQuestions();
+   step();
+   return;
+  }
   const item=plan[cursor++];
   active=item.index;
   pass=item.round;
@@ -328,7 +351,7 @@ function play(from){
   else utterance.lang='en-GB';
   const done=()=>{
    if(run!==token)return;
-   waitGap(cursor>=plan.length?0:gapMs(),run).then(ok=>{if(ok)step()});
+   waitGap(cursor<plan.length||nextTopicName()?gapMs():0,run).then(ok=>{if(ok)step()});
   };
   utterance.onend=done;
   utterance.onerror=done;
@@ -351,7 +374,6 @@ function show(){
  save(TOPIC_KEY,el('topic').value);
 }
 el('play').append(icon('play'));
-el('pause').append(icon('pause'));
 el('stop').append(icon('stop'));
 document.querySelectorAll('[data-part]').forEach(button=>button.addEventListener('click',()=>{
  const next=Number(button.dataset.part);
@@ -367,8 +389,7 @@ document.querySelectorAll('[data-bank]').forEach(button=>button.addEventListener
 el('topic').addEventListener('change',()=>{save(TOPIC_KEY,el('topic').value);stop();renderQuestions()});
 el('times').addEventListener('change',()=>{el('times').value=String(times());save(TIMES_KEY,el('times').value)});
 el('gap').addEventListener('change',()=>{el('gap').value=String(gapMs()/1000);save(GAP_KEY,el('gap').value)});
-el('play').addEventListener('click',()=>play());
-el('pause').addEventListener('click',pause);
+el('play').addEventListener('click',toggle);
 el('stop').addEventListener('click',stop);
 document.addEventListener('keydown',event=>{
  if(event.key!==' '&&event.code!=='Space')return;
