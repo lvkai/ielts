@@ -200,7 +200,8 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
     <button type="button" id="show" class="secondary" hidden>Show sentence</button>
     <button type="button" id="skipPrompt" class="secondary" hidden>Continue</button>
     <label class="setting"><span>Speed</span><select id="speed" aria-label="Playback speed"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1" selected>1.0×</option><option value="1.15">1.15×</option></select></label>
-    <label class="setting"><span>Repeats</span><select id="repeats" aria-label="Times to repeat each sentence"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="inf" selected>Infinite</option></select></label>
+    <label class="setting"><span>Repeats</span><select id="repeats" aria-label="Times to repeat each sentence"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="inf" selected>∞</option></select></label>
+    <label class="setting"><span>Gap</span><select id="dictateGap" aria-label="Seconds before the sentence plays again"><option value="0">0s</option><option value="1">1s</option><option value="2" selected>2s</option><option value="3">3s</option><option value="5">5s</option><option value="10">10s</option></select></label>
    </div>
    <p id="promptLine" class="prompt-line" hidden></p>
   </div>
@@ -222,7 +223,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <button type="button" id="doneAnother" class="secondary">Choose another file</button>
   </div>
  </section>
- <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. Speed sets how fast Player plays. Repeat sets how many times Player plays each sentence. Gap waits before the next play. After the last sentence, playback starts again from the first. Space plays or pauses. Shift replays the current sentence. Left and right arrows change the sentence. A correct dictation, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Player reads an instruction once. Repeats sets how many times a sentence plays before it stops. Infinite keeps going until you move on.</p>
+ <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. Speed sets how fast Player plays. Repeat sets how many times Player plays each sentence. Gap waits before the next play. After the last sentence, playback starts again from the first. Space plays or pauses. Shift replays the current sentence. Left and right arrows change the sentence. A correct dictation, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Player reads an instruction once. Repeats sets how many times Dictation plays a sentence before it stops. ∞ keeps going until you move on. The Dictation gap waits before the sentence plays again.</p>
  <div id="toast" class="toast" hidden role="dialog" aria-modal="true" aria-labelledby="toastTitle">
   <div class="toast-card">
    <h2 id="toastTitle">Transcribing</h2>
@@ -1368,12 +1369,17 @@ function commitSeek(time){
  paintFileBar(at);
 }
 const REPEAT_KEY='ielts-intensive-repeats';
+const DICTATE_GAP_KEY='ielts-intensive-dictate-gap';
 function rate(){return Number((phase==='player'?el('playerSpeed'):el('speed')).value)||1}
 function repeatLimit(){
  const value=el('repeats').value;
  if(value==='inf')return Infinity;
  const count=Number(value);
  return count===1||count===2||count===3||count===5?count:Infinity;
+}
+function repeatGapMs(){
+ const value=Number(el('dictateGap').value);
+ return value===0||value===1||value===2||value===3||value===5||value===10?value*1000:2000;
 }
 function dictateSentences(){return sentences.filter(sentence=>!sentence.prompt&&sentence.text.trim())}
 function clampSentences(duration){
@@ -1965,7 +1971,7 @@ function loopSentence(sentence,startAt){
    audio.pause();
    paintTransport();
    if(!playbackLive)return;
-   loopTimer=setTimeout(()=>{if(token!==loopToken)return;if(paused){watch();return}play();watch()},2000);
+   loopTimer=setTimeout(()=>{if(token!==loopToken)return;if(paused){watch();return}play();watch()},repeatGapMs());
   }else loopTimer=setTimeout(watch,40);
  };
  play();
@@ -2867,6 +2873,8 @@ try{
  if(savedRepeats&&el('repeats').querySelector('option[value="'+savedRepeats+'"]'))el('repeats').value=savedRepeats;
 }catch(_){}
 el('repeats').addEventListener('change',()=>{try{localStorage.setItem(REPEAT_KEY,el('repeats').value)}catch(_){}});
+try{const savedGap=localStorage.getItem(DICTATE_GAP_KEY);if(savedGap&&el('dictateGap').querySelector('option[value="'+savedGap+'"]'))el('dictateGap').value=savedGap}catch(_){}
+el('dictateGap').addEventListener('change',()=>{try{localStorage.setItem(DICTATE_GAP_KEY,el('dictateGap').value)}catch(_){}});
 el('recordName').addEventListener('input',remember);
 el('recordName').addEventListener('blur',()=>{
  if(!el('recordName').value.trim())el('recordName').value='Recording';
