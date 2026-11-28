@@ -185,7 +185,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
   <div id="dictateBox" hidden>
    <label class="answer-label" for="answer">Your dictation</label>
    <textarea id="answer" class="answer" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="Type the sentence"></textarea>
-   <div class="below"><span class="note" style="margin:0">Enter checks · Shift+Enter adds a line</span><span id="feedback" class="feedback" role="status"></span></div>
+   <div class="below"><span class="note" style="margin:0">Enter checks · Empty Enter goes to the next sentence · Shift+Enter adds a line</span><span id="feedback" class="feedback" role="status"></span></div>
    <div id="diff" class="diff" hidden aria-live="polite"></div>
    <p id="reveal" class="reveal" hidden></p>
   </div>
@@ -3008,7 +3008,10 @@ el('answer').addEventListener('input',()=>{
  if(el('feedback').classList.contains('no')){el('feedback').textContent='';el('feedback').className='feedback'}
 });
 el('answer').addEventListener('keydown',event=>{
- if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();checkAnswer()}
+ if(event.key!=='Enter'||event.shiftKey)return;
+ event.preventDefault();
+ if(!el('answer').value.trim())stepSentence(1);
+ else checkAnswer();
 });
 el('speed').addEventListener('change',()=>{const audio=el('track');if(audio.src)audio.playbackRate=rate()});
 try{
