@@ -50,8 +50,8 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="eyebrow">IELTS LISTENING TRAINER</div>
    <h1 class="heading" id="pageTitle">Digit Dictation</h1>
    <p class="sub" id="subDigits">Each round has 10 questions. Pattern 334 is spoken as 3 digits, then 3, then 4. The same digit repeated inside a group is spoken as double or triple. Type while they play. 0 is spoken as oh.</p>
-   <p class="sub hide" id="subFlight">Each round has 10 questions. A flight number is two letters, then 3 digits. Choose 4, or 3 or 4, when you want a longer number. It is spoken as one phrase, like B A, two oh seven. 0 is oh, and a repeated digit is double or triple. Type while they play.</p>
-   <p class="sub hide" id="subPostcode">Each round has 10 UK postcodes. Choose a form, or Mixed. W1A 0AX also brings SW1A, EC1A, and WC1A. Each one is spoken as a phrase, with a short pause before the last three characters. 0 is oh, and a repeated character is double. Type while they play.</p>
+   <p class="sub hide" id="subFlight">Each round has 10 questions. Letters plays the two airline letters, one at a time. Full plays the whole flight number the same way, like B, A, two oh seven. 0 is oh, and a repeated digit is double or triple. Type while they play.</p>
+   <p class="sub hide" id="subPostcode">Each round has 10 UK postcodes. Choose a form, or Mixed. W1A 0AX also brings SW1A, EC1A, and WC1A. Each letter is spoken on its own, with a short pause before the last three characters. 0 is oh, and a repeated character is double. Type while they play.</p>
    <p class="sub hide" id="subNumbers">Listen to a number from 1 to 99 and type it before the timer ends. Ten numbers per round, with 11–19 weighted to one third.</p>
    <p class="sub hide" id="subPhone">Choose one group. Each round has 10 questions. Basic is 3 or 4 digits. 0 is spoken as oh, and repeated digits are double or triple.</p>
   </div>
@@ -60,8 +60,8 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <label class="setting"><span>Pattern</span><input id="pattern" type="text" inputmode="numeric" maxlength="30" value="334" autocomplete="off" spellcheck="false" aria-label="Pattern"></label>
    <label class="setting"><span>Gap</span><select id="gap" aria-label="Gap between groups"><option value="0">0 s</option><option value="100">0.1 s</option><option value="200">0.2 s</option><option value="300">0.3 s</option><option value="500" selected>0.5 s</option></select></label>
   </div>
-  <div class="settings hide" id="settingsFlight" aria-label="Voice and digits"><label class="setting"><span>Voice</span><select id="f-voice" aria-label="Voice"></select></label>
-   <label class="setting short"><span>Digits</span><select id="f-digits" aria-label="Digits in the flight number"><option value="3" selected>3</option><option value="4">4</option><option value="mixed">3 or 4</option></select></label>
+  <div class="settings hide" id="settingsFlight" aria-label="Voice and what to hear"><label class="setting"><span>Voice</span><select id="f-voice" aria-label="Voice"></select></label>
+   <label class="setting short"><span>Listen</span><select id="f-part" aria-label="What to hear"><option value="letters">Letters</option><option value="full" selected>Full</option></select></label>
   </div>
   <div class="settings hide" id="settingsPostcode" aria-label="Voice and form"><label class="setting"><span>Voice</span><select id="p-voice" aria-label="Voice"></select></label>
    <label class="setting form"><span>Form</span><select id="p-form" aria-label="Postcode form"><option value="mixed" selected>Mixed</option><option value="a9">M1 1AE</option><option value="a99">B33 8TH</option><option value="aa9">CR2 6XH</option><option value="aa99">DN55 1PT</option><option value="central">W1A 0AX</option></select></label>
@@ -133,7 +133,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
   </aside>
  </main>
  
- <p class="bottom">Spoken as one phrase, like B A, two oh seven. The same letter twice is double. 0 is oh. A repeated digit is double or triple. Missed flight numbers and answer times stay in this browser. Three correct answers remove one miss.</p>
+ <p class="bottom">Each letter is spoken on its own. The same letter twice is double. Digits stay in one phrase, like two oh seven. 0 is oh. A repeated digit is double or triple. Missed answers and answer times stay in this browser. Three correct answers remove one miss.</p>
 
 </div>
 <div id="panelPostcode" class="hide">
@@ -162,7 +162,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <p class="footnote" id="p-summary">The postcode stays hidden until you check.</p>
   </aside>
  </main>
- <p class="bottom">Spoken as one phrase, with a short pause before the last three characters. 0 is oh. A repeated character is double. Missed postcodes and answer times stay in this browser. Three correct answers remove one miss.</p>
+ <p class="bottom">Each letter is spoken on its own, with a short pause before the last three characters. 0 is oh. A repeated character is double. Missed postcodes and answer times stay in this browser. Three correct answers remove one miss.</p>
 </div>
 <div id="panelNumbers" class="hide">
 <main class="layout">
@@ -910,7 +910,7 @@ showControls();
 const el=id=>document.getElementById('f-'+id);
 const DIGIT=['oh','one','two','three','four','five','six','seven','eight','nine'];
 const AIRLINES=[...new Set('BA VS EK QR EY SQ CX QF NZ AC AA UA DL AF LH KL SK AY IB TK AI TG MH GA JL NH KE OZ CA MU CZ HU CI BR PR UL SA ET MS SV WY GF KU LY OS LX SN TP FI LO AZ AM LA AR CM AV FJ VN BI KQ AT AH RJ JQ VA HA AS WN PK BG ME'.split(' '))];
-const ROUND=10,VOICE_KEY='ielts-flight-voice',DIGITS_KEY='ielts-flight-digits',STATS_KEY='ielts-flight-stats';
+const ROUND=10,VOICE_KEY='ielts-flight-voice',PART_KEY='ielts-flight-part',STATS_KEY='ielts-flight-stats';
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window);
 let items=[],answers=[],position=0,phase='idle',speechGeneration=0,gapTimer=null,held=null,heardAt=null,clockTimer=null;
 function randomBelow(n){
@@ -923,13 +923,10 @@ function randomBelow(n){
  }
  return Math.floor(Math.random()*n);
 }
-function digitMode(){
- const value=el('digits').value;
- return value==='4'||value==='mixed'?value:'3';
-}
-function rememberDigits(){try{localStorage.setItem(DIGITS_KEY,digitMode())}catch(_){}}
+function partMode(){return el('part').value==='letters'?'letters':'full'}
+function rememberPart(){try{localStorage.setItem(PART_KEY,partMode())}catch(_){}}
 function canon(value){return String(value||'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
-function validFlight(flight){return typeof flight==='string'&&/^[A-Z]{2}[0-9]{3,4}$/.test(flight)}
+function validItem(flight){return typeof flight==='string'&&(/^[A-Z]{2}$/.test(flight)||/^[A-Z]{2}[0-9]{3,4}$/.test(flight))}
 function formatFlight(flight){
  const text=canon(flight);
  if(text.length<=2)return text;
@@ -945,8 +942,7 @@ function takeFlight(raw,digitCount){
  return letters+nums;
 }
 function randomFlight(){
- const mode=digitMode();
- const count=mode==='4'?4:mode==='mixed'?(randomBelow(2)?4:3):3;
+ const count=3+randomBelow(2);
  const code=AIRLINES[randomBelow(AIRLINES.length)];
  const chars=[String(1+randomBelow(9))];
  while(chars.length<count)chars.push(String(randomBelow(10)));
@@ -960,9 +956,10 @@ function randomFlight(){
 function makeRound(){
  const seen=new Set();
  const flights=[];
+ const letters=partMode()==='letters';
  while(flights.length<ROUND){
   let flight='',guard=0;
-  do{flight=randomFlight();guard++}while(seen.has(flight)&&guard<30);
+  do{flight=letters?AIRLINES[randomBelow(AIRLINES.length)]:randomFlight();guard++}while(seen.has(flight)&&guard<30);
   seen.add(flight);
   flights.push(flight);
  }
@@ -979,10 +976,28 @@ function speakDigits(text){
  }
  return words.join(' ');
 }
-function spokenChunks(flight){
- const letters=flight[0]===flight[1]?'double '+flight[0]:flight[0]+' '+flight[1];
- return [letters+', '+speakDigits(flight.slice(2))];
+function spellChunks(text,leadingPause){
+ const chunks=[];
+ let first=true;
+ for(let i=0;i<text.length;){
+  const pause=first?(leadingPause||0):360;
+  first=false;
+  if(/[A-Z]/.test(text[i])){
+   let run=1;
+   while(i+run<text.length&&text[i+run]===text[i]&&run<3)run++;
+   const name=text[i];
+   chunks.push({text:run===3?'triple '+name:run===2?'double '+name:name,pause});
+   i+=run;
+  }else{
+   let j=i;
+   while(j<text.length&&/\d/.test(text[j]))j++;
+   chunks.push({text:speakDigits(text.slice(i,j)),pause});
+   i=j;
+  }
+ }
+ return chunks;
 }
+function spokenChunks(flight){return spellChunks(flight,0)}
 function loadStats(){
  try{
   const raw=JSON.parse(localStorage.getItem(STATS_KEY)||'{}');
@@ -992,7 +1007,7 @@ function loadStats(){
 let flightStats=loadStats();
 function saveStats(){try{localStorage.setItem(STATS_KEY,JSON.stringify(flightStats))}catch(_){}}
 function noteFlight(flight,ok,elapsed){
- if(!validFlight(flight))return;
+ if(!validItem(flight))return;
  const row=flightStats[flight]&&typeof flightStats[flight]==='object'?flightStats[flight]:{misses:0,rights:0};
  if(ok){
   row.rights=(Number(row.rights)||0)+1;
@@ -1009,12 +1024,12 @@ function noteFlight(flight,ok,elapsed){
 }
 function rankedMisses(){
  return Object.entries(flightStats).map(([flight,row])=>({flight,misses:Number(row&&row.misses)||0}))
-  .filter(row=>validFlight(row.flight)&&row.misses>0)
+  .filter(row=>validItem(row.flight)&&row.misses>0)
   .sort((a,b)=>b.misses-a.misses||a.flight.localeCompare(b.flight)).slice(0,10);
 }
 function rankedSlow(){
  return Object.entries(flightStats).map(([flight,row])=>({flight,lastTime:Number(row&&row.lastTime)||0}))
-  .filter(row=>validFlight(row.flight)&&row.lastTime>0)
+  .filter(row=>validItem(row.flight)&&row.lastTime>0)
   .sort((a,b)=>b.lastTime-a.lastTime||a.flight.localeCompare(b.flight)).slice(0,10);
 }
 function canStartRound(){return phase==='idle'||phase==='complete'}
@@ -1052,7 +1067,8 @@ function practiceFlights(rows,summary){
 }
 function digitLimit(){
  const flight=items[position];
- return flight?flight.length-2:digitMode()==='4'?4:3;
+ if(flight)return Math.max(0,flight.length-2);
+ return partMode()==='letters'?0:4;
 }
 function mechanical(voice){
  const name=voice&&voice.name||'';
@@ -1136,6 +1152,8 @@ function playFlight(){
  cancelSpeech();
  const token=speechGeneration;
  const flight=items[position];
+ const letters=flight.length<=2;
+ const prompt=letters?'Type the two letters.':'Type the flight number.';
  const chunks=spokenChunks(flight);
  const voice=chosenVoice();
  let settled=false;
@@ -1143,8 +1161,8 @@ function playFlight(){
   if(settled||token!==speechGeneration)return;
   settled=true;
   el('play').classList.remove('playing');
-  if(phase==='speaking'){phase='answering';el('activityText').textContent='Type the flight number.';el('answer').disabled=false;el('submit').disabled=false}
-  else if(phase==='answering')el('activityText').textContent='Type the flight number.';
+  if(phase==='speaking'){phase='answering';el('activityText').textContent=prompt;el('answer').disabled=false;el('submit').disabled=false}
+  else if(phase==='answering')el('activityText').textContent=prompt;
  };
  const fail=()=>{
   if(settled||token!==speechGeneration)return;
@@ -1155,7 +1173,7 @@ function playFlight(){
  const speakAt=index=>{
   if(settled||token!==speechGeneration)return;
   if(index>=chunks.length){finish();return}
-  const utterance=new SpeechSynthesisUtterance(chunks[index]);
+  const utterance=new SpeechSynthesisUtterance(chunks[index].text);
   held=utterance;
   if(voice){
    try{utterance.voice=voice}catch(_){}
@@ -1169,17 +1187,20 @@ function playFlight(){
    moved=true;
    clearTimeout(watch);
    if(index+1>=chunks.length){finish();return}
-   speakAt(index+1);
+   const wait=chunks[index+1].pause||0;
+   if(gapTimer!==null){clearTimeout(gapTimer);gapTimer=null}
+   if(wait)gapTimer=setTimeout(()=>speakAt(index+1),wait);
+   else speakAt(index+1);
   };
   utterance.onstart=()=>{
    if(token!==speechGeneration)return;
    startClock();
    el('play').classList.add('playing');
-   el('activityText').textContent=phase==='review'?'Replaying the flight number.':'Playing…';
+   el('activityText').textContent=phase==='review'?(letters?'Replaying the letters.':'Replaying the flight number.'):'Playing…';
   };
   utterance.onend=advance;
   utterance.onerror=()=>{if(!moved)fail()};
-  watch=setTimeout(advance,400+chunks[index].split(' ').length*800);
+  watch=setTimeout(advance,400+chunks[index].text.split(' ').length*800);
   try{window.speechSynthesis.resume();window.speechSynthesis.speak(utterance)}catch(_){fail()}
  };
  setTimeout(()=>{if(token===speechGeneration)speakAt(0)},40);
@@ -1250,21 +1271,23 @@ function showControls(){
  el('play').disabled=!running;
  const locked=running||!usableVoices().length;
  el('voice').disabled=locked;
- el('digits').disabled=running;
+ el('part').disabled=running;
 }
 function openQuestion(){
  phase='speaking';
  resetClock();
  const count=digitLimit();
+ const letters=count===0;
  el('answer').value='';
- el('answer').maxLength=2+1+count;
+ el('answer').maxLength=letters?3:2+1+count;
  el('answer').disabled=false;
  el('submit').disabled=false;
- el('answerLabel').textContent='Your flight number';
- el('tip').textContent='A full flight number is checked in place. Enter starts the next question.';
+ el('answerLabel').textContent=letters?'Your two letters':'Your flight number';
+ el('tip').textContent=letters?'Both letters are checked in place. Enter starts the next question.':'A full flight number is checked in place. Enter starts the next question.';
  el('feedback').textContent='';
  el('feedback').className='feedback';
- el('activityTitle').textContent='Listen to the flight number';
+ el('activityTitle').textContent=letters?'Listen to the two letters':'Listen to the flight number';
+ el('play').setAttribute('aria-label',letters?'Replay letters':'Replay flight number');
  el('activityText').textContent='Preparing audio…';
  refresh();
  showControls();
@@ -1277,7 +1300,7 @@ function startRound(){
  items=makeRound();
  answers=[];
  position=0;
- el('summary').textContent='The flight number stays hidden until you check.';
+ el('summary').textContent=partMode()==='letters'?'The letters stay hidden until you check.':'The flight number stays hidden until you check.';
  openQuestion();
 }
 function stopRound(){
@@ -1288,15 +1311,17 @@ function stopRound(){
  el('feedback').textContent='';el('feedback').className='feedback';
  el('activityTitle').textContent='Ready to begin?';
  el('activityText').textContent='Round stopped.';
- el('summary').textContent='The flight number stays hidden until you check.';
+ el('play').setAttribute('aria-label',partMode()==='letters'?'Replay letters':'Replay flight number');
+ el('summary').textContent=partMode()==='letters'?'The letters stay hidden until you check.':'The flight number stays hidden until you check.';
  refresh();
  showControls();
 }
 function checkAnswer(){
  if(phase!=='answering'&&phase!=='speaking')return;
  const flight=items[position];
- const typed=takeFlight(el('answer').value,flight.length-2);
- if(typed.length!==flight.length){el('feedback').textContent='Enter both letters and all '+ (flight.length-2) +' digits';el('feedback').className='feedback no';el('answer').focus();return}
+ const digits=Math.max(0,flight.length-2);
+ const typed=takeFlight(el('answer').value,digits);
+ if(typed.length!==flight.length){el('feedback').textContent=digits?'Enter both letters and all '+digits+' digits':'Enter both letters';el('feedback').className='feedback no';el('answer').focus();return}
  cancelSpeech();
  clearClock();
  const elapsed=heardAt===null?0:(performance.now()-heardAt)/1000;
@@ -1308,7 +1333,7 @@ function checkAnswer(){
  el('submit').disabled=true;
  el('feedback').textContent=ok?'Correct':'Check the marked characters';
  el('feedback').className='feedback '+(ok?'ok':'no');
- el('activityTitle').textContent=ok?'Matched':'Not the same flight number';
+ el('activityTitle').textContent=ok?'Matched':flight.length<=2?'Not the same letters':'Not the same flight number';
  el('activityText').textContent=formatFlight(flight);
  el('tip').textContent=position+1>=items.length?'Press Enter to finish this round.':'Press Enter for the next question.';
  refresh();
@@ -1332,15 +1357,23 @@ function nextQuestion(){
  openQuestion();
 }
 el('voice').addEventListener('change',rememberVoice);
-el('digits').addEventListener('change',rememberDigits);
-try{const savedDigits=localStorage.getItem(DIGITS_KEY);if(savedDigits&&el('digits').querySelector(`option[value="${savedDigits}"]`))el('digits').value=savedDigits}catch(_){}
+el('part').addEventListener('change',()=>{
+ rememberPart();
+ if(phase!=='idle'&&phase!=='complete')return;
+ const letters=partMode()==='letters';
+ el('activityText').textContent=letters?'Start a round of 10 letter pairs.':'Start a round of 10 flight numbers.';
+ el('answerLabel').textContent=letters?'Your two letters':'Your flight number';
+ el('tip').textContent=letters?'Both letters are checked in place. Enter starts the next question.':'A full flight number is checked in place. Enter starts the next question.';
+ el('play').setAttribute('aria-label',letters?'Replay letters':'Replay flight number');
+});
+try{const savedPart=localStorage.getItem(PART_KEY);if(savedPart&&el('part').querySelector(`option[value="${savedPart}"]`))el('part').value=savedPart}catch(_){}
 el('start').addEventListener('click',startRound);
 el('openMissed').addEventListener('click',()=>openStatsDialog(el('missDialog'),renderMissDialog));
 el('openSlow').addEventListener('click',()=>openStatsDialog(el('slowDialog'),renderSlowDialog));
 el('closeMiss').addEventListener('click',()=>el('missDialog').close());
 el('closeSlow').addEventListener('click',()=>el('slowDialog').close());
-el('practiceMissedDialog').addEventListener('click',()=>practiceFlights(rankedMisses(),'Each question is a flight number you missed.'));
-el('practiceSlowDialog').addEventListener('click',()=>practiceFlights(rankedSlow(),'Each question is one of your slowest flight numbers.'));
+el('practiceMissedDialog').addEventListener('click',()=>practiceFlights(rankedMisses(),'Each question is one you missed.'));
+el('practiceSlowDialog').addEventListener('click',()=>practiceFlights(rankedSlow(),'Each question is one of your slowest answers.'));
 el('missDialog').addEventListener('click',event=>{if(event.target===el('missDialog'))el('missDialog').close()});
 el('slowDialog').addEventListener('click',event=>{if(event.target===el('slowDialog'))el('slowDialog').close()});
 el('stop').addEventListener('click',stopRound);
@@ -1488,8 +1521,29 @@ function speakPart(text){
  }
  return words.join(' ');
 }
+function spellChunks(text,leadingPause){
+ const chunks=[];
+ let first=true;
+ for(let i=0;i<text.length;){
+  const pause=first?(leadingPause||0):360;
+  first=false;
+  if(/[A-Z]/.test(text[i])){
+   let run=1;
+   while(i+run<text.length&&text[i+run]===text[i]&&run<3)run++;
+   const name=text[i];
+   chunks.push({text:run===3?'triple '+name:run===2?'double '+name:name,pause});
+   i+=run;
+  }else{
+   let j=i;
+   while(j<text.length&&/\d/.test(text[j]))j++;
+   chunks.push({text:speakPart(text.slice(i,j)),pause});
+   i=j;
+  }
+ }
+ return chunks;
+}
 function spokenChunks(code){
- return [speakPart(code.slice(0,-3))+', '+speakPart(code.slice(-3))];
+ return spellChunks(code.slice(0,-3),0).concat(spellChunks(code.slice(-3),520));
 }
 function loadStats(){
  try{
@@ -1660,7 +1714,7 @@ function playPostcode(){
  const speakAt=index=>{
   if(settled||token!==speechGeneration)return;
   if(index>=chunks.length){finish();return}
-  const utterance=new SpeechSynthesisUtterance(chunks[index]);
+  const utterance=new SpeechSynthesisUtterance(chunks[index].text);
   held=utterance;
   if(voice){
    try{utterance.voice=voice}catch(_){}
@@ -1674,7 +1728,10 @@ function playPostcode(){
    moved=true;
    clearTimeout(watch);
    if(index+1>=chunks.length){finish();return}
-   speakAt(index+1);
+   const wait=chunks[index+1].pause||0;
+   if(gapTimer!==null){clearTimeout(gapTimer);gapTimer=null}
+   if(wait)gapTimer=setTimeout(()=>speakAt(index+1),wait);
+   else speakAt(index+1);
   };
   utterance.onstart=()=>{
    if(token!==speechGeneration)return;
@@ -1684,7 +1741,7 @@ function playPostcode(){
   };
   utterance.onend=advance;
   utterance.onerror=()=>{if(!moved)fail()};
-  watch=setTimeout(advance,400+chunks[index].split(' ').length*800);
+  watch=setTimeout(advance,400+chunks[index].text.split(' ').length*800);
   try{window.speechSynthesis.resume();window.speechSynthesis.speak(utterance)}catch(_){fail()}
  };
  setTimeout(()=>{if(token===speechGeneration)speakAt(0)},40);
