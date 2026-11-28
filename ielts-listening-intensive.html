@@ -55,7 +55,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .meta span{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
 .flag{border:1px solid #d8e1f0;background:#fff;color:#455874;border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}
 .flag[aria-pressed="true"]{background:#fff6df;border-color:#efd7a2;color:var(--gold)}
-.waves{display:flex;flex-direction:column;gap:4px;margin-top:10px}.wave-line{height:32px;border-radius:8px;background:#f3f6fb;overflow:hidden}.wave-line canvas{display:block;height:32px}
+.waves{display:flex;flex-direction:column;gap:4px;margin-top:10px}.wave-line{height:32px;border-radius:8px;background:#f3f6fb;overflow:hidden;cursor:context-menu}.wave-line canvas{display:block;height:32px}
 .sentence textarea{width:100%;min-height:68px;resize:none;overflow:hidden;border:1px solid #d6deeb;border-radius:10px;padding:10px 12px;line-height:1.5;color:var(--text)}
 .sentence.prompt textarea{color:#607089}
 .tiny{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
@@ -149,7 +149,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
  </section>
  <section id="stageReview" class="panel" hidden aria-label="Check sentences">
   <div class="review-head"><div><h2>Check the sentences</h2><p id="transcribeTime" class="took" hidden></p><label id="nameField" class="name-field" hidden><span>Name</span><input id="recordName" type="text" maxlength="80" autocomplete="off" aria-label="Recording name"></label><p id="saveNote" class="note"></p></div><p id="reviewCount" class="count"></p></div>
-  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Transcribe replaces that one stretch. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined. A, B, and C mark who is speaking on a dictated line. Click the letter to change it. A Blank line is a long silence. Dictation skips it. Each waveform line is 20 seconds.</p>
+  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Transcribe replaces that one stretch. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined. Right-click a waveform to split at that point. A long silence at the edge of a line becomes a blank. A, B, and C mark who is speaking on a dictated line. Click the letter to change it. A Blank line is a long silence. Dictation skips it. Each waveform line is 20 seconds.</p>
   <div id="sentences" class="list"></div>
   <div class="start-bar">
    <button type="button" id="another" class="secondary">Choose another file</button>
@@ -744,6 +744,7 @@ let sentences=[];
 let analysisVersion=0;
 let transcribeMs=null;
 let blankPass=0;
+let silencePass=0;
 let job=0;
 let cursor=0;
 let draftCursor=-1;
@@ -848,7 +849,7 @@ function createRecording(file,name,duration,tookMs){
  return queueWrite(async()=>{
   const db=await openDb();
   const tx=db.transaction(['recordings','audio'],'readwrite');
-  const record={id,name,fileName:file.name||'recording',created:Date.now(),duration,sentences:snapshot(),analysis:ANALYSIS,blankPass:1};
+  const record={id,name,fileName:file.name||'recording',created:Date.now(),duration,sentences:snapshot(),analysis:ANALYSIS,blankPass:1,silencePass:1};
   if(Number.isFinite(tookMs)&&tookMs>=0)record.transcribeMs=Math.round(tookMs);
   tx.objectStore('recordings').put(record);
   tx.objectStore('audio').put({id,blob:file,mimeType:file.type||'audio/mpeg'});
@@ -960,6 +961,7 @@ function flushRecording(){
   const patch={name:currentName(),sentences:snapshot(),place:clampIndex(cursor)};
   if(analysisVersion)patch.analysis=analysisVersion;
   if(blankPass)patch.blankPass=blankPass;
+  if(silencePass)patch.silencePass=silencePass;
   return updateRecording(currentId,patch);
 }
 function saveLibraryOrder(){
@@ -1132,6 +1134,19 @@ async function openRecording(id,mode){
     blankChecked=true;
    }catch(_){}
   }
+  silencePass=record.silencePass||0;
+  let silenceChecked=false;
+  if(!silencePass){
+   setWork('Separating long silences…',null);
+   try{
+    const samples=await audioTo16k(audio.blob);
+    if(mine!==job)return;
+    const carved=carveSilence(sentences,samples,16000);
+    if(carved)sentences=carved;
+    silencePass=1;
+    silenceChecked=true;
+   }catch(_){}
+  }
   if(!sentences.length)throw new Error('That saved recording has no sentences.');
   el('recordName').value=record.name||'Recording';
   el('nameField').hidden=false;
@@ -1159,7 +1174,7 @@ async function openRecording(id,mode){
   }else if(stale){
    analysisVersion=ANALYSIS;
    remember();
-  }else if(blankChecked)remember();
+  }else if(blankChecked||silenceChecked)remember();
   if(mine!==job)return;
   cursor=clampIndex(savedIndex(id,record.place));
   writePlace(cursor);
@@ -1415,6 +1430,112 @@ function shareGaps(list,keepEdges){
   else out.unshift(blankSentence(0,first.start));
  }
  return out;
+}
+function splitSilenceText(text,weights){
+ const words=String(text||'').split(/\s+/).filter(Boolean);
+ if(words.length<2)return weights.map((_,index)=>index===0?words.join(' '):'');
+ const total=weights.reduce((sum,weight)=>sum+weight,0)||1;
+ const counts=weights.map(weight=>Math.max(0,Math.round(weight/total*words.length)));
+ counts[counts.length-1]+=words.length-counts.reduce((sum,count)=>sum+count,0);
+ const parts=[];
+ let at=0;
+ for(let i=0;i<counts.length;i++){
+  const n=Math.max(0,counts[i]);
+  parts.push(words.slice(at,at+n).join(' '));
+  at+=n;
+ }
+ if(at<words.length&&parts.length)parts[parts.length-1]=(parts[parts.length-1]+' '+words.slice(at).join(' ')).trim();
+ return parts;
+}
+function carveSilence(list,samples,sampleRate){
+ const rate=sampleRate||16000;
+ if(!samples||samples.length<rate)return null;
+ const hop=Math.max(1,Math.round(rate*0.02));
+ const level=index=>{
+  let sum=0;
+  const end=Math.min(samples.length,index+hop);
+  for(let i=index;i<end;i++)sum+=samples[i]*samples[i];
+  return Math.sqrt(sum/Math.max(1,end-index));
+ };
+ let changed=false;
+ const out=[];
+ list.forEach(sentence=>{
+  if(sentence.blank||sentence.end-sentence.start<6.5){out.push(sentence);return}
+  const i0=Math.max(0,Math.floor(sentence.start*rate));
+  const i1=Math.min(samples.length,Math.floor(sentence.end*rate));
+  const values=[];
+  for(let i=i0;i+hop<=i1;i+=hop)values.push(level(i));
+  if(values.length<10){out.push(sentence);return}
+  const sorted=values.slice().sort((a,b)=>a-b);
+  const topAt=Math.floor(sorted.length*0.98);
+  const peak=sorted.slice(topAt).reduce((sum,value)=>sum+value,0)/Math.max(1,sorted.length-topAt);
+  if(peak<0.008){
+   if(sentence.end-sentence.start>=8){out.push(blankSentence(sentence.start,sentence.end));changed=true;return}
+   out.push(sentence);
+   return;
+  }
+  const floor=peak*0.15;
+  const hold=Math.round(0.35*rate);
+  const runs=[];
+  let run=null,noisy=0;
+  for(let i=i0;i+hop<=i1;i+=hop){
+   if(level(i)<floor){
+    if(run==null)run=i;
+    noisy=0;
+   }else if(run!=null){
+    noisy+=hop;
+    if(noisy>hold){
+     const stop=i-noisy;
+     if((stop-run)/rate>=6)runs.push({start:run/rate,end:stop/rate});
+     run=null;
+     noisy=0;
+    }
+   }
+  }
+  if(run!=null&&(i1-run)/rate>=6)runs.push({start:run/rate,end:i1/rate});
+  if(!runs.length){out.push(sentence);return}
+  const cuts=[];
+  let cursor=sentence.start;
+  runs.forEach(span=>{
+   let edge=Math.max(sentence.start,span.start);
+   let stop=Math.min(sentence.end,span.end);
+   if(edge>sentence.start+0.25)edge=Math.min(stop,edge+0.2);
+   if(stop<sentence.end-0.25)stop=Math.max(edge,stop-0.2);
+   if(stop-edge<2||edge<cursor)return;
+   if(edge-cursor>=0.25)cuts.push({speech:true,start:cursor,end:edge});
+   cuts.push({speech:false,start:Math.max(cursor,edge),end:stop});
+   cursor=stop;
+  });
+  if(sentence.end-cursor>=0.25)cuts.push({speech:true,start:cursor,end:sentence.end});
+  else if(cuts.length)cuts[cuts.length-1].end=sentence.end;
+  const speech=cuts.filter(cut=>cut.speech);
+  if(!speech.length){out.push(blankSentence(sentence.start,sentence.end));changed=true;return}
+  if(speech.length===1&&cuts.length===1){out.push(sentence);return}
+  const texts=speech.length===1?[sentence.text]:splitSilenceText(sentence.text,speech.map(cut=>cut.end-cut.start));
+  let at=0;
+  cuts.forEach(cut=>{
+   const start=roundTime(cut.start);
+   const end=roundTime(Math.max(cut.start+0.2,cut.end));
+   if(!cut.speech){out.push(blankSentence(start,end));return}
+   const text=texts[at++]||'';
+   if(!String(text).trim()){out.push(blankSentence(start,end));return}
+   const marked=markSentence({text,start,end,speaker:sentence.speaker});
+   marked.start=start;
+   marked.end=end;
+   if(sentence.prompt){marked.prompt=true;delete marked.speaker}
+   else if(sentence.speaker)marked.speaker=sentence.speaker;
+   out.push(marked);
+  });
+  changed=true;
+ });
+ if(!changed)return null;
+ const merged=[];
+ out.forEach(sentence=>{
+  const prev=merged[merged.length-1];
+  if(prev&&prev.blank&&sentence.blank&&sentence.start-prev.end<0.35){prev.end=sentence.end;return}
+  merged.push(sentence);
+ });
+ return merged;
 }
 function placeSentences(list,from,to,prev,next){
  let built=list.filter(sentence=>sentence.end>from+0.05&&sentence.start<to-0.05).map(sentence=>{
@@ -1691,6 +1812,19 @@ function drawWaveBoxes(){
    const span=Math.min(WAVE_ROW,end-from);
    const row=document.createElement('div');
    row.className='wave-line';
+   row.dataset.from=String(from);
+   row.dataset.span=String(span);
+   row.title='Right-click to split here';
+   row.addEventListener('contextmenu',event=>{
+    event.preventDefault();
+    const canvas=row.querySelector('canvas');
+    const rect=(canvas||row).getBoundingClientRect();
+    const ratio=rect.width?Math.min(1,Math.max(0,(event.clientX-rect.left)/rect.width)):0;
+    const article=row.closest('.sentence');
+    const at=Number(row.dataset.from)+ratio*Number(row.dataset.span);
+    const picked=article&&article.parentElement?[...article.parentElement.children].indexOf(article):-1;
+    if(picked>=0)splitAtTime(picked,at);
+   });
    const cssW=Math.max(2,width*(span/WAVE_ROW));
    const canvas=document.createElement('canvas');
    canvas.width=Math.max(1,Math.round(cssW*dpr));
@@ -1868,6 +2002,56 @@ function splitAt(index,cursorAt){
  second.start=mid;
  second.end=sentence.end;
  sentences.splice(index,1,first,second);
+ renderReview();
+ remember();
+}
+function waveLoud(start,end){
+ if(!wavePeaks)return true;
+ const bucket=WAVE_BUCKET/16000;
+ const i0=Math.max(0,Math.floor(start/bucket));
+ const i1=Math.min(wavePeaks.length,Math.ceil(end/bucket));
+ if(i1<=i0)return false;
+ let loud=0,max=0,n=0;
+ for(let i=i0;i<i1;i++){
+  const amp=Math.min(1,wavePeaks[i]*waveGain);
+  if(amp>max)max=amp;
+  if(amp>=0.12)loud++;
+  n++;
+ }
+ return max>=0.18&&loud/n>=0.06;
+}
+function splitAtTime(index,time){
+ const sentence=sentences[index];
+ if(!sentence)return;
+ let mid=roundTime(Number(time));
+ mid=Math.min(sentence.end-0.2,Math.max(sentence.start+0.2,mid));
+ if(!(mid>sentence.start&&mid<sentence.end))return;
+ stopAudio();
+ if(sentence.blank){
+  sentences.splice(index,1,blankSentence(sentence.start,mid),blankSentence(mid,sentence.end));
+  renderReview();
+  remember();
+  return;
+ }
+ const leftLoud=waveLoud(sentence.start,mid);
+ const rightLoud=waveLoud(mid,sentence.end);
+ let leftText='',rightText='';
+ if(leftLoud&&rightLoud){
+  const parts=splitSilenceText(sentence.text,[mid-sentence.start,sentence.end-mid]);
+  leftText=parts[0]||'';
+  rightText=parts[1]||'';
+ }else if(!rightLoud)leftText=sentence.text||'';
+ else rightText=sentence.text||'';
+ const make=(text,start,end)=>{
+  if(!String(text||'').trim())return blankSentence(start,end);
+  const marked=markSentence({text:String(text).trim(),start,end,speaker:sentence.speaker});
+  marked.start=start;
+  marked.end=end;
+  if(sentence.prompt){marked.prompt=true;delete marked.speaker}
+  else if(sentence.speaker)marked.speaker=sentence.speaker;
+  return marked;
+ };
+ sentences.splice(index,1,make(leftText,sentence.start,mid),make(rightText,mid,sentence.end));
  renderReview();
  remember();
 }
@@ -2671,7 +2855,8 @@ async function retranscribeSpan(index){
   built.forEach(item=>{
    if(!item.blank&&!item.prompt&&item.text.trim()&&speaker)item.speaker=speaker;
   });
-  sentences.splice(index,1,...built);
+  const carved=carveSilence(built,samples,16000);
+  sentences.splice(index,1,...(carved||built));
   remember();
   const top=window.scrollY;
   renderReview();
@@ -2778,6 +2963,9 @@ async function startJob(file){
   dropBlankThanks(sentences,samples,16000);
   blankPass=1;
   sentences=shareGaps(sentences);
+  const carved=carveSilence(sentences,samples,16000);
+  if(carved)sentences=carved;
+  silencePass=1;
   if(!sentences.length)throw new Error('No speech was found in this recording.');
   setWork('Marking speakers…',100);
   assignSpeakers(sentences,samples,16000);
