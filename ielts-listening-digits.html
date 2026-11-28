@@ -37,7 +37,8 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 .stats-dialog{border:0;border-radius:16px;padding:0;width:min(420px,calc(100vw - 28px));max-height:min(72vh,520px);color:var(--text);box-shadow:0 18px 50px rgba(24,35,57,.22)}.stats-dialog::backdrop{background:rgba(24,35,57,.38)}.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}.dialog-head h3{margin:0;font-size:16px}.dialog-close{width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:var(--red);font-size:18px;font-weight:700;line-height:1;cursor:pointer}.dialog-close:hover{background:#fdecee}.dialog-scroll{overflow:auto;max-height:min(46vh,340px)}.stats-table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}.stats-table th,.stats-table td{padding:9px 16px;text-align:left}.stats-table th{font-size:11px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line)}.stats-table td:last-child,.stats-table th:last-child{text-align:right}.dialog-empty{margin:0;padding:22px 16px;color:var(--muted);font-size:13px}.dialog-actions{display:flex;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line)}.dialog-actions .primary{min-height:44px;height:44px;padding:0 16px;font-size:13px}
 .setting.short select{width:120px}.setting.form select{width:148px}#f-answer{letter-spacing:.12em;text-transform:uppercase}#p-answer{letter-spacing:.08em;text-transform:uppercase}.mode-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 22px;border-bottom:1px solid var(--line)}.mode-tab{border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);padding:10px 16px 12px;font-size:15px;font-weight:760;border-radius:0;margin-bottom:-1px}.mode-tab[aria-selected="true"]{color:var(--blue);border-bottom-color:var(--blue)}.mode-tab:hover{color:var(--text)}.length-tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);overflow-x:auto}.length-tab{flex:0 0 auto;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);padding:9px 12px 8px;font-size:13px;font-weight:750;border-radius:0}.length-tab[aria-selected="true"]{color:var(--blue);border-bottom-color:var(--blue)}.length-tab:hover{color:var(--text)}
 .timer-wrap{display:flex;align-items:center;justify-content:center;margin-top:21px;gap:7px}.timer-value{font-size:32px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;font-weight:800}.timer-value.urgent{color:var(--red)}.timer-label{font-size:12px;color:var(--muted)}.timer-progress{height:5px;max-width:220px;width:100%;background:#edf1f7;border-radius:100px;margin:12px auto 0;overflow:hidden}.timer-progress>div{height:100%;width:0%;background:var(--blue);transition:width .04s linear}.timer-progress.urgent>div{background:var(--red)}
-@media(max-width:800px){.wrap{padding:27px 16px 34px}header{align-items:start;flex-direction:column}.settings,.setting,.setting select,.setting.short select,.setting.form select,.setting input{width:100%}.layout{grid-template-columns:1fr}.practice,.results{min-height:0}.activity{min-height:220px}}
+#settingsYears{flex-wrap:nowrap}#settingsYears .setting select{width:112px}#settingsYears .voice select{width:220px}
+@media(max-width:800px){.wrap{padding:27px 16px 34px}header{align-items:start;flex-direction:column}.settings,.setting,.setting select,.setting.short select,.setting.form select,#settingsYears,.setting input,#settingsYears .setting select,#settingsYears .voice select{width:100%}#settingsYears{flex-wrap:wrap}.layout{grid-template-columns:1fr}.practice,.results{min-height:0}.activity{min-height:220px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
 </style>
 </head>
@@ -228,7 +229,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="footnote" id="y-summary">Answers and response times appear after each question. Timing starts after speech ends.</div>
   </aside>
  </main>
-<p class="bottom">A year is spoken as nineteen ninety-four, twenty sixteen, two thousand and five, nineteen oh five, or eighteen hundred. Recorded British voices play the two halves when both are saved as numbers. Missed years and answer times stay in this browser.</p>
+<p class="bottom">A year is spoken as one phrase: nineteen ninety-four, twenty sixteen, two thousand and five, nineteen oh five, or eighteen hundred. Speech uses an English voice on this device. Missed years and answer times stay in this browser.</p>
 </div>
 <div id="panelPhone" class="hide">
 <main class="layout">
@@ -2760,7 +2761,6 @@ function yearList(){
 }
 const randomize=xs=>{const a=[...xs];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 document.getElementById('subYears').textContent=`Listen to a year from ${yearStart} to ${yearEnd} and type it before the timer ends. Ten years per round.`;
-const recordedVoices=[{id:'f',name:'British female'},{id:'m',name:'British male'}];
 const VOICE_KEY='ielts-dictation-voice';
 const inWeChat=/MicroMessenger/i.test(navigator.userAgent);
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window)&&!inWeChat;
@@ -2888,24 +2888,23 @@ function systemVoices(){
 }
 function fillVoices(){
  const select=el('voice');
- const previous=select.value||localStorage.getItem(VOICE_KEY)||'f';
+ const previous=select.value||localStorage.getItem(VOICE_KEY)||'';
  select.replaceChildren();
- for(const voice of recordedVoices){
-  const option=document.createElement('option');
-  option.value=voice.id;option.textContent=voice.name;select.append(option);
- }
  for(const voice of systemVoices()){
   const option=document.createElement('option');
   option.value='system:'+voice.voiceURI;option.textContent=voice.name;select.append(option);
  }
- select.value=[...select.options].some(option=>option.value===previous)?previous:'f';
+ if(!select.options.length){
+  const option=document.createElement('option');
+  option.value='';option.textContent='No English voice';select.append(option);
+ }
+ select.value=[...select.options].some(option=>option.value&&option.value===previous)?previous:select.options[0].value;
 }
 function rememberVoice(){try{localStorage.setItem(VOICE_KEY,el('voice').value)}catch(_){}}
 function recordingFolder(){return el('voice').value==='m'?'m':'f'}
 function speechReady(){return speechOK&&systemVoices().length>0}
 function availableYears(){
- const recorded=!el('voice').value.startsWith('system:');
- return yearList().filter(year=>(recorded&&yearClips(year))||speechReady());
+ return speechReady()?yearList():[];
 }
 function playThroughWeChat(run){
  const bridge=window.WeixinJSBridge;
@@ -3019,10 +3018,7 @@ function speakPhrase(text,clips){
 }
 function talk(){
  if(!years.length||!(phase==='speaking'||phase==='answering'))return;
- const year=years[position];
- const clips=yearClips(year);
- if(!el('voice').value.startsWith('system:')&&clips)playList(clips);
- else speakPhrase(yearPhrase(year),clips);
+ speakPhrase(yearPhrase(years[position]));
 }
 function setUpQuestion(){phase='speaking';answerStartedAt=null;el('answer').value='';el('answer').disabled=false;el('submit').disabled=false;el('play').disabled=false;el('activityTitle').textContent='Listen and type the year';el('activityText').textContent='Preparing audio…';el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerFill').style.width='0%';el('timerTrack').classList.remove('urgent');refreshStats();el('answer').focus({preventScroll:true});talk()}
 function showRoundControls(running){el('start').classList.toggle('hide',running);el('stop').classList.toggle('hide',!running);if(running)el('retry').classList.add('hide')}
