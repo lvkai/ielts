@@ -21,8 +21,10 @@
 *{box-sizing:border-box}html{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif}body{margin:0;background:var(--bg);color:var(--text);min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}
 [hidden]{display:none!important}
 .wrap{max-width:1080px;margin:0 auto;padding:36px 22px 64px}
-.pager{display:flex;align-items:center;gap:8px;margin:0 0 18px;flex-wrap:wrap}.pager a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.pager a:hover{text-decoration:underline}.pager a:focus-visible{outline:3px solid #adc0ff;outline-offset:2px;border-radius:4px}.steps{display:flex;flex-wrap:wrap;align-items:center;margin:14px 0 0;padding:0;list-style:none}.steps li{display:flex;align-items:center}.steps li+li:before{content:"";width:12px;height:1px;margin:0 2px;background:#d5deea}.steps button{border:0;background:transparent;color:var(--muted);border-radius:999px;min-height:36px;padding:0 10px;font-size:13px;font-weight:750}.steps button[aria-current="page"]{background:var(--blue-soft);color:var(--blue)}.steps button:hover:not(:disabled){color:var(--text)}
+.pager{display:flex;align-items:center;gap:8px;margin:0 0 18px;flex-wrap:wrap}.pager a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.pager a:hover{text-decoration:underline}.pager a:focus-visible{outline:3px solid #adc0ff;outline-offset:2px;border-radius:4px}.steps{display:flex;flex-wrap:wrap;align-items:center;margin:0;padding:0;list-style:none}.steps li{display:flex;align-items:center}.steps li+li:before{content:"";width:12px;height:1px;margin:0 2px;background:#d5deea}.steps button{border:0;background:transparent;color:var(--muted);border-radius:999px;min-height:36px;padding:0 10px;font-size:13px;font-weight:750}.steps button[aria-current="page"]{background:var(--blue-soft);color:var(--blue)}.steps button:hover:not(:disabled){color:var(--text)}
 h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.15}
+.step-row{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.file-switch select{appearance:none;border:1px solid var(--line);border-radius:12px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;min-height:36px;max-width:280px;padding:0 28px 0 12px;font-weight:700;color:var(--text)}
 .sub{margin:10px 0 0;color:var(--muted);font-size:14px;line-height:1.6;max-width:42em}
 .panel{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 9px 36px rgba(35,49,79,.035);padding:26px}
 .drop{border:1.5px dashed #c5d2e8;border-radius:16px;padding:36px 18px;text-align:center;background:#fbfcff}
@@ -82,7 +84,6 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .reveal{margin-top:12px;padding:12px 14px;border-radius:12px;background:#f4f7fb;line-height:1.55}
 .practice-layout{display:flex;align-items:flex-start;gap:16px}.practice-main{flex:1;min-width:0}
 .sentence-nav{width:218px;flex:none;display:flex;flex-direction:column;gap:4px;max-height:min(70vh,640px);overflow:auto;padding-right:2px}
-.practice-name{margin:0 0 14px;font-size:18px;font-weight:750;letter-spacing:-.02em;line-height:1.35;overflow-wrap:anywhere}
 .jump{display:flex;align-items:center;gap:6px;width:100%;border:0;background:transparent;border-radius:10px;min-height:34px;padding:0 6px;color:var(--text);font-size:13px;font-weight:750;text-align:left;white-space:nowrap}
 .jump.blank{color:var(--muted)}
 .jump.now{background:var(--blue-soft);color:var(--blue)}.jump .kind{width:16px;height:16px;display:flex;flex:none}.jump .kind svg{width:16px;height:16px}.jump b{flex:none;min-width:2em;text-align:right;font-variant-numeric:tabular-nums}.jump .who{flex:none;width:16px;color:var(--text);font-size:12px;font-weight:800;text-align:center;line-height:16px}.jump.now .who{color:var(--text)}.nav-time{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;font-weight:700}.jump.now .nav-time{color:var(--blue)}.jump .draft-mark{width:14px;height:14px;display:flex;flex:none;color:var(--muted)}.jump.now .draft-mark{color:var(--blue)}.jump .draft-mark svg{width:14px;height:14px}
@@ -93,7 +94,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
 .name-field{display:flex;align-items:center;gap:8px;margin-top:10px}.name-field span{font-size:12px;color:var(--muted);font-weight:750}.name-field input{width:min(360px,100%);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-weight:700}
 .library{margin-top:22px}.library h2{margin:0 0 4px;font-size:16px;letter-spacing:-.02em}.library-hint{margin:0 0 8px;color:var(--muted);font-size:12px}.library-empty{margin:8px 0 0;color:var(--muted);font-size:13px}.library-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.library-item.dragging{opacity:.45}.library-main{display:flex;align-items:center;gap:8px;flex:1;min-width:0;width:100%}.library-main.can-drag{cursor:grab;touch-action:none;user-select:none}.library-main.can-drag:active{cursor:grabbing}.drag-handle{width:32px;height:40px;border:0;background:transparent;color:#8b97ab;border-radius:8px;display:grid;place-items:center;flex-shrink:0;padding:0;cursor:grab}.drag-handle:hover{background:#f3f6fb;color:var(--text)}.drag-handle svg{width:16px;height:16px}.library-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.library-copy b{font-weight:750}.library-meta{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}.library-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}.library-actions button{border-radius:999px;min-height:34px;padding:0 12px;font-size:12px;font-weight:750}.library-actions .edit,.library-actions .listen,.library-actions .practice{border:1px solid #d8e1f0;background:#fff;color:#455874}.library-actions .danger{width:34px;min-width:34px;height:34px;padding:0;border:0;background:none;color:#455874;font-size:20px;line-height:1}
 .player-bit{display:block;width:100%;border:0;background:transparent;border-radius:10px;min-height:48px;padding:8px 12px;text-align:left;line-height:1.45;color:var(--muted);font-size:22px;font-weight:400}.player-bit.now{color:var(--text)}.player-roll{will-change:transform}.player-head{display:flex;justify-content:flex-end;padding:0 0 8px}.player-count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}.player-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:16px}.player-controls .icon-btn{width:42px;min-width:42px;height:42px;min-height:42px;padding:0}.player-focus{position:relative;overflow:hidden;height:min(40vh,260px);margin-top:28px}.player-hidden{margin:16px 0;color:var(--muted)}
-@media(max-width:640px){.wrap{padding:22px 14px 40px}.panel{padding:18px 14px}.start-bar{align-items:stretch;flex-direction:column}.start-bar .primary,.start-bar .secondary,.work-actions .secondary{width:100%}.library-item{align-items:flex-start;flex-direction:column}.library-actions{width:100%}.practice-layout{flex-direction:column}.sentence-nav{width:100%;max-height:132px;flex-direction:row}.jump{width:auto;flex:none}}
+@media(max-width:640px){.wrap{padding:22px 14px 40px}.panel{padding:18px 14px}.step-row{align-items:stretch}.file-switch,.file-switch select{width:100%;max-width:none}.start-bar{align-items:stretch;flex-direction:column}.start-bar .primary,.start-bar .secondary,.work-actions .secondary{width:100%}.library-item{align-items:flex-start;flex-direction:column}.library-actions{width:100%}.practice-layout{flex-direction:column}.sentence-nav{width:100%;max-height:132px;flex-direction:row}.jump{width:auto;flex:none}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -103,12 +104,15 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
   <a href="index.html">← Home</a>
  </nav>
  <h1>Intensive Listening</h1>
+ <div class="step-row">
  <ol class="steps" aria-label="Sections">
   <li><button type="button" data-step="upload" aria-current="page">File List</button></li>
   <li><button type="button" data-step="review" disabled>Editor</button></li>
   <li><button type="button" data-step="player" disabled>Player</button></li>
   <li><button type="button" data-step="practice" disabled>Dictation</button></li>
  </ol>
+ <label class="file-switch"><select id="fileSwitch" aria-label="Recording" hidden></select></label>
+ </div>
  <div id="fileBar" class="filebar" hidden>
   <span id="fileNow" class="file-time">0:00</span>
   <div id="fileScrub" class="scrub" role="slider" tabindex="0" aria-label="Recording position" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
@@ -144,7 +148,6 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
   </div>
  </section>
  <section id="stagePlayer" class="panel" hidden aria-label="Player">
-  <h2 id="playerName" class="practice-name"></h2>
   <div class="practice-layout">
    <aside id="playerNav" class="sentence-nav" aria-label="Sentences"></aside>
    <div class="practice-main">
@@ -164,7 +167,6 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
   </div>
  </section>
  <section id="stagePractice" class="panel" hidden aria-label="Dictation">
-  <h2 id="practiceName" class="practice-name"></h2>
   <div class="practice-layout">
   <aside id="sentenceNav" class="sentence-nav" aria-label="Sentences"></aside>
   <div class="practice-main">
@@ -1000,11 +1002,32 @@ function bindReorder(row,surface,handle){
   handle.focus();
  });
 }
+async function fillFileSwitch(){
+ const select=el('fileSwitch');
+ let records=[];
+ try{records=await listRecordings()}catch(_){}
+ select.replaceChildren();
+ if(!records.length){select.hidden=true;return}
+ select.hidden=false;
+ if(!currentId){
+  const blank=document.createElement('option');
+  blank.value='';
+  blank.textContent='Choose a recording';
+  select.append(blank);
+ }
+ records.forEach(record=>{
+  const option=document.createElement('option');
+  option.value=record.id;
+  option.textContent=record.name||'Recording';
+  select.append(option);
+ });
+ select.value=currentId&&records.some(record=>record.id===currentId)?currentId:'';
+}
 async function renderLibrary(){
  const host=el('libraryList');
  let records=[];
  try{records=await listRecordings()}
- catch(_){el('library').hidden=true;return}
+ catch(_){el('library').hidden=true;fillFileSwitch();return}
  el('library').hidden=false;
  host.replaceChildren();
  if(!records.length){
@@ -1012,6 +1035,7 @@ async function renderLibrary(){
   empty.className='library-empty';
   empty.textContent='Saved recordings appear here.';
   host.append(empty);
+  fillFileSwitch();
   return;
  }
  records.forEach(record=>{
@@ -1074,6 +1098,7 @@ async function renderLibrary(){
   row.append(main,actions);
   host.append(row);
  });
+ fillFileSwitch();
 }
 async function openRecording(id,mode){
  const mine=++job;
@@ -1158,6 +1183,7 @@ async function openRecording(id,mode){
   else if(mode==='done')finish();
   else if(mode==='player')beginPlayer(cursor);
   else{show('review');revealSentence()}
+  fillFileSwitch();
  }catch(error){
   if(mine!==job)return;
   show('upload');
@@ -2180,7 +2206,6 @@ function playOnce(sentence,done,startAt){
  watch();
 }
 function showPracticeChrome(sentence,keepPause){
- el('practiceName').textContent=currentName();
  dictatePass=1;
  paintPracticeCount();
  el('promptLine').hidden=!sentence.prompt;
@@ -2386,7 +2411,6 @@ function paintPlayerButton(){
 }
 function renderPlayer(){
  buildSentenceNav(el('playerNav'),index=>playPlayerLine(index));
- el('playerName').textContent=currentName();
  const sentenceNow=sentences[cursor];
  const times=playerRepeatCount();
  const counted=times>1&&sentenceNow&&!sentenceNow.prompt;
@@ -3021,7 +3045,11 @@ try{
 el('repeats').addEventListener('change',()=>{try{localStorage.setItem(REPEAT_KEY,el('repeats').value)}catch(_){} if(phase==='practice')paintPracticeCount()});
 try{const savedGap=localStorage.getItem(DICTATE_GAP_KEY);if(savedGap&&el('dictateGap').querySelector('option[value="'+savedGap+'"]'))el('dictateGap').value=savedGap}catch(_){}
 el('dictateGap').addEventListener('change',()=>{try{localStorage.setItem(DICTATE_GAP_KEY,el('dictateGap').value)}catch(_){}});
-el('recordName').addEventListener('input',remember);
+el('recordName').addEventListener('input',()=>{
+ remember();
+ const option=currentId?[...el('fileSwitch').options].find(item=>item.value===currentId):null;
+ if(option)option.textContent=currentName();
+});
 el('recordName').addEventListener('blur',()=>{
  if(!el('recordName').value.trim())el('recordName').value='Recording';
  flushRecording();
@@ -3078,27 +3106,20 @@ window.addEventListener('resize',()=>{
  clearTimeout(playerResize);
  playerResize=setTimeout(()=>{if(phase==='player'&&playerText)renderPlayer()},60);
 });
+el('fileSwitch').addEventListener('change',()=>{
+ const id=el('fileSwitch').value;
+ if(!id||id===currentId)return;
+ const mode=phase==='player'?'player':phase==='practice'||phase==='done'?'practice':undefined;
+ openRecording(id,mode);
+});
 el('prevSentence').addEventListener('click',()=>stepSentence(-1));
 el('nextSentence').addEventListener('click',()=>stepSentence(1));
-let shiftAlone=false;
 let ctrlAlone=false;
 document.addEventListener('keydown',event=>{
- if(event.key==='Shift'){if(!event.repeat)shiftAlone=true;return}
  if(event.key==='Control'){if(!event.repeat)ctrlAlone=true;return}
- if(event.shiftKey)shiftAlone=false;
  if(event.ctrlKey)ctrlAlone=false;
 });
 document.addEventListener('keyup',event=>{
- if(event.key==='Shift'){
-  const alone=shiftAlone;
-  shiftAlone=false;
-  if(!alone||event.altKey||event.ctrlKey||event.metaKey)return;
-  if(event.target&&event.target.tagName==='SELECT')return;
-  if(phase!=='player')return;
-  if(event.target&&event.target.closest&&event.target.closest('input,textarea'))return;
-  playPlayerLine(cursor);
-  return;
- }
  if(event.key!=='Control')return;
  const alone=ctrlAlone;
  ctrlAlone=false;
