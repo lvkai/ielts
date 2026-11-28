@@ -73,7 +73,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .answer-label{display:block;margin-top:6px;font-size:13px;font-weight:750}
 .answer{width:100%;min-height:96px;margin-top:8px;border:1.5px solid #d6deeb;border-radius:13px;padding:12px 14px;font-size:18px;line-height:1.5;resize:vertical}
 .answer:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 4px #315eea14}
-.below{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:10px}
+.below{display:flex;justify-content:flex-end;gap:12px;align-items:center;margin-top:10px}
 .feedback{font-size:13px;font-weight:720;color:var(--muted);text-align:right}.feedback.ok{color:var(--green)}.feedback.no{color:var(--red)}
 .diff{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .diff p{margin:0;line-height:1.65}
@@ -188,7 +188,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
   <div id="dictateBox" hidden>
    <label class="answer-label" for="answer">Your dictation</label>
    <textarea id="answer" class="answer" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="Type the sentence"></textarea>
-   <div class="below"><span class="note" style="margin:0">Enter checks · Empty Enter goes to the next sentence · Shift+Enter adds a line</span><span id="feedback" class="feedback" role="status"></span></div>
+   <div class="below"><span id="feedback" class="feedback" role="status"></span></div>
    <div id="diff" class="diff" hidden aria-live="polite"></div>
    <p id="reveal" class="reveal" hidden></p>
   </div>
