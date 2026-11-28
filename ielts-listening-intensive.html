@@ -162,7 +162,6 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <aside id="playerNav" class="sentence-nav" aria-label="Sentences"></aside>
    <div class="practice-main">
     <div class="player-head"><p id="playerCount" class="player-count"></p></div>
-    <div class="track" aria-hidden="true"><div id="playerFill" class="track-fill"></div></div>
     <div class="player-controls">
      <button type="button" id="playerPrev" class="secondary icon-btn" aria-label="Previous" disabled></button>
      <button type="button" id="playerPlay" class="primary icon-btn" aria-label="Play" disabled></button>
@@ -186,7 +185,6 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <div class="overline" id="practiceLabel">Sentence</div>
    <div class="progress-count"><b id="doneCount">0</b> / <span id="dictateTotal">0</span></div>
   </div>
-  <div class="track" aria-hidden="true"><div id="loopFill" class="track-fill"></div></div>
   <div class="activity">
    <button type="button" id="speaker" class="sound" aria-label="Replay sentence">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
@@ -2103,12 +2101,6 @@ function playbackBounds(sentence){
  const from=Math.max(0,sentence.start);
  return {from,to:Math.min(duration,Math.max(from,sentence.end))};
 }
-function paintLoop(from,to){
- const audio=el('track');
- const span=Math.max(0.01,to-from);
- const ratio=Math.min(1,Math.max(0,(audio.currentTime-from)/span));
- el('loopFill').style.width=(ratio*100)+'%';
-}
 function seekAndPlay(audio,from,token,onReady){
  audio.pause();
  audio.playbackRate=rate();
@@ -2147,7 +2139,6 @@ function loopSentence(sentence,startAt){
  const watch=()=>{
   if(token!==loopToken)return;
   if(paused||!armed||scrubbing){loopTimer=setTimeout(watch,paused?80:40);return}
-  paintLoop(from,to);
   paintFileBar();
   if(audio.currentTime>=to-0.04){
    armed=false;
@@ -2182,7 +2173,6 @@ function playOnce(sentence,done,startAt){
  const watch=()=>{
   if(token!==loopToken||finished)return;
   if(paused||!armed||scrubbing){loopTimer=setTimeout(watch,paused?80:40);return}
-  paintLoop(from,to);
   paintFileBar();
   if(audio.currentTime>=to-0.04||audio.ended){
    finished=true;
@@ -2203,7 +2193,6 @@ function showPracticeChrome(sentence,keepPause){
  el('doneCount').textContent=String(done);
  el('dictateTotal').textContent=String(dictate.length);
  el('practiceLabel').textContent='Sentence '+(cursor+1)+' of '+sentences.length;
- el('loopFill').style.width='0%';
  el('promptLine').hidden=!sentence.prompt;
  el('dictateBox').hidden=sentence.prompt;
  el('check').hidden=sentence.prompt;
@@ -2416,14 +2405,6 @@ function paintPlayerButton(){
  setButtonIcon(el('playerPlay'),on?'pause':'play',on?'Pause':'Play');
  el('playerPlay').setAttribute('aria-pressed',on?'true':'false');
 }
-function paintPlayerProgress(){
- const sentence=sentences[cursor];
- if(!sentence||phase!=='player'){el('playerFill').style.width='0';return}
- const bounds=playbackBounds(sentence);
- const span=Math.max(0.01,bounds.to-bounds.from);
- const ratio=Math.min(1,Math.max(0,(el('track').currentTime-bounds.from)/span));
- el('playerFill').style.width=(ratio*100)+'%';
-}
 function renderPlayer(){
  buildSentenceNav(el('playerNav'),index=>playPlayerLine(index));
  el('playerName').textContent=currentName();
@@ -2469,7 +2450,6 @@ function renderPlayer(){
   }
  }
  paintPlayerButton();
- paintPlayerProgress();
 }
 function atPlayerEnd(){
  const sentence=sentences[cursor];
@@ -2480,7 +2460,6 @@ function watchPlayer(token){
  const step=()=>{
   if(token!==loopToken||phase!=='player'||!playerRun)return;
   if(el('track').paused||scrubbing){loopTimer=setTimeout(step,40);return}
-  paintPlayerProgress();
   paintFileBar();
   const sentence=sentences[cursor];
   if(!sentence)return;
@@ -2504,7 +2483,6 @@ function advancePlayer(token){
  };
  const wait=playerGapSeconds();
  if(wait<=0){go();return}
- paintPlayerProgress();
  paintPlayerButton();
  holdPlayerGap(token,wait,go);
 }
@@ -2574,7 +2552,7 @@ function togglePlayerText(){
 function followPlayer(time){
  if(phase!=='player'||!sentences.length)return;
  const index=sentenceIndexAt(time);
- if(index<0||index===cursor){paintPlayerProgress();return}
+ if(index<0||index===cursor)return
  cursor=index;
  renderPlayer();
 }
@@ -3152,7 +3130,7 @@ document.addEventListener('keydown',event=>{
 },true);
 el('track').addEventListener('play',()=>{if(phase!=='practice')return;betweenRepeats=false;paintTransport()});
 el('track').addEventListener('pause',()=>{if(phase==='practice')paintTransport()});
-el('track').addEventListener('timeupdate',()=>{if(!scrubbing)paintFileBar();if(phase==='player')paintPlayerProgress()});
+el('track').addEventListener('timeupdate',()=>{if(!scrubbing)paintFileBar()});
 el('track').addEventListener('loadedmetadata',()=>paintFileBar());
 el('track').addEventListener('ended',()=>paintFileBar());
 document.querySelectorAll('[data-step]').forEach(button=>button.addEventListener('click',()=>goStep(button.dataset.step)));
