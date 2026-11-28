@@ -66,11 +66,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .tiny .nudge button:last-of-type{right:0;text-align:right}
 .tiny .nudge button:hover:not(:disabled){background:#f6f8fc}
 .start-bar{position:sticky;bottom:0;display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:8px;padding:16px 0 4px;background:linear-gradient(transparent,#fff 16px)}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.overline{color:var(--muted);font-size:13px;font-weight:650}
-.progress-count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}.progress-count b{font-size:22px;color:var(--text)}
 .activity{display:flex;flex-direction:column;align-items:center;text-align:center;padding:8px 0}
-.activity h2{margin:0 0 6px;font-size:20px;letter-spacing:-.02em}
 .prompt-line{margin:8px 0 0;font-size:22px;line-height:1.45;font-weight:650;text-align:left;width:100%}
 .answer-label{display:block;margin-top:6px;font-size:13px;font-weight:750}
 .answer{width:100%;min-height:96px;margin-top:8px;border:1.5px solid #d6deeb;border-radius:13px;padding:12px 14px;font-size:18px;line-height:1.5;resize:vertical}
@@ -172,12 +168,8 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
   <div class="practice-layout">
   <aside id="sentenceNav" class="sentence-nav" aria-label="Sentences"></aside>
   <div class="practice-main">
-  <div class="top">
-   <div class="overline" id="practiceLabel">Sentence</div>
-   <div class="progress-count"><b id="doneCount">0</b> / <span id="dictateTotal">0</span></div>
-  </div>
+  <div class="player-head"><p id="practiceCount" class="player-count"></p></div>
   <div class="activity">
-   <h2 id="practiceTitle">Listen and type</h2>
    <div class="practice-actions">
     <button type="button" id="prevSentence" class="secondary icon-btn" aria-label="Previous sentence"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h2.2v14H6zM18.5 5 8.2 12l10.3 7z"/></svg></button>
     <button type="button" id="pause" class="secondary icon-btn" aria-pressed="false" aria-label="Play"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></button>
@@ -743,6 +735,7 @@ let loopTo=0;
 let phase='upload';
 let playerRun=false;
 let playerPass=1;
+let dictatePass=1;
 let gapTimer=0;
 let gapLeft=0;
 let gapHold=false;
@@ -1378,6 +1371,13 @@ function repeatLimit(){
 function repeatGapMs(){
  const value=Number(el('dictateGap').value);
  return value===0||value===1||value===2||value===3||value===5||value===10?value*1000:2000;
+}
+function paintPracticeCount(){
+ const sentence=sentences[cursor];
+ const times=repeatLimit();
+ const counted=times>1&&sentence&&!sentence.prompt;
+ const total=Number.isFinite(times)?String(times):'∞';
+ el('practiceCount').textContent=sentences.length?(cursor+1)+' / '+sentences.length+(counted?' · '+dictatePass+' of '+total:''):'';
 }
 function dictateSentences(){return sentences.filter(sentence=>!sentence.prompt&&sentence.text.trim())}
 function clampSentences(duration){
@@ -2116,9 +2116,19 @@ function loopSentence(sentence,startAt){
  let opened=false;
  let armed=false;
  let plays=0;
+ let again=false;
  const arm=()=>{armed=true};
  if(!paused){playbackLive=true;paintTransport()}
- const play=()=>{if(paused||token!==loopToken)return;const target=opened?from:first;opened=true;seekAndPlay(audio,target,token,ok=>{if(token!==loopToken)return;if(ok)arm();else{playbackLive=false;paintTransport();el('feedback').textContent='Press play to hear this sentence.'}})};
+ dictatePass=1;
+ paintPracticeCount();
+ const play=()=>{
+  if(paused||token!==loopToken)return;
+  if(again){dictatePass++;paintPracticeCount()}
+  again=true;
+  const target=opened?from:first;
+  opened=true;
+  seekAndPlay(audio,target,token,ok=>{if(token!==loopToken)return;if(ok)arm();else{playbackLive=false;paintTransport();el('feedback').textContent='Press play to hear this sentence.'}});
+ };
  const watch=()=>{
   if(token!==loopToken)return;
   if(paused||!armed||scrubbing){loopTimer=setTimeout(watch,paused?80:40);return}
@@ -2150,7 +2160,7 @@ function playOnce(sentence,done,startAt){
  if(!paused){playbackLive=true;paintTransport()}
  seekAndPlay(audio,first,token,ok=>{
   if(token!==loopToken)return;
-  if(!ok){playbackLive=false;paintTransport();el('practiceTitle').textContent='Press play to hear this instruction.'}
+  if(!ok){playbackLive=false;paintTransport()}
   else armed=true;
  });
  const watch=()=>{
@@ -2171,11 +2181,8 @@ function playOnce(sentence,done,startAt){
 }
 function showPracticeChrome(sentence,keepPause){
  el('practiceName').textContent=currentName();
- const dictate=dictateSentences();
- const done=sentences.slice(0,cursor).filter(item=>!item.prompt&&item.text.trim()).length;
- el('doneCount').textContent=String(done);
- el('dictateTotal').textContent=String(dictate.length);
- el('practiceLabel').textContent='Sentence '+(cursor+1)+' of '+sentences.length;
+ dictatePass=1;
+ paintPracticeCount();
  el('promptLine').hidden=!sentence.prompt;
  el('dictateBox').hidden=sentence.prompt;
  el('show').hidden=true;
@@ -2199,10 +2206,6 @@ function showPracticeChrome(sentence,keepPause){
  if(!keepPause)resetPause();
  misses=0;
  moving=false;
-}
-function speakerTitle(sentence){
- if(!sentence||sentence.prompt)return 'Instruction';
- return speakerNames().length>1&&sentence.speaker?'Speaker '+sentence.speaker:'Listen and type';
 }
 function sentenceIndexAt(time){
  let index=0;
@@ -2342,9 +2345,8 @@ function followPractice(time){
  syncSentenceButtons();
  showPracticeChrome(sentence,true);
  if(sentence.prompt){
-  el('practiceTitle').textContent='Instruction';
   el('promptLine').textContent=sentence.text;
- }else el('practiceTitle').textContent=speakerTitle(sentence);
+ }
 }
 function enter(index,startAt,dir){
  storeDraft();
@@ -2365,12 +2367,10 @@ function moveTo(index,startAt,dir){
  showPracticeChrome(sentence);
  highlightSentence(cursor);
  if(sentence.prompt){
-  el('practiceTitle').textContent='Instruction';
   el('promptLine').textContent=sentence.text;
   playOnce(sentence,()=>{if(phase==='practice'&&cursor===index)enter(index+1)},startAt);
   return;
  }
- el('practiceTitle').textContent=speakerTitle(sentence);
  loopSentence(sentence,startAt);
  el('answer').focus();
 }
@@ -3015,7 +3015,7 @@ try{
  const savedRepeats=localStorage.getItem(REPEAT_KEY);
  if(savedRepeats&&el('repeats').querySelector('option[value="'+savedRepeats+'"]'))el('repeats').value=savedRepeats;
 }catch(_){}
-el('repeats').addEventListener('change',()=>{try{localStorage.setItem(REPEAT_KEY,el('repeats').value)}catch(_){}});
+el('repeats').addEventListener('change',()=>{try{localStorage.setItem(REPEAT_KEY,el('repeats').value)}catch(_){} if(phase==='practice')paintPracticeCount()});
 try{const savedGap=localStorage.getItem(DICTATE_GAP_KEY);if(savedGap&&el('dictateGap').querySelector('option[value="'+savedGap+'"]'))el('dictateGap').value=savedGap}catch(_){}
 el('dictateGap').addEventListener('change',()=>{try{localStorage.setItem(DICTATE_GAP_KEY,el('dictateGap').value)}catch(_){}});
 el('recordName').addEventListener('input',remember);
