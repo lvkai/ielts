@@ -3081,21 +3081,29 @@ window.addEventListener('resize',()=>{
 el('prevSentence').addEventListener('click',()=>stepSentence(-1));
 el('nextSentence').addEventListener('click',()=>stepSentence(1));
 let shiftAlone=false;
+let ctrlAlone=false;
 document.addEventListener('keydown',event=>{
  if(event.key==='Shift'){if(!event.repeat)shiftAlone=true;return}
+ if(event.key==='Control'){if(!event.repeat)ctrlAlone=true;return}
  if(event.shiftKey)shiftAlone=false;
+ if(event.ctrlKey)ctrlAlone=false;
 });
 document.addEventListener('keyup',event=>{
- if(event.key!=='Shift')return;
- const alone=shiftAlone;
- shiftAlone=false;
- if(!alone||event.altKey||event.ctrlKey||event.metaKey)return;
- if(event.target&&event.target.tagName==='SELECT')return;
- if(phase==='player'){
+ if(event.key==='Shift'){
+  const alone=shiftAlone;
+  shiftAlone=false;
+  if(!alone||event.altKey||event.ctrlKey||event.metaKey)return;
+  if(event.target&&event.target.tagName==='SELECT')return;
+  if(phase!=='player')return;
   if(event.target&&event.target.closest&&event.target.closest('input,textarea'))return;
   playPlayerLine(cursor);
   return;
  }
+ if(event.key!=='Control')return;
+ const alone=ctrlAlone;
+ ctrlAlone=false;
+ if(!alone||event.altKey||event.shiftKey||event.metaKey)return;
+ if(event.target&&event.target.tagName==='SELECT')return;
  if(phase!=='practice')return;
  showOriginal(!originalVisible());
 });
