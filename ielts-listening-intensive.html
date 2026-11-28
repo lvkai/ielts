@@ -86,9 +86,9 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .sentence-nav{width:218px;flex:none;display:flex;flex-direction:column;gap:4px;max-height:min(70vh,640px);overflow:auto;padding-right:2px}
 .jump{display:flex;align-items:center;gap:6px;width:100%;border:0;background:transparent;border-radius:10px;min-height:34px;padding:0 6px;color:var(--text);font-size:13px;font-weight:750;text-align:left;white-space:nowrap}
 .jump.blank{color:var(--muted)}
-.jump.now{background:var(--blue-soft);color:var(--blue)}.jump .kind{width:16px;height:16px;display:flex;flex:none}.jump .kind svg{width:16px;height:16px}.jump b{flex:none;min-width:2em;text-align:right;font-variant-numeric:tabular-nums}.jump .who{flex:none;width:16px;color:var(--text);font-size:12px;font-weight:800;text-align:center;line-height:16px}.jump.now .who{color:var(--text)}.nav-time{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;font-weight:700}.jump.now .nav-time{color:var(--blue)}.jump .draft-mark{width:14px;height:14px;display:flex;flex:none;color:var(--muted)}.jump.now .draft-mark{color:var(--blue)}.jump .draft-mark svg{width:14px;height:14px}
+.jump.now{background:var(--blue-soft);color:var(--blue)}.jump .kind{width:16px;height:16px;display:flex;flex:none}.jump .kind svg{width:16px;height:16px}.jump b{flex:none;min-width:2em;text-align:right;font-variant-numeric:tabular-nums}.jump .who{flex:none;width:16px;color:var(--text);font-size:12px;font-weight:800;text-align:center;line-height:16px}.jump.now .who{color:var(--text)}.nav-time{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;font-weight:700}.jump.now .nav-time{color:var(--blue)}.jump .draft-mark{width:14px;height:14px;display:flex;flex:none;color:var(--muted)}.jump.now .draft-mark{color:var(--blue)}.jump .draft-mark svg{width:14px;height:14px}.jump .flag-mark{margin-left:auto;width:14px;height:14px;display:flex;flex:none;color:var(--gold)}.jump .flag-mark svg{width:14px;height:14px}
 button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue);border-radius:999px;min-height:32px;min-width:32px;padding:0 8px;font-size:12px;font-weight:800}
-.practice-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;width:100%;margin:12px 0 0;padding-top:16px}.practice-actions .primary,.practice-actions .secondary{min-height:42px}
+.practice-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;width:100%;margin:12px 0 0;padding-top:16px}.practice-actions .primary,.practice-actions .secondary{min-height:42px}#flagSentence[aria-pressed="true"]{background:#fff6df;border-color:#efd7a2;color:var(--gold)}
 .setting{position:relative;display:flex;align-items:center}.setting span{position:absolute;left:0;bottom:calc(100% + 3px);font-size:11px;line-height:1;color:var(--muted);font-weight:650;white-space:nowrap}.setting select{appearance:none;border:1px solid var(--line);border-radius:12px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;min-height:42px;padding:0 28px 0 12px;font-weight:700}
 .note{margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.6}.note.warn{color:var(--red)}
 .name-field{display:flex;align-items:center;gap:8px;margin-top:10px}.name-field span{font-size:12px;color:var(--muted);font-weight:750}.name-field input{width:min(360px,100%);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-weight:700}
@@ -176,6 +176,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
     <button type="button" id="prevSentence" class="secondary icon-btn" aria-label="Previous sentence"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h2.2v14H6zM18.5 5 8.2 12l10.3 7z"/></svg></button>
     <button type="button" id="pause" class="secondary icon-btn" aria-pressed="false" aria-label="Play"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></button>
     <button type="button" id="nextSentence" class="secondary icon-btn" aria-label="Next sentence"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.8 5H18v14h-2.2zM5.5 5l10.3 7L5.5 19z"/></svg></button>
+    <button type="button" id="flagSentence" class="secondary" aria-pressed="false">Flag</button>
     <button type="button" id="show" class="secondary" hidden>Show sentence</button>
     <button type="button" id="skipPrompt" class="secondary" hidden>Continue</button>
     <label class="setting"><span>Speed</span><select id="speed" aria-label="Playback speed"><option value="0.75">0.75×</option><option value="0.9">0.9×</option><option value="1" selected>1.0×</option><option value="1.15">1.15×</option></select></label>
@@ -412,6 +413,7 @@ function markSentence(sentence){
  if(!Number.isFinite(end)||end<start+0.25)end=start+0.35;
  const marked={text:sentence.text,start,end,prompt:isPrompt(sentence.text)};
  if(!marked.prompt&&/^[ABC]$/.test(sentence.speaker))marked.speaker=sentence.speaker;
+ if(sentence.flag)marked.flag=true;
  return marked;
 }
 function framePitch(samples,offset,length,rate){
@@ -794,6 +796,7 @@ function asSentence(sentence){
  const marked={text,start,end:Number.isFinite(end)?end:start,prompt:!!(source&&source.prompt)};
  if(!marked.prompt&&source&&/^[ABC]$/.test(source.speaker))marked.speaker=source.speaker;
  if(!marked.prompt&&source&&typeof source.draft==='string'&&source.draft)marked.draft=source.draft;
+ if(source&&source.flag)marked.flag=true;
  if(source&&source.blank){marked.blank=true;marked.prompt=false;marked.text='';delete marked.speaker}
  return marked;
 }
@@ -2213,6 +2216,7 @@ function showPracticeChrome(sentence,keepPause){
  el('show').hidden=true;
  el('skipPrompt').hidden=!sentence.prompt;
  el('reveal').hidden=true;
+ paintFlagButton();
  const draft=sentence.prompt?'':(sentence.draft||'');
  el('answer').value=draft;
  draftCursor=sentence.prompt?-1:cursor;
@@ -2287,11 +2291,71 @@ function paintDraftMarks(nav){
    const node=document.createElement('span');
    node.className='draft-mark';
    node.append(draftIcon());
-   button.append(node);
+   const flag=button.querySelector('.flag-mark');
+   if(flag)button.insertBefore(node,flag);
+   else button.append(node);
   }else if(!typed&&mark)mark.remove();
-  const label=(button.getAttribute('aria-label')||'').replace(/, typed$/,'');
-  button.setAttribute('aria-label',typed?label+', typed':label);
+  paintJumpLabel(button);
  });
+}
+function flagIcon(){
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 24 24');
+ svg.setAttribute('aria-hidden','true');
+ const pole=document.createElementNS('http://www.w3.org/2000/svg','path');
+ pole.setAttribute('fill','currentColor');
+ pole.setAttribute('d','M6 3h2v18H6z');
+ const cloth=document.createElementNS('http://www.w3.org/2000/svg','path');
+ cloth.setAttribute('fill','currentColor');
+ cloth.setAttribute('d','M8 4h10l-2.2 4L18 12H8z');
+ svg.append(pole,cloth);
+ return svg;
+}
+function paintJumpLabel(button){
+ const sentence=sentences[Number(button.dataset.index)];
+ const base=(button.getAttribute('aria-label')||'').replace(/(?:, (?:typed|flagged))+$/,'');
+ const parts=[base];
+ if(sentenceTyped(sentence))parts.push('typed');
+ if(sentence&&sentence.flag)parts.push('flagged');
+ button.setAttribute('aria-label',parts.join(', '));
+}
+function paintFlagMarks(nav){
+ const hosts=nav?[nav]:[el('sentenceNav'),el('playerNav')];
+ hosts.forEach(host=>{
+  if(!host)return;
+  host.querySelectorAll('.jump').forEach(button=>{
+   const sentence=sentences[Number(button.dataset.index)];
+   const flagged=!!(sentence&&sentence.flag);
+   let mark=button.querySelector('.flag-mark');
+   if(flagged&&!mark){
+    mark=document.createElement('span');
+    mark.className='flag-mark';
+    mark.title='Flagged';
+    mark.append(flagIcon());
+    button.append(mark);
+   }else if(flagged)button.append(mark);
+   else if(mark)mark.remove();
+   paintJumpLabel(button);
+  });
+ });
+}
+function paintFlagButton(){
+ const sentence=sentences[cursor];
+ const button=el('flagSentence');
+ const on=!!(sentence&&sentence.flag);
+ button.hidden=!(sentence&&!sentence.blank);
+ button.setAttribute('aria-pressed',on?'true':'false');
+ button.setAttribute('aria-label',on?'Remove flag':'Flag this sentence');
+}
+function toggleFlag(){
+ if(phase!=='practice')return;
+ const sentence=sentences[cursor];
+ if(!sentence||sentence.blank)return;
+ if(sentence.flag)delete sentence.flag;
+ else sentence.flag=true;
+ paintFlagButton();
+ paintFlagMarks();
+ remember();
 }
 function highlightSentence(index,nav){
  nav=nav||el('sentenceNav');
@@ -2346,6 +2410,7 @@ function buildSentenceNav(nav,onPick){
  });
  highlightSentence(cursor,nav);
  paintDraftMarks(nav);
+ paintFlagMarks(nav);
 }
 function storeDraft(){
  if(phase!=='practice'||draftCursor<0)return;
@@ -3114,6 +3179,7 @@ el('fileSwitch').addEventListener('change',()=>{
 });
 el('prevSentence').addEventListener('click',()=>stepSentence(-1));
 el('nextSentence').addEventListener('click',()=>stepSentence(1));
+el('flagSentence').addEventListener('click',toggleFlag);
 let ctrlAlone=false;
 document.addEventListener('keydown',event=>{
  if(event.key==='Control'){if(!event.repeat)ctrlAlone=true;return}
