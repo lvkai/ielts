@@ -21,24 +21,22 @@
 *{box-sizing:border-box}html{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif}body{margin:0;background:var(--bg);color:var(--text);min-height:100vh}button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.44}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}
 .wrap{max-width:1100px;margin:0 auto;padding:43px 22px 56px}
 .home-nav{margin:0 0 10px}.home-nav a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.home-nav a:hover{text-decoration:underline}
-header{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:26px}.eyebrow{color:var(--blue);font-size:11px;letter-spacing:.15em;font-weight:800;margin-bottom:9px}.heading{font-size:clamp(25px,3.7vw,36px);letter-spacing:-.045em;line-height:1.15;margin:0}.sub{font-size:13px;color:var(--muted);margin:10px 0 0;max-width:46em}
-.settings{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.setting{display:grid;gap:6px}.setting span{font-size:11px;color:var(--muted);font-weight:650}.setting select{appearance:none;border:1px solid var(--line);border-radius:10px;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;width:280px;padding:11px 30px 11px 13px;font-weight:700;color:var(--text);font-size:13px}.setting input[type="text"]{border:1px solid var(--line);border-radius:10px;background:var(--surface);width:112px;padding:11px 12px;font-weight:700;color:var(--text);font-size:13px;letter-spacing:.14em}
+header{display:flex;align-items:end;justify-content:space-between;gap:16px 28px;margin-bottom:18px;flex-wrap:wrap}.heading{font-size:clamp(25px,3.7vw,36px);letter-spacing:-.045em;line-height:1.15;margin:0}
+.settings{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.setting{display:grid;gap:6px;width:max-content}.setting span{font-size:11px;color:var(--muted);font-weight:650;white-space:nowrap}.setting select{appearance:none;border:1px solid var(--line);border-radius:10px;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center;width:100%;min-width:96px;padding:8px 26px 8px 10px;font-weight:700;color:var(--text);font-size:13px}.setting.voice{width:176px}.setting.short{width:104px}.setting.form{width:118px}.setting input[type="text"]{border:1px solid var(--line);border-radius:10px;background:var(--surface);width:76px;padding:8px 10px;font-weight:700;color:var(--text);font-size:13px;letter-spacing:.14em}
 .layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(340px,1fr);gap:18px;align-items:start}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 9px 36px rgba(35,49,79,.035)}
 .practice{padding:26px 29px 28px;min-height:548px;display:flex;flex-direction:column}.top{display:flex;justify-content:space-between;align-items:center;gap:16px}.overline{color:var(--muted);font-size:13px;font-weight:650}.top-metrics{display:flex;align-items:baseline;gap:16px}.timer{min-width:4.6em;font-size:13px;font-weight:750;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}.progress-count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}.progress-count b{font-size:22px;color:var(--text);font-weight:800}.track{height:5px;margin-top:17px;border-radius:100px;background:#eef1f6;overflow:hidden}.track-fill{width:0;height:100%;border-radius:100px;background:var(--blue);transition:width .25s}
 .activity{display:flex;align-items:center;flex-direction:column;justify-content:center;min-height:268px;text-align:center;padding:28px 0 18px}.sound{height:92px;width:92px;border-radius:27px;border:1px solid #dbe4ff;background:var(--blue-soft);display:flex;align-items:center;justify-content:center;color:var(--blue)}.sound:hover:not(:disabled){background:#e5ecff}.sound svg{width:36px;height:36px}.sound.playing{background:#dbe5ff}.activity-title{font-size:20px;font-weight:760;letter-spacing:-.022em;margin:22px 0 6px}.activity-text{min-height:22px;font-size:13px;color:var(--muted);margin:0;line-height:1.6}
 .input-area{margin-top:auto}.answer-label{display:block;font-size:13px;color:#39465d;font-weight:750;margin-bottom:11px}.answer-row{display:flex;gap:11px}.answer-row input{width:100%;min-width:0;height:63px;padding:0 16px;border:1.5px solid #d6deeb;border-radius:13px;background:#fff;font-size:clamp(18px,2.4vw,26px);font-weight:730;letter-spacing:.14em;color:var(--text);font-variant-numeric:tabular-nums}.answer-row input:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 4px #315eea10}.answer-row input:disabled{background:#f9fafc}
 .primary{border:0;background:var(--blue);color:#fff;font-size:14px;font-weight:750;border-radius:13px;padding:0 27px;min-height:63px;white-space:nowrap}.primary:hover:not(:disabled){background:#264fd0}.secondary{border:1px solid #d8e1f0;background:#fff;color:#455874;font-size:13px;font-weight:730;border-radius:12px;padding:11px 16px;min-height:51px}.secondary:hover:not(:disabled){background:#f6f8fc}
-.below{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px}.tip{font-size:12px;color:var(--muted);line-height:1.5;margin:0}.feedback{font-size:13px;font-weight:720;color:var(--muted);text-align:right}.feedback.ok{color:var(--green)}.feedback.no{color:var(--red)}
+.below{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-height:36px}.feedback{font-size:13px;font-weight:720;color:var(--muted);text-align:right}.feedback.ok{color:var(--green)}.feedback.no{color:var(--red)}
 .actions{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}.actions .primary{height:51px;min-height:51px}.hide{display:none!important}.stop{color:var(--red);border-color:#f0d0d0}.stop:hover:not(:disabled){background:#fdecee}
 .results{padding:23px 23px 20px;min-height:548px}.result-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}.result-top h2{font-size:17px;margin:0;letter-spacing:-.02em}.result-metrics{display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-end}.score{font-size:12px;color:var(--muted)}.score b{font-size:17px;color:var(--text);font-variant-numeric:tabular-nums}
 .cols,.res-row{display:grid;grid-template-columns:28px minmax(0,1fr) minmax(0,1fr) 52px 58px;align-items:center;gap:6px}.cols{font-size:11px;color:var(--muted);padding:15px 8px 11px;border-bottom:1px solid var(--line)}.res-row{min-height:46px;border-bottom:1px solid #f0f3f7;padding:9px 8px;font-size:13px;font-variant-numeric:tabular-nums;letter-spacing:.04em}.res-row:last-child{border-bottom:0}.res-row.active{border-radius:9px;background:#f2f5ff}.num{font-size:12px;color:#a0acc0;letter-spacing:0}.hidden-val{color:#c7ceda}.truth{font-weight:760}.miss{color:var(--red);font-weight:800}.status{font-size:19px;font-weight:800;line-height:1}.status.good{color:var(--green)}.status.bad{color:var(--red)}.status.mute{color:#9aa7ba;font-size:12px}.status.current{color:var(--blue);font-size:12px}.time-col,.time-used{text-align:right;letter-spacing:0}.time-used{font-size:12px;font-weight:700;color:var(--muted)}
-.footnote{margin-top:15px;padding-top:15px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.6}.bottom{margin-top:22px;text-align:center;font-size:12px;line-height:1.7;color:var(--muted)}
 .history-links{display:flex;gap:12px;margin-top:6px}.text-link{border:0;padding:0;background:none;color:var(--blue);font-size:13px;font-weight:750;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.text-link:hover{color:#2148c4}
 .stats-dialog{border:0;border-radius:16px;padding:0;width:min(420px,calc(100vw - 28px));max-height:min(72vh,520px);color:var(--text);box-shadow:0 18px 50px rgba(24,35,57,.22)}.stats-dialog::backdrop{background:rgba(24,35,57,.38)}.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}.dialog-head h3{margin:0;font-size:16px}.dialog-close{width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:var(--red);font-size:18px;font-weight:700;line-height:1;cursor:pointer}.dialog-close:hover{background:#fdecee}.dialog-scroll{overflow:auto;max-height:min(46vh,340px)}.stats-table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}.stats-table th,.stats-table td{padding:9px 16px;text-align:left}.stats-table th{font-size:11px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line)}.stats-table td:last-child,.stats-table th:last-child{text-align:right}.dialog-empty{margin:0;padding:22px 16px;color:var(--muted);font-size:13px}.dialog-actions{display:flex;justify-content:flex-end;padding:12px 16px;border-top:1px solid var(--line)}.dialog-actions .primary{min-height:44px;height:44px;padding:0 16px;font-size:13px}
-.setting.short select{width:120px}.setting.form select{width:148px}#f-answer{letter-spacing:.12em;text-transform:uppercase}#p-answer{letter-spacing:.08em;text-transform:uppercase}.mode-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 22px;border-bottom:1px solid var(--line)}.mode-tab{border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);padding:10px 16px 12px;font-size:15px;font-weight:760;border-radius:0;margin-bottom:-1px}.mode-tab[aria-selected="true"]{color:var(--blue);border-bottom-color:var(--blue)}.mode-tab:hover{color:var(--text)}.length-tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);overflow-x:auto}.length-tab{flex:0 0 auto;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);padding:9px 12px 8px;font-size:13px;font-weight:750;border-radius:0}.length-tab[aria-selected="true"]{color:var(--blue);border-bottom-color:var(--blue)}.length-tab:hover{color:var(--text)}
+#f-answer{letter-spacing:.12em;text-transform:uppercase}#p-answer{letter-spacing:.08em;text-transform:uppercase}.mode-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:2px 0 22px;border-bottom:1px solid var(--line)}.mode-tab{border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);padding:10px 16px 12px;font-size:15px;font-weight:760;border-radius:0;margin-bottom:-1px}.mode-tab[aria-selected="true"]{color:var(--blue);border-bottom-color:var(--blue)}.mode-tab:hover{color:var(--text)}.length-tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);overflow-x:auto}.length-tab{flex:0 0 auto;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);padding:9px 12px 8px;font-size:13px;font-weight:750;border-radius:0}.length-tab[aria-selected="true"]{color:var(--blue);border-bottom-color:var(--blue)}.length-tab:hover{color:var(--text)}
 .timer-wrap{display:flex;align-items:center;justify-content:center;margin-top:21px;gap:7px}.timer-value{font-size:32px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;font-weight:800}.timer-value.urgent{color:var(--red)}.timer-label{font-size:12px;color:var(--muted)}.timer-progress{height:5px;max-width:220px;width:100%;background:#edf1f7;border-radius:100px;margin:12px auto 0;overflow:hidden}.timer-progress>div{height:100%;width:0%;background:var(--blue);transition:width .04s linear}.timer-progress.urgent>div{background:var(--red)}
-#settingsYears{flex-wrap:nowrap}#settingsYears .setting select{width:112px}#settingsYears .voice select{width:220px}
-@media(max-width:800px){.wrap{padding:27px 16px 34px}header{align-items:start;flex-direction:column}.settings,.setting,.setting select,.setting.short select,.setting.form select,#settingsYears,.setting input,#settingsYears .setting select,#settingsYears .voice select{width:100%}#settingsYears{flex-wrap:wrap}.layout{grid-template-columns:1fr}.practice,.results{min-height:0}.activity{min-height:220px}}
+@media(max-width:800px){.wrap{padding:27px 16px 34px}header{align-items:start;flex-direction:column}.layout{grid-template-columns:1fr}.practice,.results{min-height:0}.activity{min-height:220px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
 </style>
 </head>
@@ -47,25 +45,16 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
  <nav class="home-nav" aria-label="Site"><a href="index.html">← Home</a></nav>
  <div class="mode-tabs" role="tablist" aria-label="Dictation type"><button type="button" class="mode-tab" id="tabNumbers" role="tab" aria-selected="false" aria-controls="panelNumbers">Numbers</button><button type="button" class="mode-tab" id="tabYears" role="tab" aria-selected="false" aria-controls="panelYears">Years</button><button type="button" class="mode-tab" id="tabDigits" role="tab" aria-selected="true" aria-controls="panelDigits">Digits</button><button type="button" class="mode-tab" id="tabPhone" role="tab" aria-selected="false" aria-controls="panelPhone">Phone</button><button type="button" class="mode-tab" id="tabFlight" role="tab" aria-selected="false" aria-controls="panelFlight">Flight</button><button type="button" class="mode-tab" id="tabPostcode" role="tab" aria-selected="false" aria-controls="panelPostcode">Postcode</button></div>
  <header>
-  <div>
-   <div class="eyebrow">IELTS LISTENING TRAINER</div>
-   <h1 class="heading" id="pageTitle">Digit Dictation</h1>
-   <p class="sub" id="subDigits">Each round has 10 questions. Pattern 334 is spoken as 3 digits, then 3, then 4. The same digit repeated inside a group is spoken as double or triple. Type while they play. 0 is spoken as oh.</p>
-   <p class="sub hide" id="subFlight">Each round has 10 questions. Letters plays the two airline letters, one at a time. Full plays the whole flight number the same way, like B, A, two oh seven. 0 is oh, and a repeated digit is double or triple. Type while they play.</p>
-   <p class="sub hide" id="subPostcode">Each round has 10 UK postcodes. Choose a form, or Mixed. W1A 0AX also brings SW1A, EC1A, and WC1A. Each letter is spoken on its own, with a short pause before the last three characters. 0 is oh, and a repeated character is double. Type while they play.</p>
-   <p class="sub hide" id="subNumbers">Listen to a number from 1 to 99 and type it before the timer ends. Ten numbers per round, with 11–19 weighted to one third.</p>
-   <p class="sub hide" id="subYears">Listen to a year from the last 500 years and type it before the timer ends. Ten years per round.</p>
-   <p class="sub hide" id="subPhone">Choose one group. Each round has 10 questions. Basic is 3 or 4 digits. 0 is spoken as oh, and repeated digits are double or triple.</p>
-  </div>
+  <h1 class="heading" id="pageTitle">Digit Dictation</h1>
   <div class="settings" id="settingsDigits" aria-label="Voice, pattern, and gap">
-   <label class="setting"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
+   <label class="setting voice"><span>Voice</span><select id="voice" aria-label="Voice"></select></label>
    <label class="setting"><span>Pattern</span><input id="pattern" type="text" inputmode="numeric" maxlength="30" value="334" autocomplete="off" spellcheck="false" aria-label="Pattern"></label>
    <label class="setting"><span>Gap</span><select id="gap" aria-label="Gap between groups"><option value="0">0 s</option><option value="100">0.1 s</option><option value="200">0.2 s</option><option value="300">0.3 s</option><option value="500" selected>0.5 s</option></select></label>
   </div>
-  <div class="settings hide" id="settingsFlight" aria-label="Voice and what to hear"><label class="setting"><span>Voice</span><select id="f-voice" aria-label="Voice"></select></label>
+  <div class="settings hide" id="settingsFlight" aria-label="Voice and what to hear"><label class="setting voice"><span>Voice</span><select id="f-voice" aria-label="Voice"></select></label>
    <label class="setting short"><span>Listen</span><select id="f-part" aria-label="What to hear"><option value="letters">Letters</option><option value="full" selected>Full</option></select></label>
   </div>
-  <div class="settings hide" id="settingsPostcode" aria-label="Voice and form"><label class="setting"><span>Voice</span><select id="p-voice" aria-label="Voice"></select></label>
+  <div class="settings hide" id="settingsPostcode" aria-label="Voice and form"><label class="setting voice"><span>Voice</span><select id="p-voice" aria-label="Voice"></select></label>
    <label class="setting form"><span>Form</span><select id="p-form" aria-label="Postcode form"><option value="mixed" selected>Mixed</option><option value="a9">M1 1AE</option><option value="a99">B33 8TH</option><option value="aa9">CR2 6XH</option><option value="aa99">DN55 1PT</option><option value="central">W1A 0AX</option></select></label>
   </div>
   <div class="settings hide" id="settingsYears" aria-label="Test settings">
@@ -100,7 +89,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="input-area">
     <label class="answer-label" id="answerLabel" for="answer">Your 10 digits</label>
     <div class="answer-row"><input id="answer" type="text" inputmode="numeric" maxlength="12" autocomplete="off" spellcheck="false" disabled><button id="submit" class="primary" type="button" disabled>Check</button></div>
-    <div class="below"><p class="tip" id="tip">A full answer is checked in place. You can correct it. Enter starts the next question.</p><span id="feedback" class="feedback" aria-live="polite"></span></div>
+    <div class="below"><span id="feedback" class="feedback" aria-live="polite"></span></div>
    </div>
    <div class="actions"><button id="start" class="primary" type="button">Start round</button><button id="next" class="primary hide" type="button">Next</button><button id="stop" class="secondary stop hide" type="button">Stop</button></div>
   </section>
@@ -108,10 +97,8 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="result-top"><div><h2>Results</h2><div class="history-links"><button type="button" id="openMissed" class="text-link">Missed</button><button type="button" id="openSlow" class="text-link">Slowest</button></div></div><div class="result-metrics"><span class="score">Correct <b id="score">0</b> / <b id="completed">0</b></span><span class="score">Average <b id="avgTime">—</b></span></div></div>
    <div class="cols"><span>No.</span><span>Correct</span><span>Yours</span><span>Result</span><span class="time-col">Time</span></div>
    <div id="rows"></div>
-   <p class="footnote" id="summary">The answer stays hidden until you check.</p>
   </aside>
  </main>
- <p class="bottom" id="footDigits">Pattern sets the groups. 334 is 3 digits, then 3, then 4. Digits in one group are spoken together. A repeated digit in that group is double or triple. The gap runs before the next group. Missed groups and each group's time stay in this browser, separately for each group length. A group's time starts when that group is spoken and stops when its digits are entered. Three correct answers remove one miss.</p>
 </div>
 <div id="panelFlight" class="hide">
  <main class="layout">
@@ -128,7 +115,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="input-area">
     <label class="answer-label" id="f-answerLabel" for="f-answer">Your flight number</label>
     <div class="answer-row"><input id="f-answer" type="text" maxlength="7" autocomplete="off" autocapitalize="characters" spellcheck="false" disabled><button id="f-submit" class="primary" type="button" disabled>Check</button></div>
-    <div class="below"><p class="tip" id="f-tip">A full flight number is checked in place. You can correct it. Enter starts the next question.</p><span id="f-feedback" class="feedback" aria-live="polite"></span></div>
+    <div class="below"><span id="f-feedback" class="feedback" aria-live="polite"></span></div>
    </div>
    <div class="actions"><button id="f-start" class="primary" type="button">Start round</button><button id="f-next" class="primary hide" type="button">Next</button><button id="f-stop" class="secondary stop hide" type="button">Stop</button></div>
   </section>
@@ -136,12 +123,8 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="result-top"><div><h2>Results</h2><div class="history-links"><button type="button" id="f-openMissed" class="text-link">Missed</button><button type="button" id="f-openSlow" class="text-link">Slowest</button></div></div><div class="result-metrics"><span class="score">Correct <b id="f-score">0</b> / <b id="f-completed">0</b></span><span class="score">Average <b id="f-avgTime">—</b></span></div></div>
    <div class="cols"><span>No.</span><span>Correct</span><span>Yours</span><span>Result</span><span class="time-col">Time</span></div>
    <div id="f-rows"></div>
-   <p class="footnote" id="f-summary">The flight number stays hidden until you check.</p>
   </aside>
  </main>
- 
- <p class="bottom">Each letter is spoken on its own. The same letter twice is double. Digits stay in one phrase, like two oh seven. 0 is oh. A repeated digit is double or triple. Missed answers and answer times stay in this browser. Three correct answers remove one miss.</p>
-
 </div>
 <div id="panelPostcode" class="hide">
  <main class="layout">
@@ -158,7 +141,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="input-area">
     <label class="answer-label" id="p-answerLabel" for="p-answer">Your postcode</label>
     <div class="answer-row"><input id="p-answer" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" disabled><button id="p-submit" class="primary" type="button" disabled>Check</button></div>
-    <div class="below"><p class="tip" id="p-tip">A full postcode is checked in place. You can correct it. Enter starts the next question.</p><span id="p-feedback" class="feedback" aria-live="polite"></span></div>
+    <div class="below"><span id="p-feedback" class="feedback" aria-live="polite"></span></div>
    </div>
    <div class="actions"><button id="p-start" class="primary" type="button">Start round</button><button id="p-next" class="primary hide" type="button">Next</button><button id="p-stop" class="secondary stop hide" type="button">Stop</button></div>
   </section>
@@ -166,10 +149,8 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="result-top"><div><h2>Results</h2><div class="history-links"><button type="button" id="p-openMissed" class="text-link">Missed</button><button type="button" id="p-openSlow" class="text-link">Slowest</button></div></div><div class="result-metrics"><span class="score">Correct <b id="p-score">0</b> / <b id="p-completed">0</b></span><span class="score">Average <b id="p-avgTime">—</b></span></div></div>
    <div class="cols"><span>No.</span><span>Correct</span><span>Yours</span><span>Result</span><span class="time-col">Time</span></div>
    <div id="p-rows"></div>
-   <p class="footnote" id="p-summary">The postcode stays hidden until you check.</p>
   </aside>
  </main>
- <p class="bottom">Each letter is spoken on its own, with a short pause before the last three characters. 0 is oh. A repeated character is double. Missed postcodes and answer times stay in this browser. Three correct answers remove one miss.</p>
 </div>
 <div id="panelNumbers" class="hide">
 <main class="layout">
@@ -188,7 +169,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="input-area">
     <label class="answer-label" for="n-answer">Your answer</label>
     <div class="answer-row"><input id="n-answer" type="text" inputmode="numeric" maxlength="2" autocomplete="off" spellcheck="false" disabled><button id="n-submit" class="primary" type="button" disabled>Submit</button></div>
-    <div class="below"><p class="tip">A full number is checked in place. You can correct it. Enter starts the next question.</p><span id="n-feedback" class="feedback" aria-live="polite"></span></div>
+    <div class="below"><span id="n-feedback" class="feedback" aria-live="polite"></span></div>
    </div>
    <div class="actions" id="n-actions"><button id="n-start" class="primary" type="button">Start round</button><button id="n-stop" class="secondary stop hide" type="button">Stop</button><button id="n-retry" class="secondary hide" type="button">Retry mistakes</button></div>
   </section>
@@ -196,10 +177,8 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="result-top"><div><h2>Results</h2><div class="history-links"><button type="button" id="n-openMissed" class="text-link">Missed</button><button type="button" id="n-openSlow" class="text-link">Slowest</button></div></div><div class="result-metrics"><span class="score">Correct <b id="n-score">0</b> / <b id="n-completed">0</b></span><span class="score">Average time <b id="n-avgTime">—</b></span></div></div>
    <div class="cols"><span>No.</span><span>You entered</span><span>Answer</span><span>Result</span><span style="text-align:right">Time</span></div>
    <div id="n-rows"></div>
-   <div class="footnote" id="n-summary">Answers and response times appear after each question. Timing starts after speech ends.</div>
   </aside>
  </main>
-<p class="bottom">British female and British male are recorded in the page, so they play in WeChat. Other voices use this device’s speech. Missed numbers and answer times stay in this browser.</p>
 </div>
 <div id="panelYears" class="hide">
 <main class="layout">
@@ -218,7 +197,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="input-area">
     <label class="answer-label" for="y-answer">Your year</label>
     <div class="answer-row"><input id="y-answer" type="text" inputmode="numeric" maxlength="4" autocomplete="off" spellcheck="false" disabled><button id="y-submit" class="primary" type="button" disabled>Submit</button></div>
-    <div class="below"><p class="tip">A full year is checked in place. You can correct it. Enter starts the next question.</p><span id="y-feedback" class="feedback" aria-live="polite"></span></div>
+    <div class="below"><span id="y-feedback" class="feedback" aria-live="polite"></span></div>
    </div>
    <div class="actions" id="y-actions"><button id="y-start" class="primary" type="button">Start round</button><button id="y-stop" class="secondary stop hide" type="button">Stop</button><button id="y-retry" class="secondary hide" type="button">Retry mistakes</button></div>
   </section>
@@ -226,10 +205,8 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="result-top"><div><h2>Results</h2><div class="history-links"><button type="button" id="y-openMissed" class="text-link">Missed</button><button type="button" id="y-openSlow" class="text-link">Slowest</button></div></div><div class="result-metrics"><span class="score">Correct <b id="y-score">0</b> / <b id="y-completed">0</b></span><span class="score">Average time <b id="y-avgTime">—</b></span></div></div>
    <div class="cols"><span>No.</span><span>You entered</span><span>Answer</span><span>Result</span><span style="text-align:right">Time</span></div>
    <div id="y-rows"></div>
-   <div class="footnote" id="y-summary">Answers and response times appear after each question. Timing starts after speech ends.</div>
   </aside>
  </main>
-<p class="bottom">A year is spoken as one phrase: nineteen ninety-four, twenty sixteen, two thousand and five, nineteen oh five, or eighteen hundred. Speech uses an English voice on this device. Missed years and answer times stay in this browser.</p>
 </div>
 <div id="panelPhone" class="hide">
 <main class="layout">
@@ -248,7 +225,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="input-area">
     <label class="answer-label" for="c-answer">Your answer</label>
     <div class="answer-row"><input id="c-answer" type="text" inputmode="numeric" maxlength="19" autocomplete="off" spellcheck="false" disabled><button id="c-submit" class="primary" type="button" disabled>Submit</button></div>
-    <div class="below"><p class="tip">A full number is checked in place. You can correct it. Enter starts the next question.</p><span id="c-feedback" class="feedback" aria-live="polite"></span></div>
+    <div class="below"><span id="c-feedback" class="feedback" aria-live="polite"></span></div>
    </div>
    <div class="actions" id="c-actions"><button id="c-start" class="primary" type="button">Start round</button><button id="c-stop" class="secondary stop hide" type="button">Stop</button><button id="c-retry" class="secondary hide" type="button">Retry mistakes</button></div>
   </section>
@@ -256,10 +233,8 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <div class="result-top"><div><h2>Results</h2><div class="history-links"><button type="button" id="c-openMissed" class="text-link">Missed</button><button type="button" id="c-openSlow" class="text-link">Slowest</button></div></div><div class="result-metrics"><span class="score">Correct <b id="c-score">0</b> / <b id="c-completed">0</b></span><span class="score">Average time <b id="c-avgTime">—</b></span></div></div>
    <div class="cols"><span>No.</span><span>You entered</span><span>Answer</span><span>Result</span><span style="text-align:right">Time</span></div>
    <div id="c-rows"></div>
-   <div class="footnote" id="c-summary">Answers and response times appear after each question. Timing starts after the number is read.</div>
   </aside>
  </main>
-<p class="bottom">These are practice numbers, not real phone lines or cards. Speech uses an English voice on this device. Missed numbers and answer times stay in this browser.</p>
 </div>
 </div>
 <dialog id="n-missDialog" class="stats-dialog" aria-labelledby="n-missTitle">
@@ -536,7 +511,7 @@ function renderSlowDialog(){
  el('practiceSlowDialog').disabled=!rows.length||!canStartRound();
 }
 function openStatsDialog(dialog,render){render();if(!dialog.open)dialog.showModal()}
-function practiceGroups(rows,summary){
+function practiceGroups(rows){
  if(!canStartRound()||!rows.length)return;
  if(!usableVoices().length){el('activityText').textContent='Add a Google voice in Chrome, or a Windows Natural voice such as Sonia or Ryan.';return}
  el('missDialog').close();
@@ -546,7 +521,6 @@ function practiceGroups(rows,summary){
  items=rows.map(row=>row.group);
  answers=[];
  position=0;
- el('summary').textContent=summary;
  openQuestion();
 }
 function formatDigits(text,sizes){
@@ -838,7 +812,6 @@ function openQuestion(){
  el('answer').disabled=false;
  el('submit').disabled=false;
  el('answerLabel').textContent='Your '+count+' digits';
- el('tip').textContent='A full answer is checked in place. You can correct it. Enter starts the next question.';
  el('feedback').textContent='';
  el('feedback').className='feedback';
  el('activityTitle').textContent='Listen to '+count+' digits';
@@ -857,7 +830,6 @@ function startRound(){
  items=Array.from({length:ROUND},randomDigits);
  answers=[];
  position=0;
- el('summary').textContent='The answer stays hidden until you check.';
  openQuestion();
 }
 function stopRound(){
@@ -869,7 +841,6 @@ function stopRound(){
  el('feedback').textContent='';el('feedback').className='feedback';
  el('activityTitle').textContent='Ready to begin?';
  el('activityText').textContent='Round stopped.';
- el('summary').textContent='The answer stays hidden until you check.';
  refresh();
  showControls();
 }
@@ -898,7 +869,6 @@ function checkAnswer(){
  el('feedback').className='feedback '+(ok?'ok':'no');
  el('activityTitle').textContent=ok?'Matched':'Not the same sequence';
  el('activityText').textContent=formatDigits(digits,questionGroups);
- el('tip').textContent=position+1>=items.length?'Correct it if needed. Press Enter to finish this round.':'Correct it if needed. Press Enter for the next question.';
  refresh();
  showControls();
  el('answer').focus();
@@ -912,7 +882,6 @@ function nextQuestion(){
   el('answer').disabled=true;el('answer').readOnly=false;el('submit').disabled=true;
   el('activityTitle').textContent='Round complete';
   el('activityText').textContent='Start another round when you are ready.';
-  el('summary').textContent='Round complete.';
   refresh();
   showControls();
   return;
@@ -935,8 +904,8 @@ el('openMissed').addEventListener('click',()=>openStatsDialog(el('missDialog'),r
 el('openSlow').addEventListener('click',()=>openStatsDialog(el('slowDialog'),renderSlowDialog));
 el('closeMiss').addEventListener('click',()=>el('missDialog').close());
 el('closeSlow').addEventListener('click',()=>el('slowDialog').close());
-el('practiceMissedDialog').addEventListener('click',()=>practiceGroups(rankedMisses(missLength),'Each question is a missed group of '+lengthPhrase(missLength)+'.'));
-el('practiceSlowDialog').addEventListener('click',()=>practiceGroups(rankedSlow(slowLength),'Each question is a slow group of '+lengthPhrase(slowLength)+'.'));
+el('practiceMissedDialog').addEventListener('click',()=>practiceGroups(rankedMisses(missLength)));
+el('practiceSlowDialog').addEventListener('click',()=>practiceGroups(rankedSlow(slowLength)));
 el('missDialog').addEventListener('click',event=>{if(event.target===el('missDialog'))el('missDialog').close()});
 el('slowDialog').addEventListener('click',event=>{if(event.target===el('slowDialog'))el('slowDialog').close()});
 el('stop').addEventListener('click',stopRound);
@@ -1156,7 +1125,7 @@ function renderSlowDialog(){
  el('practiceSlowDialog').disabled=!rows.length||!canStartRound();
 }
 function openStatsDialog(dialog,render){render();if(!dialog.open)dialog.showModal()}
-function practiceFlights(rows,summary){
+function practiceFlights(rows){
  if(!canStartRound()||!rows.length)return;
  if(!usableVoices().length){el('activityText').textContent='Add a Google voice in Chrome, or a Windows Natural voice such as Sonia or Ryan.';return}
  el('missDialog').close();
@@ -1165,7 +1134,6 @@ function practiceFlights(rows,summary){
  items=rows.map(row=>row.flight);
  answers=[];
  position=0;
- el('summary').textContent=summary;
  openQuestion();
 }
 function digitLimit(){
@@ -1386,7 +1354,6 @@ function openQuestion(){
  el('answer').disabled=false;
  el('submit').disabled=false;
  el('answerLabel').textContent=letters?'Your two letters':'Your flight number';
- el('tip').textContent=letters?'Both letters are checked in place. You can correct them. Enter starts the next question.':'A full flight number is checked in place. You can correct it. Enter starts the next question.';
  el('feedback').textContent='';
  el('feedback').className='feedback';
  el('activityTitle').textContent=letters?'Listen to the two letters':'Listen to the flight number';
@@ -1403,7 +1370,6 @@ function startRound(){
  items=makeRound();
  answers=[];
  position=0;
- el('summary').textContent=partMode()==='letters'?'The letters stay hidden until you check.':'The flight number stays hidden until you check.';
  openQuestion();
 }
 function stopRound(){
@@ -1415,7 +1381,6 @@ function stopRound(){
  el('activityTitle').textContent='Ready to begin?';
  el('activityText').textContent='Round stopped.';
  el('play').setAttribute('aria-label',partMode()==='letters'?'Replay letters':'Replay flight number');
- el('summary').textContent=partMode()==='letters'?'The letters stay hidden until you check.':'The flight number stays hidden until you check.';
  refresh();
  showControls();
 }
@@ -1444,7 +1409,6 @@ function checkAnswer(){
  el('feedback').className='feedback '+(ok?'ok':'no');
  el('activityTitle').textContent=ok?'Matched':flight.length<=2?'Not the same letters':'Not the same flight number';
  el('activityText').textContent=formatFlight(flight);
- el('tip').textContent=position+1>=items.length?'Correct it if needed. Press Enter to finish this round.':'Correct it if needed. Press Enter for the next question.';
  refresh();
  showControls();
  el('answer').focus();
@@ -1458,7 +1422,6 @@ function nextQuestion(){
   el('answer').disabled=true;el('answer').readOnly=false;el('submit').disabled=true;
   el('activityTitle').textContent='Round complete';
   el('activityText').textContent='Start another round when you are ready.';
-  el('summary').textContent='Round complete.';
   refresh();
   showControls();
   return;
@@ -1472,7 +1435,6 @@ el('part').addEventListener('change',()=>{
  const letters=partMode()==='letters';
  el('activityText').textContent=letters?'Start a round of 10 letter pairs.':'Start a round of 10 flight numbers.';
  el('answerLabel').textContent=letters?'Your two letters':'Your flight number';
- el('tip').textContent=letters?'Both letters are checked in place. You can correct them. Enter starts the next question.':'A full flight number is checked in place. You can correct it. Enter starts the next question.';
  el('play').setAttribute('aria-label',letters?'Replay letters':'Replay flight number');
 });
 try{const savedPart=localStorage.getItem(PART_KEY);if(savedPart&&el('part').querySelector(`option[value="${savedPart}"]`))el('part').value=savedPart}catch(_){}
@@ -1481,8 +1443,8 @@ el('openMissed').addEventListener('click',()=>openStatsDialog(el('missDialog'),r
 el('openSlow').addEventListener('click',()=>openStatsDialog(el('slowDialog'),renderSlowDialog));
 el('closeMiss').addEventListener('click',()=>el('missDialog').close());
 el('closeSlow').addEventListener('click',()=>el('slowDialog').close());
-el('practiceMissedDialog').addEventListener('click',()=>practiceFlights(rankedMisses(),'Each question is one you missed.'));
-el('practiceSlowDialog').addEventListener('click',()=>practiceFlights(rankedSlow(),'Each question is one of your slowest answers.'));
+el('practiceMissedDialog').addEventListener('click',()=>practiceFlights(rankedMisses()));
+el('practiceSlowDialog').addEventListener('click',()=>practiceFlights(rankedSlow()));
 el('missDialog').addEventListener('click',event=>{if(event.target===el('missDialog'))el('missDialog').close()});
 el('slowDialog').addEventListener('click',event=>{if(event.target===el('slowDialog'))el('slowDialog').close()});
 el('stop').addEventListener('click',stopRound);
@@ -1734,7 +1696,7 @@ function renderSlowDialog(){
  el('practiceSlowDialog').disabled=!rows.length||!canStartRound();
 }
 function openStatsDialog(dialog,render){render();if(!dialog.open)dialog.showModal()}
-function practiceCodes(rows,summary){
+function practiceCodes(rows){
  if(!canStartRound()||!rows.length)return;
  if(!usableVoices().length){el('activityText').textContent='Add a Google voice in Chrome, or a Windows Natural voice such as Sonia or Ryan.';return}
  el('missDialog').close();
@@ -1743,7 +1705,6 @@ function practiceCodes(rows,summary){
  items=rows.map(row=>row.code);
  answers=[];
  position=0;
- el('summary').textContent=summary;
  openQuestion();
 }
 function codeLimit(){return items[position]?items[position].length:7}
@@ -1957,7 +1918,6 @@ function openQuestion(){
  el('answer').disabled=false;
  el('submit').disabled=false;
  el('answerLabel').textContent='Your postcode';
- el('tip').textContent='A full postcode is checked in place. You can correct it. Enter starts the next question.';
  el('feedback').textContent='';
  el('feedback').className='feedback';
  el('activityTitle').textContent='Listen to the postcode';
@@ -1973,7 +1933,6 @@ function startRound(){
  items=makeRound();
  answers=[];
  position=0;
- el('summary').textContent='The postcode stays hidden until you check.';
  openQuestion();
 }
 function stopRound(){
@@ -1984,7 +1943,6 @@ function stopRound(){
  el('feedback').textContent='';el('feedback').className='feedback';
  el('activityTitle').textContent='Ready to begin?';
  el('activityText').textContent='Round stopped.';
- el('summary').textContent='The postcode stays hidden until you check.';
  refresh();
  showControls();
 }
@@ -2012,7 +1970,6 @@ function checkAnswer(){
  el('feedback').className='feedback '+(ok?'ok':'no');
  el('activityTitle').textContent=ok?'Matched':'Not the same postcode';
  el('activityText').textContent=formatPostcode(code);
- el('tip').textContent=position+1>=items.length?'Correct it if needed. Press Enter to finish this round.':'Correct it if needed. Press Enter for the next question.';
  refresh();
  showControls();
  el('answer').focus();
@@ -2026,7 +1983,6 @@ function nextQuestion(){
   el('answer').disabled=true;el('answer').readOnly=false;el('submit').disabled=true;
   el('activityTitle').textContent='Round complete';
   el('activityText').textContent='Start another round when you are ready.';
-  el('summary').textContent='Round complete.';
   refresh();
   showControls();
   return;
@@ -2041,8 +1997,8 @@ el('openMissed').addEventListener('click',()=>openStatsDialog(el('missDialog'),r
 el('openSlow').addEventListener('click',()=>openStatsDialog(el('slowDialog'),renderSlowDialog));
 el('closeMiss').addEventListener('click',()=>el('missDialog').close());
 el('closeSlow').addEventListener('click',()=>el('slowDialog').close());
-el('practiceMissedDialog').addEventListener('click',()=>practiceCodes(rankedMisses(),'Each question is a postcode you missed.'));
-el('practiceSlowDialog').addEventListener('click',()=>practiceCodes(rankedSlow(),'Each question is one of your slowest postcodes.'));
+el('practiceMissedDialog').addEventListener('click',()=>practiceCodes(rankedMisses()));
+el('practiceSlowDialog').addEventListener('click',()=>practiceCodes(rankedSlow()));
 el('missDialog').addEventListener('click',event=>{if(event.target===el('missDialog'))el('missDialog').close()});
 el('slowDialog').addEventListener('click',event=>{if(event.target===el('slowDialog'))el('slowDialog').close()});
 el('stop').addEventListener('click',stopRound);
@@ -2375,10 +2331,10 @@ function talk(){
 }
 function setUpQuestion(){phase='speaking';answerStartedAt=null;el('answer').value='';el('answer').disabled=false;el('submit').disabled=false;el('play').disabled=false;el('activityTitle').textContent='Listen and type the number';el('activityText').textContent='Preparing audio…';el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerFill').style.width='0%';el('timerTrack').classList.remove('urgent');refreshStats();el('answer').focus({preventScroll:true});talk()}
 function showRoundControls(running){el('start').classList.toggle('hide',running);el('stop').classList.toggle('hide',!running);if(running)el('retry').classList.add('hide')}
-function startSet(pool=allNumbers){prepareDing();clearTick();clearNext();cancelSpeech();numbers=pool===allNumbers?drawRound(pool):randomize(pool).slice(0,10);answers=[];position=0;phase='idle';showRoundControls(true);el('summary').textContent='Answers stay hidden until each question is completed. Time starts after speech ends.';setUpQuestion()}
+function startSet(pool=allNumbers){prepareDing();clearTick();clearNext();cancelSpeech();numbers=pool===allNumbers?drawRound(pool):randomize(pool).slice(0,10);answers=[];position=0;phase='idle';showRoundControls(true);setUpQuestion()}
 function stopRound(){if(phase==='idle'||phase==='complete')return;clearTick();clearNext();cancelSpeech();const answered=answers.length;el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';
- if(!answered){numbers=[];position=0;phase='idle';reviewMisses=[];el('activityTitle').textContent='Ready to begin?';el('activityText').textContent='Round stopped.';el('start').textContent='Start round';showRoundControls(false);el('retry').classList.add('hide');el('summary').textContent='Answers and response times appear after each question. Timing starts after speech ends.';refreshStats();return}
- phase='complete';reviewMisses=answers.filter(x=>!x.ok).map(x=>x.target);const correct=answers.filter(x=>x.ok).length;el('activityTitle').textContent='Round stopped';el('activityText').textContent=`Stopped after ${answered} of ${numbers.length}.`;el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);el('summary').innerHTML=`Stopped · Score: <strong>${correct} / ${answered}</strong>. ${reviewMisses.length?'Retry your incorrect answers.':'The answered numbers were correct.'}`;refreshStats()}
+ if(!answered){numbers=[];position=0;phase='idle';reviewMisses=[];el('activityTitle').textContent='Ready to begin?';el('activityText').textContent='Round stopped.';el('start').textContent='Start round';showRoundControls(false);el('retry').classList.add('hide');refreshStats();return}
+ phase='complete';reviewMisses=answers.filter(x=>!x.ok).map(x=>x.target);const correct=answers.filter(x=>x.ok).length;el('activityTitle').textContent='Round stopped';el('activityText').textContent=`Stopped after ${answered} of ${numbers.length}.`;el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);refreshStats()}
 function finish(reason){
  if(reason==='timeout'&&phase==='review')return;
  if(!(phase==='speaking'||phase==='answering'||phase==='review'))return;
@@ -2416,7 +2372,7 @@ function goNext(){
  else endSet();
 }
 function endSet(){if(phase==='complete')return;clearTick();cancelSpeech();phase='complete';const correct=answers.filter(x=>x.ok).length;playCompletionSound(correct===numbers.length);reviewMisses=answers.filter(x=>!x.ok).map(x=>x.target);el('activityTitle').textContent='Round complete';el('activityText').textContent=`${correct} of ${numbers.length} correct`;
- el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);el('feedback').textContent='';el('summary').innerHTML=`Score: <strong>${correct} / ${numbers.length}</strong> · Accuracy: <strong>${Math.round(correct/numbers.length*100)}%</strong>. ${reviewMisses.length?'Retry your incorrect answers.':'Perfect round!'}`;refreshStats();}
+ el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);el('feedback').textContent='';refreshStats();}
 el('start').addEventListener('click',()=>startSet());el('stop').addEventListener('click',stopRound);el('retry').addEventListener('click',()=>{if(reviewMisses.length)startSet(reviewMisses)});
 el('openMissed').addEventListener('click',()=>openStatsDialog(el('missDialog'),renderMissDialog));
 el('openSlow').addEventListener('click',()=>openStatsDialog(el('slowDialog'),renderSlowDialog));
@@ -2841,7 +2797,7 @@ function startSet(preset){
  prepareDing();clearTick();clearNext();cancelSpeech();
  items=preset&&preset.length?preset.slice(0,ROUND):drawRound();
  answers=[];position=0;phase='idle';showRoundControls(true);
- el('summary').textContent='Answers stay hidden until each question is completed. Time starts after the number is read.';
+ 
  setUpQuestion();
 }
 function stopRound(){
@@ -2849,10 +2805,10 @@ function stopRound(){
  clearTick();clearNext();cancelSpeech();
  const answered=answers.length;
  el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';
- if(!answered){items=[];position=0;phase='idle';reviewMisses=[];el('activityTitle').textContent='Ready to begin?';el('activityText').textContent='Round stopped.';el('start').textContent='Start round';showRoundControls(false);el('retry').classList.add('hide');el('summary').textContent='Answers and response times appear after each question. Timing starts after the number is read.';refreshStats();return}
+ if(!answered){items=[];position=0;phase='idle';reviewMisses=[];el('activityTitle').textContent='Ready to begin?';el('activityText').textContent='Round stopped.';el('start').textContent='Start round';showRoundControls(false);el('retry').classList.add('hide');refreshStats();return}
  phase='complete';reviewMisses=answers.filter(x=>!x.ok).map(x=>x.item);const correct=answers.filter(x=>x.ok).length;
  el('activityTitle').textContent='Round stopped';el('activityText').textContent=`Stopped after ${answered} of ${items.length}.`;el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);
- el('summary').innerHTML=`Stopped · Score: <strong>${correct} / ${answered}</strong>. ${reviewMisses.length?'Retry the incorrect numbers.':'The answered numbers were correct.'}`;refreshStats();
+ refreshStats();
 }
 function finish(reason){
  if(reason==='timeout'&&phase==='review')return;
@@ -2900,7 +2856,7 @@ function endSet(){
  el('activityTitle').textContent='Round complete';el('activityText').textContent=`${correct} of ${items.length} correct`;
  el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';
  el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);el('feedback').textContent='';
- el('summary').innerHTML=`Score: <strong>${correct} / ${items.length}</strong> · Accuracy: <strong>${Math.round(correct/items.length*100)}%</strong>. ${reviewMisses.length?'Retry the incorrect numbers.':'Perfect round!'}`;refreshStats();
+ refreshStats();
 }
 el('answer').addEventListener('input',()=>{
  const cleaned=el('answer').value.replace(/[^\d\s-]/g,'');
@@ -2973,7 +2929,6 @@ function yearList(){
  return years;
 }
 const randomize=xs=>{const a=[...xs];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-document.getElementById('subYears').textContent=`Listen to a year from ${yearStart} to ${yearEnd} and type it before the timer ends. Ten years per round.`;
 const VOICE_KEY='ielts-dictation-voice';
 const inWeChat=/MicroMessenger/i.test(navigator.userAgent);
 const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window)&&!inWeChat;
@@ -3250,12 +3205,11 @@ function startSet(pool){
  if(!source.length){el('activityText').textContent='Choose a voice, then start the round.';return}
  prepareDing();clearTick();clearNext();cancelSpeech();
  years=randomize(source).slice(0,10);answers=[];position=0;phase='idle';showRoundControls(true);
- el('summary').textContent='Answers stay hidden until each question is completed. Time starts after speech ends.';
  setUpQuestion();
 }
 function stopRound(){if(phase==='idle'||phase==='complete')return;clearTick();clearNext();cancelSpeech();const answered=answers.length;el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';
- if(!answered){years=[];position=0;phase='idle';reviewMisses=[];el('activityTitle').textContent='Ready to begin?';el('activityText').textContent='Round stopped.';el('start').textContent='Start round';showRoundControls(false);el('retry').classList.add('hide');el('summary').textContent='Answers and response times appear after each question. Timing starts after speech ends.';refreshStats();return}
- phase='complete';reviewMisses=answers.filter(x=>!x.ok).map(x=>x.target);const correct=answers.filter(x=>x.ok).length;el('activityTitle').textContent='Round stopped';el('activityText').textContent=`Stopped after ${answered} of ${years.length}.`;el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);el('summary').innerHTML=`Stopped · Score: <strong>${correct} / ${answered}</strong>. ${reviewMisses.length?'Retry your incorrect answers.':'The answered years were correct.'}`;refreshStats()}
+ if(!answered){years=[];position=0;phase='idle';reviewMisses=[];el('activityTitle').textContent='Ready to begin?';el('activityText').textContent='Round stopped.';el('start').textContent='Start round';showRoundControls(false);el('retry').classList.add('hide');refreshStats();return}
+ phase='complete';reviewMisses=answers.filter(x=>!x.ok).map(x=>x.target);const correct=answers.filter(x=>x.ok).length;el('activityTitle').textContent='Round stopped';el('activityText').textContent=`Stopped after ${answered} of ${years.length}.`;el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);refreshStats()}
 function finish(reason){
  if(reason==='timeout'&&phase==='review')return;
  if(!(phase==='speaking'||phase==='answering'||phase==='review'))return;
@@ -3293,7 +3247,7 @@ function goNext(){
  else endSet();
 }
 function endSet(){if(phase==='complete')return;clearTick();cancelSpeech();phase='complete';const correct=answers.filter(x=>x.ok).length;playCompletionSound(correct===years.length);reviewMisses=answers.filter(x=>!x.ok).map(x=>x.target);el('activityTitle').textContent='Round complete';el('activityText').textContent=`${correct} of ${years.length} correct`;
- el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);el('feedback').textContent='';el('summary').innerHTML=`Score: <strong>${correct} / ${years.length}</strong> · Accuracy: <strong>${Math.round(correct/years.length*100)}%</strong>. ${reviewMisses.length?'Retry your incorrect answers.':'Perfect round!'}`;refreshStats();}
+ el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);el('feedback').textContent='';refreshStats();}
 el('start').addEventListener('click',()=>startSet());el('stop').addEventListener('click',stopRound);el('retry').addEventListener('click',()=>{if(reviewMisses.length)startSet(reviewMisses)});
 el('openMissed').addEventListener('click',()=>openStatsDialog(el('missDialog'),renderMissDialog));
 el('openSlow').addEventListener('click',()=>openStatsDialog(el('slowDialog'),renderSlowDialog));
@@ -3338,7 +3292,6 @@ window.addEventListener('ielts-speak',event=>{if(event.detail!=='years')yieldToO
 const modes=['numbers','years','digits','phone','flight','postcode'];
 const tabs={numbers:document.getElementById('tabNumbers'),years:document.getElementById('tabYears'),digits:document.getElementById('tabDigits'),phone:document.getElementById('tabPhone'),flight:document.getElementById('tabFlight'),postcode:document.getElementById('tabPostcode')};
 const panels={numbers:document.getElementById('panelNumbers'),years:document.getElementById('panelYears'),digits:document.getElementById('panelDigits'),phone:document.getElementById('panelPhone'),flight:document.getElementById('panelFlight'),postcode:document.getElementById('panelPostcode')};
-const subs={numbers:document.getElementById('subNumbers'),years:document.getElementById('subYears'),digits:document.getElementById('subDigits'),phone:document.getElementById('subPhone'),flight:document.getElementById('subFlight'),postcode:document.getElementById('subPostcode')};
 const settings={numbers:document.getElementById('settingsNumbers'),years:document.getElementById('settingsYears'),digits:document.getElementById('settingsDigits'),phone:document.getElementById('settingsPhone'),flight:document.getElementById('settingsFlight'),postcode:document.getElementById('settingsPostcode')};
 const title=document.getElementById('pageTitle');
 const names={numbers:'Number Dictation',years:'Year Dictation',digits:'Digit Dictation',phone:'Phone and Card Dictation',flight:'Flight Number Dictation',postcode:'Postcode Dictation'};
@@ -3348,7 +3301,6 @@ function show(name){
  Object.keys(panels).forEach(key=>{
   const on=key===mode;
   panels[key].classList.toggle('hide',!on);
-  subs[key].classList.toggle('hide',!on);
   settings[key].classList.toggle('hide',!on);
   tabs[key].setAttribute('aria-selected',on?'true':'false');
   tabs[key].tabIndex=on?0:-1;
