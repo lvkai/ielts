@@ -98,7 +98,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
 .setting{position:relative;display:flex;align-items:center}.setting span{position:absolute;left:0;bottom:calc(100% + 3px);font-size:11px;line-height:1;color:var(--muted);font-weight:650;white-space:nowrap}.setting select{appearance:none;border:1px solid var(--line);border-radius:12px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23738097' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;min-height:42px;padding:0 28px 0 12px;font-weight:700}
 .note{margin:14px 0 0;color:var(--muted);font-size:12px;line-height:1.6}.note.warn{color:var(--red)}
 .name-field{display:flex;align-items:center;gap:8px;margin-top:10px}.name-field span{font-size:12px;color:var(--muted);font-weight:750}.name-field input{width:min(360px,100%);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-weight:700}
-.library{margin-top:22px}.library h2{margin:0 0 4px;font-size:16px;letter-spacing:-.02em}.library-empty{margin:8px 0 0;color:var(--muted);font-size:13px}.library-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.library-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.library-copy b{font-weight:750}.library-meta{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}.library-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}.library-actions button{border-radius:999px;min-height:34px;padding:0 12px;font-size:12px;font-weight:750}.library-actions .edit,.library-actions .listen{border:1px solid #d8e1f0;background:#fff;color:#455874}.library-actions .practice{border:0;background:var(--blue);color:#fff}.library-actions .danger{border:0;background:none;padding:0 4px;color:var(--red)}
+.library{margin-top:22px}.library h2{margin:0 0 4px;font-size:16px;letter-spacing:-.02em}.library-hint{margin:0 0 8px;color:var(--muted);font-size:12px}.library-empty{margin:8px 0 0;color:var(--muted);font-size:13px}.library-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.library-item.dragging{opacity:.45}.library-main{display:flex;align-items:center;gap:8px;flex:1;min-width:0;width:100%}.drag-handle{width:32px;height:40px;border:0;background:transparent;color:#8b97ab;border-radius:8px;display:grid;place-items:center;flex-shrink:0;padding:0;touch-action:none;cursor:grab}.drag-handle:hover{background:#f3f6fb;color:var(--text)}.drag-handle:active{cursor:grabbing}.drag-handle svg{width:16px;height:16px}.library-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.library-copy b{font-weight:750}.library-meta{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}.library-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}.library-actions button{border-radius:999px;min-height:34px;padding:0 12px;font-size:12px;font-weight:750}.library-actions .edit,.library-actions .listen{border:1px solid #d8e1f0;background:#fff;color:#455874}.library-actions .practice{border:0;background:var(--blue);color:#fff}.library-actions .danger{border:0;background:none;padding:0 4px;color:var(--red)}
 .player-bit{display:block;width:100%;border:0;background:transparent;border-radius:10px;min-height:48px;padding:8px 12px;text-align:left;line-height:1.45;color:var(--muted);font-size:22px;font-weight:400}.player-bit.now{color:var(--text)}.player-roll{will-change:transform}.player-head{display:flex;justify-content:flex-end;padding:0 0 8px}.player-count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}.player-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:16px}.player-controls .icon-btn{width:42px;min-width:42px;height:42px;min-height:42px;padding:0}.player-focus{position:relative;overflow:hidden;height:min(40vh,260px);margin-top:28px}.player-hidden{margin:16px 0;color:var(--muted)}
 .fine{margin:18px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
 @media(max-width:640px){.wrap{padding:22px 14px 40px}.panel{padding:18px 14px}.start-bar{align-items:stretch;flex-direction:column}.start-bar .primary,.start-bar .secondary,.work-actions .secondary{width:100%}.library-item{align-items:flex-start;flex-direction:column}.library-actions{width:100%}.practice-layout{flex-direction:column}.sentence-nav{width:100%;max-height:132px;flex-direction:row}.jump{width:auto;flex:none}}
@@ -137,6 +137,7 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
   <p id="uploadError" class="note" style="color:var(--red)" role="status"></p>
   <div id="library" class="library" hidden>
    <h2>Saved recordings</h2>
+   <p id="libraryHint" class="library-hint" hidden>Drag a handle to change the order. Arrow keys move the focused recording.</p>
    <div id="libraryList"></div>
   </div>
  </section>
@@ -831,7 +832,15 @@ async function listRecordings(){
  const tx=db.transaction('recordings','readonly');
  const records=await requestResult(tx.objectStore('recordings').getAll());
  await txDone(tx);
- return records.sort((a,b)=>b.created-a.created);
+ const ranked=records.some(record=>Number.isFinite(Number(record.order)));
+ return records.sort((a,b)=>{
+  if(ranked){
+   const ao=Number.isFinite(Number(a.order))?Number(a.order):-Infinity;
+   const bo=Number.isFinite(Number(b.order))?Number(b.order):-Infinity;
+   if(ao!==bo)return ao-bo;
+  }
+  return (Number(b.created)||0)-(Number(a.created)||0);
+ });
 }
 function createRecording(file,name,duration,tookMs){
  const id=crypto.randomUUID();
@@ -952,6 +961,65 @@ function flushRecording(){
   if(blankPass)patch.blankPass=blankPass;
   return updateRecording(currentId,patch);
 }
+function saveLibraryOrder(){
+ const ids=[...el('libraryList').querySelectorAll('.library-item')].map(row=>row.dataset.id).filter(Boolean);
+ return queueWrite(async()=>{
+  const db=await openDb();
+  const tx=db.transaction('recordings','readwrite');
+  const store=tx.objectStore('recordings');
+  for(let index=0;index<ids.length;index++){
+   const existing=await requestResult(store.get(ids[index]));
+   if(existing&&existing.order!==index){existing.order=index;store.put(existing)}
+  }
+  await txDone(tx);
+ });
+}
+function bindReorder(row,handle){
+ handle.addEventListener('pointerdown',event=>{
+  if(event.button!==0)return;
+  event.preventDefault();
+  const host=el('libraryList');
+  let moved=false;
+  const startY=event.clientY;
+  try{handle.setPointerCapture(event.pointerId)}catch(_){}
+  const place=ev=>{
+   const rows=[...host.querySelectorAll('.library-item')].filter(item=>item!==row);
+   const next=rows.find(item=>{
+    const box=item.getBoundingClientRect();
+    return ev.clientY<box.top+box.height/2;
+   })||null;
+   if(row.nextElementSibling!==next){host.insertBefore(row,next);moved=true}
+  };
+  const move=ev=>{
+   if(!moved&&Math.abs(ev.clientY-startY)<5)return;
+   row.classList.add('dragging');
+   if(ev.clientY<72)window.scrollBy(0,-14);
+   else if(ev.clientY>window.innerHeight-72)window.scrollBy(0,14);
+   place(ev);
+  };
+  const end=()=>{
+   handle.removeEventListener('pointermove',move);
+   handle.removeEventListener('pointerup',end);
+   handle.removeEventListener('pointercancel',end);
+   row.classList.remove('dragging');
+   if(moved)saveLibraryOrder().catch(()=>{});
+  };
+  handle.addEventListener('pointermove',move);
+  handle.addEventListener('pointerup',end);
+  handle.addEventListener('pointercancel',end);
+ });
+ handle.addEventListener('keydown',event=>{
+  if(event.key!=='ArrowUp'&&event.key!=='ArrowDown')return;
+  const host=el('libraryList');
+  const sibling=event.key==='ArrowUp'?row.previousElementSibling:row.nextElementSibling;
+  if(!sibling||!sibling.classList.contains('library-item'))return;
+  event.preventDefault();
+  if(event.key==='ArrowUp')host.insertBefore(row,sibling);
+  else host.insertBefore(sibling,row);
+  saveLibraryOrder().catch(()=>{});
+  handle.focus();
+ });
+}
 async function renderLibrary(){
  const host=el('libraryList');
  let records=[];
@@ -959,6 +1027,8 @@ async function renderLibrary(){
  catch(_){el('library').hidden=true;return}
  el('library').hidden=false;
  host.replaceChildren();
+ const hint=el('libraryHint');
+ if(hint)hint.hidden=records.length<2;
  if(!records.length){
   const empty=document.createElement('p');
   empty.className='library-empty';
@@ -969,6 +1039,18 @@ async function renderLibrary(){
  records.forEach(record=>{
   const row=document.createElement('div');
   row.className='library-item';
+  row.dataset.id=record.id;
+  const main=document.createElement('div');
+  main.className='library-main';
+  if(records.length>1){
+   const handle=document.createElement('button');
+   handle.type='button';
+   handle.className='drag-handle';
+   handle.setAttribute('aria-label','Reorder');
+   handle.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="5" cy="3.5" r="1.2" fill="currentColor"/><circle cx="11" cy="3.5" r="1.2" fill="currentColor"/><circle cx="5" cy="8" r="1.2" fill="currentColor"/><circle cx="11" cy="8" r="1.2" fill="currentColor"/><circle cx="5" cy="12.5" r="1.2" fill="currentColor"/><circle cx="11" cy="12.5" r="1.2" fill="currentColor"/></svg>';
+   bindReorder(row,handle);
+   main.append(handle);
+  }
   const copy=document.createElement('div');
   copy.className='library-copy';
   const name=document.createElement('b');
@@ -1008,7 +1090,8 @@ async function renderLibrary(){
    renderLibrary();
   });
   actions.append(edit,listen,practice,remove);
-  row.append(copy,actions);
+  main.append(copy);
+  row.append(main,actions);
   host.append(row);
  });
 }
