@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f8fb">
-<meta name="description" content="Free IELTS listening practice for numbers from 1 to 99, digit groups, phone and card numbers, flight numbers, and UK postcodes. Switch between them. 11–19 are weighted to one third. Pattern 334 speaks 3 digits, then 3, then 4.">
+<meta name="description" content="Free IELTS listening practice for numbers from 1 to 99, years from the last 500 years, digit groups, phone and card numbers, flight numbers, and UK postcodes. Switch between them. 11–19 are weighted to one third. Pattern 334 speaks 3 digits, then 3, then 4.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://lvkai.github.io/ielts/ielts-listening-digits.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="IELTS Listening Number Dictation">
-<meta property="og:description" content="Free IELTS listening practice for numbers from 1 to 99, digit groups, phone and card numbers, flight numbers, and UK postcodes. Switch between them. 11–19 are weighted to one third. Pattern 334 speaks 3 digits, then 3, then 4.">
+<meta property="og:description" content="Free IELTS listening practice for numbers from 1 to 99, years from the last 500 years, digit groups, phone and card numbers, flight numbers, and UK postcodes. Switch between them. 11–19 are weighted to one third. Pattern 334 speaks 3 digits, then 3, then 4.">
 <meta property="og:url" content="https://lvkai.github.io/ielts/ielts-listening-digits.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Listening Number Dictation","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-digits.html","description":"Free IELTS listening practice for numbers from 1 to 99, digit groups, phone and card numbers, flight numbers, and UK postcodes. Switch between them. 11–19 are weighted to one third. Pattern 334 speaks 3 digits, then 3, then 4.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"IELTS Listening Number Dictation","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://lvkai.github.io/ielts/ielts-listening-digits.html","description":"Free IELTS listening practice for numbers from 1 to 99, years from the last 500 years, digit groups, phone and card numbers, flight numbers, and UK postcodes. Switch between them. 11–19 are weighted to one third. Pattern 334 speaks 3 digits, then 3, then 4.","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D6BCN8YEYC"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-D6BCN8YEYC');</script>
 <title>IELTS Listening Number Dictation</title>
@@ -44,7 +44,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
 <body>
 <div class="wrap">
  <nav class="home-nav" aria-label="Site"><a href="index.html">← Home</a></nav>
- <div class="mode-tabs" role="tablist" aria-label="Dictation type"><button type="button" class="mode-tab" id="tabNumbers" role="tab" aria-selected="false" aria-controls="panelNumbers">Numbers</button><button type="button" class="mode-tab" id="tabDigits" role="tab" aria-selected="true" aria-controls="panelDigits">Digits</button><button type="button" class="mode-tab" id="tabPhone" role="tab" aria-selected="false" aria-controls="panelPhone">Phone</button><button type="button" class="mode-tab" id="tabFlight" role="tab" aria-selected="false" aria-controls="panelFlight">Flight</button><button type="button" class="mode-tab" id="tabPostcode" role="tab" aria-selected="false" aria-controls="panelPostcode">Postcode</button></div>
+ <div class="mode-tabs" role="tablist" aria-label="Dictation type"><button type="button" class="mode-tab" id="tabNumbers" role="tab" aria-selected="false" aria-controls="panelNumbers">Numbers</button><button type="button" class="mode-tab" id="tabYears" role="tab" aria-selected="false" aria-controls="panelYears">Years</button><button type="button" class="mode-tab" id="tabDigits" role="tab" aria-selected="true" aria-controls="panelDigits">Digits</button><button type="button" class="mode-tab" id="tabPhone" role="tab" aria-selected="false" aria-controls="panelPhone">Phone</button><button type="button" class="mode-tab" id="tabFlight" role="tab" aria-selected="false" aria-controls="panelFlight">Flight</button><button type="button" class="mode-tab" id="tabPostcode" role="tab" aria-selected="false" aria-controls="panelPostcode">Postcode</button></div>
  <header>
   <div>
    <div class="eyebrow">IELTS LISTENING TRAINER</div>
@@ -53,6 +53,7 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
    <p class="sub hide" id="subFlight">Each round has 10 questions. Letters plays the two airline letters, one at a time. Full plays the whole flight number the same way, like B, A, two oh seven. 0 is oh, and a repeated digit is double or triple. Type while they play.</p>
    <p class="sub hide" id="subPostcode">Each round has 10 UK postcodes. Choose a form, or Mixed. W1A 0AX also brings SW1A, EC1A, and WC1A. Each letter is spoken on its own, with a short pause before the last three characters. 0 is oh, and a repeated character is double. Type while they play.</p>
    <p class="sub hide" id="subNumbers">Listen to a number from 1 to 99 and type it before the timer ends. Ten numbers per round, with 11–19 weighted to one third.</p>
+   <p class="sub hide" id="subYears">Listen to a year from the last 500 years and type it before the timer ends. Ten years per round.</p>
    <p class="sub hide" id="subPhone">Choose one group. Each round has 10 questions. Basic is 3 or 4 digits. 0 is spoken as oh, and repeated digits are double or triple.</p>
   </div>
   <div class="settings" id="settingsDigits" aria-label="Voice, pattern, and gap">
@@ -65,6 +66,11 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
   </div>
   <div class="settings hide" id="settingsPostcode" aria-label="Voice and form"><label class="setting"><span>Voice</span><select id="p-voice" aria-label="Voice"></select></label>
    <label class="setting form"><span>Form</span><select id="p-form" aria-label="Postcode form"><option value="mixed" selected>Mixed</option><option value="a9">M1 1AE</option><option value="a99">B33 8TH</option><option value="aa9">CR2 6XH</option><option value="aa99">DN55 1PT</option><option value="central">W1A 0AX</option></select></label>
+  </div>
+  <div class="settings hide" id="settingsYears" aria-label="Test settings">
+   <label class="setting voice"><span>Voice</span><select id="y-voice" aria-label="Voice"></select></label>
+   <label class="setting"><span>Playback speed</span><select id="y-speed" aria-label="Playback speed"><option value="0.8">0.8×</option><option value="1" selected>1.0×</option><option value="1.2">1.2×</option></select></label>
+   <label class="setting"><span>Time limit</span><select id="y-limit" aria-label="Time limit per question"><option value="2">2 sec</option><option value="3">3 sec</option><option value="5" selected>5 sec</option><option value="10">10 sec</option></select></label>
   </div>
   <div class="settings hide" id="settingsNumbers" aria-label="Test settings">
    <label class="setting voice"><span>Voice</span><select id="n-voice" aria-label="Voice"></select></label>
@@ -194,6 +200,36 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
  </main>
 <p class="bottom">British female and British male are recorded in the page, so they play in WeChat. Other voices use this device’s speech. Missed numbers and answer times stay in this browser.</p>
 </div>
+<div id="panelYears" class="hide">
+<main class="layout">
+  <section class="panel practice" aria-label="Year dictation">
+   <div class="top"><div class="overline" id="y-roundLabel">Ready</div><div class="progress-count"><b id="y-qIndex">0</b> / <span id="y-qTotal">10</span></div></div>
+   <div class="track"><div class="track-fill" id="y-progress"></div></div>
+   <div class="activity">
+    <button type="button" id="y-play" class="sound" aria-label="Replay year" title="Replay year" disabled>
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    </button>
+    <h2 class="activity-title" id="y-activityTitle">Ready to begin?</h2>
+    <p class="activity-text" id="y-activityText" role="status">Start a round of 10 years.</p>
+    <div class="timer-wrap"><span id="y-timer" class="timer-value">--</span><span class="timer-label">sec</span></div>
+    <div id="y-timerTrack" class="timer-progress"><div id="y-timerFill"></div></div>
+   </div>
+   <div class="input-area">
+    <label class="answer-label" for="y-answer">Your year</label>
+    <div class="answer-row"><input id="y-answer" type="text" inputmode="numeric" maxlength="4" autocomplete="off" spellcheck="false" disabled><button id="y-submit" class="primary" type="button" disabled>Submit</button></div>
+    <div class="below"><p class="tip">Press Enter or wait for the timer · Tap the speaker to replay</p><span id="y-feedback" class="feedback" aria-live="polite"></span></div>
+   </div>
+   <div class="actions" id="y-actions"><button id="y-start" class="primary" type="button">Start round</button><button id="y-stop" class="secondary stop hide" type="button">Stop</button><button id="y-retry" class="secondary hide" type="button">Retry mistakes</button></div>
+  </section>
+  <aside class="panel results" aria-label="Question results">
+   <div class="result-top"><div><h2>Results</h2><div class="history-links"><button type="button" id="y-openMissed" class="text-link">Missed</button><button type="button" id="y-openSlow" class="text-link">Slowest</button></div></div><div class="result-metrics"><span class="score">Correct <b id="y-score">0</b> / <b id="y-completed">0</b></span><span class="score">Average time <b id="y-avgTime">—</b></span></div></div>
+   <div class="cols"><span>No.</span><span>You entered</span><span>Answer</span><span>Result</span><span style="text-align:right">Time</span></div>
+   <div id="y-rows"></div>
+   <div class="footnote" id="y-summary">Answers and response times appear after each question. Timing starts after speech ends.</div>
+  </aside>
+ </main>
+<p class="bottom">A year is spoken as nineteen ninety-four, twenty sixteen, two thousand and five, nineteen oh five, or eighteen hundred. Recorded British voices play the two halves when both are saved as numbers. Missed years and answer times stay in this browser.</p>
+</div>
 <div id="panelPhone" class="hide">
 <main class="layout">
   <section class="panel practice" aria-label="Dictation practice">
@@ -234,6 +270,16 @@ header{display:flex;align-items:end;justify-content:space-between;gap:16px;margi
  <div class="dialog-head"><h3 id="n-slowTitle">Slowest</h3><button type="button" id="n-closeSlow" class="dialog-close" aria-label="Close">×</button></div>
  <div class="dialog-scroll"><table class="stats-table"><thead><tr><th>Number</th><th>Time</th></tr></thead><tbody id="n-slowBody"></tbody></table><p id="n-slowEmpty" class="dialog-empty hide">No timed answers yet.</p></div>
  <div class="dialog-actions"><button type="button" id="n-practiceSlowDialog" class="primary" disabled>Practice these</button></div>
+</dialog>
+<dialog id="y-missDialog" class="stats-dialog" aria-labelledby="y-missTitle">
+ <div class="dialog-head"><h3 id="y-missTitle">Missed</h3><button type="button" id="y-closeMiss" class="dialog-close" aria-label="Close">×</button></div>
+ <div class="dialog-scroll"><table class="stats-table"><thead><tr><th>Year</th><th>Misses</th></tr></thead><tbody id="y-missBody"></tbody></table><p id="y-missEmpty" class="dialog-empty hide">No missed years yet.</p></div>
+ <div class="dialog-actions"><button type="button" id="y-practiceMissedDialog" class="primary" disabled>Practice these</button></div>
+</dialog>
+<dialog id="y-slowDialog" class="stats-dialog" aria-labelledby="y-slowTitle">
+ <div class="dialog-head"><h3 id="y-slowTitle">Slowest</h3><button type="button" id="y-closeSlow" class="dialog-close" aria-label="Close">×</button></div>
+ <div class="dialog-scroll"><table class="stats-table"><thead><tr><th>Year</th><th>Time</th></tr></thead><tbody id="y-slowBody"></tbody></table><p id="y-slowEmpty" class="dialog-empty hide">No timed years yet.</p></div>
+ <div class="dialog-actions"><button type="button" id="y-practiceSlowDialog" class="primary" disabled>Practice these</button></div>
 </dialog>
 <dialog id="c-missDialog" class="stats-dialog" aria-labelledby="c-missTitle">
  <div class="dialog-head"><h3 id="c-missTitle">Missed</h3><button type="button" id="c-closeMiss" class="dialog-close" aria-label="Close">×</button></div>
@@ -2687,14 +2733,348 @@ refreshStats();
 function yieldToOther(){cancelSpeech();clearTick();}
 window.addEventListener('ielts-speak',event=>{if(event.detail!=='phone')yieldToOther()});
 })();
+(()=>{'use strict';
+const el=id=>document.getElementById('y-'+id);
+const yearEnd=new Date().getFullYear();
+const yearStart=yearEnd-499;
+const belowTwenty=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const decades=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+const english=n=>n<20?belowTwenty[n]:decades[Math.floor(n/10)]+(n%10?'-'+belowTwenty[n%10]:'');
+function yearPhrase(year){
+ const hi=Math.floor(year/100),lo=year%100;
+ if(year===2000)return 'two thousand';
+ if(year>2000&&year<2010)return 'two thousand and '+english(lo);
+ if(lo===0)return english(hi)+' hundred';
+ if(lo<10)return english(hi)+' oh '+english(lo);
+ return english(hi)+' '+english(lo);
+}
+function yearClips(year){
+ const hi=Math.floor(year/100),lo=year%100;
+ if(hi<1||hi>99||lo<10)return null;
+ return [hi,lo];
+}
+function yearList(){
+ const years=[];
+ for(let year=yearStart;year<=yearEnd;year++)years.push(year);
+ return years;
+}
+const randomize=xs=>{const a=[...xs];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+document.getElementById('subYears').textContent=`Listen to a year from ${yearStart} to ${yearEnd} and type it before the timer ends. Ten years per round.`;
+const recordedVoices=[{id:'f',name:'British female'},{id:'m',name:'British male'}];
+const VOICE_KEY='ielts-dictation-voice';
+const inWeChat=/MicroMessenger/i.test(navigator.userAgent);
+const speechOK=('speechSynthesis' in window)&&('SpeechSynthesisUtterance' in window)&&!inWeChat;
+const clip=document.createElement('audio');
+clip.preload='auto';
+clip.setAttribute('playsinline','');
+clip.setAttribute('webkit-playsinline','');
+if('preservesPitch' in clip)clip.preservesPitch=true;
+clip.style.cssText='position:absolute;width:1px;height:1px;opacity:0;pointer-events:none';
+document.body.append(clip);
+const SoundContext=window.AudioContext||window.webkitAudioContext;
+let completionAudio=null;
+function prepareDing(){
+ if(!SoundContext)return;
+ try{
+  if(!completionAudio||completionAudio.state==='closed')completionAudio=new SoundContext();
+  if(completionAudio.state==='suspended')completionAudio.resume().catch(()=>{});
+ }catch(_){completionAudio=null;}
+}
+function playCompletionSound(perfect){
+ if(!completionAudio||completionAudio.state==='closed')return;
+ const play=()=>{
+  try{
+   const start=completionAudio.currentTime+0.015;
+   if(perfect){
+    const envelope=completionAudio.createGain();
+    envelope.gain.setValueAtTime(0.0001,start);
+    envelope.gain.exponentialRampToValueAtTime(0.16,start+0.015);
+    envelope.gain.exponentialRampToValueAtTime(0.0001,start+0.55);
+    envelope.connect(completionAudio.destination);
+    for(const [frequency,volume] of [[880,1],[1320,0.25]]){
+     const oscillator=completionAudio.createOscillator();
+     const harmonic=completionAudio.createGain();
+     oscillator.type='sine';oscillator.frequency.value=frequency;
+     harmonic.gain.value=volume;
+     oscillator.connect(harmonic);harmonic.connect(envelope);
+     oscillator.start(start);oscillator.stop(start+0.58);
+    }
+   }else{
+    for(const [frequency,offset] of [[440,0],[330,0.23]]){
+     const oscillator=completionAudio.createOscillator();
+     const envelope=completionAudio.createGain();
+     const at=start+offset;
+     oscillator.type='triangle';oscillator.frequency.value=frequency;
+     envelope.gain.setValueAtTime(0.0001,at);
+     envelope.gain.exponentialRampToValueAtTime(0.12,at+0.018);
+     envelope.gain.exponentialRampToValueAtTime(0.0001,at+0.2);
+     oscillator.connect(envelope);envelope.connect(completionAudio.destination);
+     oscillator.start(at);oscillator.stop(at+0.21);
+    }
+   }
+  }catch(_){}
+ };
+ if(completionAudio.state==='running')play();
+ else completionAudio.resume().then(()=>{if(completionAudio.state==='running'&&phase==='complete'&&answers.every(x=>x.ok)===perfect)play()}).catch(()=>{});
+}
+let years=[],answers=[],position=0,phase='idle',speechGeneration=0,speechEndTimer=null,gapTimer=null,activeClip=null,tick=null,nextTimer=null,expiresAt=0,duration=5000,answerStartedAt=null,reviewMisses=[];
+const STATS_KEY='ielts-year-dictation-stats';
+function loadStats(){try{const raw=JSON.parse(localStorage.getItem(STATS_KEY)||'{}');return raw&&typeof raw==='object'?raw:{}}catch(_){return{}}}
+let yearStats=loadStats();
+function saveStats(){try{localStorage.setItem(STATS_KEY,JSON.stringify(yearStats))}catch(_){}}
+function noteAttempt(target,ok,elapsed){
+ const key=String(target);
+ const row=yearStats[key]&&typeof yearStats[key]==='object'?yearStats[key]:{misses:0};
+ if(!ok)row.misses=(Number(row.misses)||0)+1;
+ if(elapsed>0)row.lastTime=elapsed;
+ yearStats[key]=row;saveStats();
+}
+function inRange(n){return n>=yearStart&&n<=yearEnd}
+function rankedMisses(){
+ return Object.entries(yearStats).map(([n,row])=>({n:Number(n),misses:Number(row&&row.misses)||0}))
+  .filter(row=>inRange(row.n)&&row.misses>0)
+  .sort((a,b)=>b.misses-a.misses||a.n-b.n).slice(0,10);
+}
+function rankedSlow(){
+ return Object.entries(yearStats).map(([n,row])=>({n:Number(n),lastTime:Number(row&&row.lastTime)||0}))
+  .filter(row=>inRange(row.n)&&row.lastTime>0)
+  .sort((a,b)=>b.lastTime-a.lastTime||a.n-b.n).slice(0,10);
+}
+function canStartRound(){return phase==='idle'||phase==='complete'}
+function fillStatTable(body,empty,rows,cells){
+ body.replaceChildren();
+ empty.classList.toggle('hide',rows.length>0);
+ rows.forEach(row=>{
+  const tr=document.createElement('tr');
+  cells(row).forEach(text=>{const td=document.createElement('td');td.textContent=text;tr.append(td)});
+  body.append(tr);
+ });
+}
+function renderMissDialog(){
+ const rows=rankedMisses();
+ fillStatTable(el('missBody'),el('missEmpty'),rows,row=>[String(row.n),String(row.misses)]);
+ el('practiceMissedDialog').disabled=!rows.length||!canStartRound();
+}
+function renderSlowDialog(){
+ const rows=rankedSlow();
+ fillStatTable(el('slowBody'),el('slowEmpty'),rows,row=>[String(row.n),row.lastTime.toFixed(1)+'s']);
+ el('practiceSlowDialog').disabled=!rows.length||!canStartRound();
+}
+function openStatsDialog(dialog,render){render();if(!dialog.open)dialog.showModal()}
+function practiceGroup(rows){
+ if(!canStartRound()||!rows.length)return;
+ el('missDialog').close();el('slowDialog').close();
+ startSet(rows.map(row=>row.n));
+}
+const clearTick=()=>{if(tick!==null){clearInterval(tick);tick=null}};
+const clearNext=()=>{if(nextTimer!==null){clearTimeout(nextTimer);nextTimer=null}};
+function cancelSpeech(){
+ speechGeneration++;
+ if(speechEndTimer!==null){clearTimeout(speechEndTimer);speechEndTimer=null}
+ if(gapTimer!==null){clearTimeout(gapTimer);gapTimer=null}
+ if(speechOK){try{window.speechSynthesis.cancel()}catch(_){}}
+ clip.onended=null;clip.onerror=null;clip.pause();
+ try{clip.currentTime=0}catch(_){}
+ activeClip=null;
+ el('play').classList.remove('playing');
+}
+function mechanical(voice){
+ const name=voice&&voice.name||'';
+ return /microsoft/i.test(name)&&!/natural|online/i.test(name);
+}
+function systemVoices(){
+ if(!speechOK)return [];
+ return window.speechSynthesis.getVoices().filter(v=>/^en([-_]|$)/i.test(v.lang)&&!mechanical(v)).sort((a,b)=>(/^en-GB/i.test(a.lang)?0:1)-( /^en-GB/i.test(b.lang)?0:1)||a.name.localeCompare(b.name));
+}
+function fillVoices(){
+ const select=el('voice');
+ const previous=select.value||localStorage.getItem(VOICE_KEY)||'f';
+ select.replaceChildren();
+ for(const voice of recordedVoices){
+  const option=document.createElement('option');
+  option.value=voice.id;option.textContent=voice.name;select.append(option);
+ }
+ for(const voice of systemVoices()){
+  const option=document.createElement('option');
+  option.value='system:'+voice.voiceURI;option.textContent=voice.name;select.append(option);
+ }
+ select.value=[...select.options].some(option=>option.value===previous)?previous:'f';
+}
+function rememberVoice(){try{localStorage.setItem(VOICE_KEY,el('voice').value)}catch(_){}}
+function recordingFolder(){return el('voice').value==='m'?'m':'f'}
+function speechReady(){return speechOK&&systemVoices().length>0}
+function availableYears(){
+ const recorded=!el('voice').value.startsWith('system:');
+ return yearList().filter(year=>(recorded&&yearClips(year))||speechReady());
+}
+function playThroughWeChat(run){
+ const bridge=window.WeixinJSBridge;
+ if(inWeChat&&bridge&&typeof bridge.invoke==='function'){bridge.invoke('getNetworkType',{},run);return}
+ run();
+}
+function refreshRows(){const host=el('rows');host.replaceChildren();for(let i=0;i<(years.length||10);i++){
+ const result=answers[i],active=position===i&&(phase==='speaking'||phase==='answering');
+ const row=document.createElement('div');row.className='res-row'+(active?' active':'');
+ const c1=document.createElement('span');c1.className='num';c1.textContent=String(i+1).padStart(2,'0');
+ const c2=document.createElement('span');c2.textContent=result?(result.input||'—'):'—';if(!result)c2.className='hidden-val';
+ const c3=document.createElement('span');c3.className=result?'truth':'hidden-val';c3.textContent=result?String(result.target):'—';
+ const c4=document.createElement('span');const expiredEmpty=Boolean(result&&result.reason==='timeout'&&result.input==='—');
+ c4.className='status '+(result?'icon '+(expiredEmpty?'timeout':result.ok?'good':'bad'):(active?'current':'mute'));
+ c4.textContent=result?(expiredEmpty?'⏱':result.ok?'✓':'×'):(active?'NOW':'—');
+ if(result){const outcome=expiredEmpty?'Time expired without input':result.ok?'Correct':'Incorrect';c4.setAttribute('aria-label',outcome);c4.title=result.reason==='timeout'?outcome+' · Auto-submitted at time limit':outcome;}
+ const c5=document.createElement('span');c5.className='time-used'+(result?'':' hidden-val');c5.textContent=result?result.elapsed.toFixed(1)+'s':'—';
+ row.append(c1,c2,c3,c4,c5);host.append(row);
+ }}
+function refreshStats(){el('qIndex').textContent=phase==='idle'?'0':phase==='complete'?String(years.length):String(Math.min(position+1,years.length));el('roundLabel').textContent=phase==='idle'?'Ready':phase==='complete'?'Round complete':`Question ${position+1} · ${phase==='speaking'?'Playing':phase==='answering'?'Your turn':'Next question'}`;
+ el('qTotal').textContent=String(years.length||10);el('progress').style.width=(years.length?(answers.length/years.length*100):0)+'%';el('score').textContent=String(answers.filter(a=>a.ok).length);el('completed').textContent=String(answers.length);el('avgTime').textContent=answers.length?(answers.reduce((total,item)=>total+item.elapsed,0)/answers.length).toFixed(1)+'s':'—';refreshRows();}
+function displayTime(ms){const remain=Math.max(0,ms);el('timer').textContent=(remain/1000).toFixed(1);el('timer').classList.toggle('urgent',remain<=2000);el('timerTrack').classList.toggle('urgent',remain<=2000);el('timerFill').style.width=(duration?Math.min(100,remain/duration*100):0)+'%';}
+function beginCountdown(){if(phase!=='speaking')return;phase='answering';duration=Number(el('limit').value)*1000;answerStartedAt=performance.now();expiresAt=answerStartedAt+duration;displayTime(duration);el('activityText').textContent='Submit before time runs out';refreshStats();clearTick();tick=setInterval(()=>{const remain=expiresAt-performance.now();displayTime(remain);if(remain<=0)finish('timeout')},40);}
+function afterSpeech(token){
+ if(token!==speechGeneration)return false;
+ if(speechEndTimer!==null){clearTimeout(speechEndTimer);speechEndTimer=null}
+ el('play').classList.remove('playing');
+ if(phase==='speaking')beginCountdown();
+ else if(phase==='answering')el('activityText').textContent='Submit before time runs out';
+ return true;
+}
+function playList(ids){
+ cancelSpeech();
+ const token=speechGeneration;
+ const audio=clip;
+ activeClip=audio;
+ audio.playbackRate=Number(el('speed').value)||1;
+ audio.volume=1;
+ let index=0,settled=false;
+ const markFinished=()=>{if(settled)return;settled=true;afterSpeech(token)};
+ const fail=()=>{
+  if(settled||token!==speechGeneration)return;
+  settled=true;
+  el('play').classList.remove('playing');
+  el('activityText').textContent='Playback failed. Tap the speaker to retry.';
+ };
+ const armBackup=()=>{
+  if(settled||token!==speechGeneration)return;
+  if(speechEndTimer!==null){clearTimeout(speechEndTimer);speechEndTimer=null}
+  const seconds=Number.isFinite(audio.duration)&&audio.duration>0?audio.duration/Math.max(0.5,audio.playbackRate):1.3;
+  speechEndTimer=setTimeout(markFinished,(seconds+(ids.length-index)*1.6+0.5)*1000);
+ };
+ const step=()=>{
+  if(settled||token!==speechGeneration)return;
+  if(index>=ids.length){markFinished();return}
+  const id=ids[index++];
+  const first=index===1;
+  const url=new URL('number-audio/'+recordingFolder()+'/'+id+'.mp3',document.baseURI).href;
+  audio.onended=null;audio.onerror=null;
+  const go=()=>{
+   if(token!==speechGeneration)return;
+   audio.onended=()=>{if(settled||token!==speechGeneration)return;gapTimer=setTimeout(step,120)};
+   audio.onerror=fail;
+   if(audio.src!==url)audio.src=url;
+   try{audio.currentTime=0}catch(_){}
+   let pending;
+   try{pending=audio.play()}catch(_){pending=Promise.reject()}
+   const started=()=>{
+    if(token!==speechGeneration)return;
+    el('play').classList.add('playing');
+    el('activityText').textContent=phase==='answering'?'Replaying · Timer continues':'Playing…';
+    armBackup();
+   };
+   if(pending&&pending.then)pending.then(started).catch(()=>{
+    if(token!==speechGeneration||settled)return;
+    if(first)el('activityText').textContent='Tap the speaker to play the year.';
+    else fail();
+   });
+   else started();
+  };
+  if(first)playThroughWeChat(go);else go();
+ };
+ step();
+}
+function chosenVoice(){
+ if(el('voice').value.startsWith('system:'))return systemVoices().find(item=>item.voiceURI===el('voice').value.slice(7))||null;
+ return systemVoices().find(item=>/^en-GB/i.test(item.lang))||systemVoices()[0]||null;
+}
+function speakPhrase(text,clips){
+ const voice=chosenVoice();
+ if(!voice){if(clips)playList(clips);else el('activityText').textContent='Playback failed. Tap the speaker to retry.';return}
+ cancelSpeech();
+ const token=speechGeneration;
+ const utterance=new SpeechSynthesisUtterance(text);
+ utterance.voice=voice;utterance.lang=voice.lang||'en-GB';utterance.rate=Number(el('speed').value)||1;utterance.volume=1;
+ let settled=false;
+ const markFinished=()=>{if(settled)return;settled=true;afterSpeech(token)};
+ utterance.onstart=()=>{
+  if(token!==speechGeneration)return;
+  el('play').classList.add('playing');
+  el('activityText').textContent=phase==='answering'?'Replaying · Timer continues':'Playing…';
+  const seconds=Math.max(4,(text.length*0.14)/Math.max(0.5,utterance.rate)+1.6);
+  if(speechEndTimer===null)speechEndTimer=setTimeout(markFinished,seconds*1000);
+ };
+ utterance.onend=markFinished;
+ utterance.onerror=()=>{if(settled||token!==speechGeneration)return;settled=true;if(clips)playList(clips);else{el('play').classList.remove('playing');el('activityText').textContent='Playback failed. Tap the speaker to retry.'}};
+ setTimeout(()=>{
+  if(token!==speechGeneration)return;
+  try{window.speechSynthesis.resume();window.speechSynthesis.speak(utterance)}catch(_){if(!settled){settled=true;if(clips)playList(clips)}}
+ },40);
+}
+function talk(){
+ if(!years.length||!(phase==='speaking'||phase==='answering'))return;
+ const year=years[position];
+ const clips=yearClips(year);
+ if(!el('voice').value.startsWith('system:')&&clips)playList(clips);
+ else speakPhrase(yearPhrase(year),clips);
+}
+function setUpQuestion(){phase='speaking';answerStartedAt=null;el('answer').value='';el('answer').disabled=false;el('submit').disabled=false;el('play').disabled=false;el('activityTitle').textContent='Listen and type the year';el('activityText').textContent='Preparing audio…';el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerFill').style.width='0%';el('timerTrack').classList.remove('urgent');refreshStats();el('answer').focus({preventScroll:true});talk()}
+function showRoundControls(running){el('start').classList.toggle('hide',running);el('stop').classList.toggle('hide',!running);if(running)el('retry').classList.add('hide')}
+function startSet(pool){
+ const source=pool&&pool.length?pool:availableYears();
+ if(!source.length){el('activityText').textContent='Choose a voice, then start the round.';return}
+ prepareDing();clearTick();clearNext();cancelSpeech();
+ years=randomize(source).slice(0,10);answers=[];position=0;phase='idle';showRoundControls(true);
+ el('summary').textContent='Answers stay hidden until each question is completed. Time starts after speech ends.';
+ setUpQuestion();
+}
+function stopRound(){if(phase==='idle'||phase==='complete')return;clearTick();clearNext();cancelSpeech();const answered=answers.length;el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('feedback').textContent='';el('feedback').className='feedback';el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';
+ if(!answered){years=[];position=0;phase='idle';reviewMisses=[];el('activityTitle').textContent='Ready to begin?';el('activityText').textContent='Round stopped.';el('start').textContent='Start round';showRoundControls(false);el('retry').classList.add('hide');el('summary').textContent='Answers and response times appear after each question. Timing starts after speech ends.';refreshStats();return}
+ phase='complete';reviewMisses=answers.filter(x=>!x.ok).map(x=>x.target);const correct=answers.filter(x=>x.ok).length;el('activityTitle').textContent='Round stopped';el('activityText').textContent=`Stopped after ${answered} of ${years.length}.`;el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);el('summary').innerHTML=`Stopped · Score: <strong>${correct} / ${answered}</strong>. ${reviewMisses.length?'Retry your incorrect answers.':'The answered years were correct.'}`;refreshStats()}
+function finish(reason){if(!(phase==='speaking'||phase==='answering'))return;const input=el('answer').value.trim();if(reason==='submit'&&!/^\d{4}$/.test(input)){
+ el('feedback').textContent='Enter the four-digit year';el('feedback').className='feedback no';el('answer').focus();return;}
+ clearTick();cancelSpeech();phase='transition';const target=years[position],valid=/^\d{4}$/.test(input),ok=valid&&Number(input)===target;
+ const elapsed=answerStartedAt===null?0:Math.min(duration,Math.max(0,performance.now()-answerStartedAt))/1000;
+ answers.push({target,input:input||'—',valid,ok,elapsed,reason:reason==='timeout'?'timeout':ok?'correct':'wrong'});
+ noteAttempt(target,ok,elapsed);
+ el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('feedback').textContent=reason==='timeout'?(ok?"Time's Up! · ✓":input?"Time's Up! · ×":"Time's Up! · ⏱"):(ok?'✓ Correct':`Answer: ${target}`);el('feedback').className='feedback '+(ok?'ok':'no');el('activityText').textContent=reason==='timeout'?"Time's Up! · Next question…":ok?'Correct · Next question…':`Answer: ${target} · Next question…`;
+ el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';refreshStats();nextTimer=setTimeout(()=>{nextTimer=null;position++;if(position<years.length)setUpQuestion();else endSet()},700);
+}
+function endSet(){if(phase==='complete')return;clearTick();cancelSpeech();phase='complete';const correct=answers.filter(x=>x.ok).length;playCompletionSound(correct===years.length);reviewMisses=answers.filter(x=>!x.ok).map(x=>x.target);el('activityTitle').textContent='Round complete';el('activityText').textContent=`${correct} of ${years.length} correct`;
+ el('answer').value='';el('answer').disabled=true;el('submit').disabled=true;el('play').disabled=true;el('timer').textContent='--';el('timer').classList.remove('urgent');el('timerTrack').classList.remove('urgent');el('timerFill').style.width='0%';el('start').textContent='Start another round';showRoundControls(false);el('retry').classList.toggle('hide',!reviewMisses.length);el('feedback').textContent='';el('summary').innerHTML=`Score: <strong>${correct} / ${years.length}</strong> · Accuracy: <strong>${Math.round(correct/years.length*100)}%</strong>. ${reviewMisses.length?'Retry your incorrect answers.':'Perfect round!'}`;refreshStats();}
+el('start').addEventListener('click',()=>startSet());el('stop').addEventListener('click',stopRound);el('retry').addEventListener('click',()=>{if(reviewMisses.length)startSet(reviewMisses)});
+el('openMissed').addEventListener('click',()=>openStatsDialog(el('missDialog'),renderMissDialog));
+el('openSlow').addEventListener('click',()=>openStatsDialog(el('slowDialog'),renderSlowDialog));
+el('closeMiss').addEventListener('click',()=>el('missDialog').close());
+el('closeSlow').addEventListener('click',()=>el('slowDialog').close());
+el('practiceMissedDialog').addEventListener('click',()=>practiceGroup(rankedMisses()));
+el('practiceSlowDialog').addEventListener('click',()=>practiceGroup(rankedSlow()));
+el('missDialog').addEventListener('click',event=>{if(event.target===el('missDialog'))el('missDialog').close()});
+el('slowDialog').addEventListener('click',event=>{if(event.target===el('slowDialog'))el('slowDialog').close()});
+el('play').addEventListener('click',talk);el('submit').addEventListener('click',()=>finish('submit'));
+el('answer').addEventListener('input',()=>{const cleaned=el('answer').value.replace(/\D/g,'');if(cleaned!==el('answer').value)el('answer').value=cleaned});
+el('answer').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish('submit')}});
+fillVoices();
+el('voice').addEventListener('change',rememberVoice);
+if(speechOK)window.speechSynthesis.addEventListener('voiceschanged',fillVoices);
+refreshStats();
+function yieldToOther(){cancelSpeech();clearTick();}
+window.addEventListener('ielts-speak',event=>{if(event.detail!=='years')yieldToOther()});
+})();
 (()=>{
-const modes=['numbers','digits','phone','flight','postcode'];
-const tabs={numbers:document.getElementById('tabNumbers'),digits:document.getElementById('tabDigits'),phone:document.getElementById('tabPhone'),flight:document.getElementById('tabFlight'),postcode:document.getElementById('tabPostcode')};
-const panels={numbers:document.getElementById('panelNumbers'),digits:document.getElementById('panelDigits'),phone:document.getElementById('panelPhone'),flight:document.getElementById('panelFlight'),postcode:document.getElementById('panelPostcode')};
-const subs={numbers:document.getElementById('subNumbers'),digits:document.getElementById('subDigits'),phone:document.getElementById('subPhone'),flight:document.getElementById('subFlight'),postcode:document.getElementById('subPostcode')};
-const settings={numbers:document.getElementById('settingsNumbers'),digits:document.getElementById('settingsDigits'),phone:document.getElementById('settingsPhone'),flight:document.getElementById('settingsFlight'),postcode:document.getElementById('settingsPostcode')};
+const modes=['numbers','years','digits','phone','flight','postcode'];
+const tabs={numbers:document.getElementById('tabNumbers'),years:document.getElementById('tabYears'),digits:document.getElementById('tabDigits'),phone:document.getElementById('tabPhone'),flight:document.getElementById('tabFlight'),postcode:document.getElementById('tabPostcode')};
+const panels={numbers:document.getElementById('panelNumbers'),years:document.getElementById('panelYears'),digits:document.getElementById('panelDigits'),phone:document.getElementById('panelPhone'),flight:document.getElementById('panelFlight'),postcode:document.getElementById('panelPostcode')};
+const subs={numbers:document.getElementById('subNumbers'),years:document.getElementById('subYears'),digits:document.getElementById('subDigits'),phone:document.getElementById('subPhone'),flight:document.getElementById('subFlight'),postcode:document.getElementById('subPostcode')};
+const settings={numbers:document.getElementById('settingsNumbers'),years:document.getElementById('settingsYears'),digits:document.getElementById('settingsDigits'),phone:document.getElementById('settingsPhone'),flight:document.getElementById('settingsFlight'),postcode:document.getElementById('settingsPostcode')};
 const title=document.getElementById('pageTitle');
-const names={numbers:'Number Dictation',digits:'Digit Dictation',phone:'Phone and Card Dictation',flight:'Flight Number Dictation',postcode:'Postcode Dictation'};
+const names={numbers:'Number Dictation',years:'Year Dictation',digits:'Digit Dictation',phone:'Phone and Card Dictation',flight:'Flight Number Dictation',postcode:'Postcode Dictation'};
 function named(value){return modes.includes(value)?value:''}
 function show(name){
  const mode=named(name)||'digits';
@@ -2713,6 +3093,7 @@ function show(name){
  window.dispatchEvent(new CustomEvent('ielts-speak',{detail:mode}));
 }
 tabs.numbers.addEventListener('click',()=>show('numbers'));
+tabs.years.addEventListener('click',()=>show('years'));
 tabs.digits.addEventListener('click',()=>show('digits'));
 tabs.phone.addEventListener('click',()=>show('phone'));
 tabs.flight.addEventListener('click',()=>show('flight'));
