@@ -21,8 +21,7 @@
 *{box-sizing:border-box}html{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif}body{margin:0;background:var(--bg);color:var(--text);min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #adc0ff;outline-offset:2px}
 [hidden]{display:none!important}
 .wrap{max-width:1080px;margin:0 auto;padding:36px 22px 64px}
-.pager{display:flex;align-items:center;gap:8px;margin:0 0 18px;flex-wrap:wrap}.pager a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.pager a:hover{text-decoration:underline}.pager a:focus-visible{outline:3px solid #adc0ff;outline-offset:2px;border-radius:4px}.steps{display:flex;flex-wrap:wrap;align-items:center;margin:0;padding:0;list-style:none}.steps li{display:flex;align-items:center}.steps li+li:before{content:"";width:12px;height:1px;margin:0 2px;background:#d5deea}.steps button{border:0;background:transparent;color:var(--muted);border-radius:999px;min-height:36px;padding:0 10px;font-size:13px;font-weight:750}.steps button[aria-current="page"]{background:var(--blue-soft);color:var(--blue)}.steps button:hover:not(:disabled){color:var(--text)}
-.eyebrow{color:var(--blue);font-size:11px;letter-spacing:.15em;font-weight:800;margin-bottom:9px}
+.pager{display:flex;align-items:center;gap:8px;margin:0 0 18px;flex-wrap:wrap}.pager a{color:var(--blue);font-size:13px;font-weight:700;text-decoration:none}.pager a:hover{text-decoration:underline}.pager a:focus-visible{outline:3px solid #adc0ff;outline-offset:2px;border-radius:4px}.steps{display:flex;flex-wrap:wrap;align-items:center;margin:14px 0 0;padding:0;list-style:none}.steps li{display:flex;align-items:center}.steps li+li:before{content:"";width:12px;height:1px;margin:0 2px;background:#d5deea}.steps button{border:0;background:transparent;color:var(--muted);border-radius:999px;min-height:36px;padding:0 10px;font-size:13px;font-weight:750}.steps button[aria-current="page"]{background:var(--blue-soft);color:var(--blue)}.steps button:hover:not(:disabled){color:var(--text)}
 h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.15}
 .sub{margin:10px 0 0;color:var(--muted);font-size:14px;line-height:1.6;max-width:42em}
 .panel{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 9px 36px rgba(35,49,79,.035);padding:26px}
@@ -47,7 +46,7 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .review-head h2{margin:0;font-size:18px;letter-spacing:-.02em}
 .took{margin:6px 0 0;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
 .count{color:var(--muted);font-size:13px}
-.list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.list{display:flex;flex-direction:column;gap:12px;height:1000px;margin-top:16px;overflow-y:auto;padding-right:6px}
 .sentence{border:1px solid var(--line);border-radius:14px;padding:12px}.sentence.current{border-color:#b9cbff;box-shadow:0 0 0 3px #315eea18}
 .sentence.prompt,.sentence.blank{background:#f7f8fb}
 .meta{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.meta-actions{display:grid;grid-template-columns:72px 112px 1px 36px 112px;align-items:center;column-gap:8px;margin-left:auto}.meta-sep{width:1px;height:18px;background:#d8e1f0;justify-self:center}.play,.meta-actions .flag,.meta-actions button.who{display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1;box-sizing:border-box;width:100%}.play{border:1px solid #d8e1f0;background:#fff;color:var(--blue);border-radius:999px;min-height:32px;padding:0 12px;font-size:12px;font-weight:750}.play.playing{background:var(--blue);color:#fff;border-color:var(--blue)}
@@ -70,9 +69,8 @@ h1{margin:0;font-size:clamp(28px,4vw,36px);letter-spacing:-.04em;line-height:1.1
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .overline{color:var(--muted);font-size:13px;font-weight:650}
 .progress-count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}.progress-count b{font-size:22px;color:var(--text)}
-.activity{display:flex;flex-direction:column;align-items:center;text-align:center;padding:22px 0 8px}
-.sound{height:84px;width:84px;border-radius:26px;border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue);display:flex;align-items:center;justify-content:center}.sound svg{width:34px;height:34px}.sound.playing{background:#dbe5ff}
-.activity h2{margin:16px 0 6px;font-size:20px;letter-spacing:-.02em}
+.activity{display:flex;flex-direction:column;align-items:center;text-align:center;padding:8px 0}
+.activity h2{margin:0 0 6px;font-size:20px;letter-spacing:-.02em}
 .prompt-line{margin:8px 0 0;font-size:22px;line-height:1.45;font-weight:650;text-align:left;width:100%}
 .answer-label{display:block;margin-top:6px;font-size:13px;font-weight:750}
 .answer{width:100%;min-height:96px;margin-top:8px;border:1.5px solid #d6deeb;border-radius:13px;padding:12px 14px;font-size:18px;line-height:1.5;resize:vertical}
@@ -100,7 +98,6 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
 .name-field{display:flex;align-items:center;gap:8px;margin-top:10px}.name-field span{font-size:12px;color:var(--muted);font-weight:750}.name-field input{width:min(360px,100%);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-weight:700}
 .library{margin-top:22px}.library h2{margin:0 0 4px;font-size:16px;letter-spacing:-.02em}.library-hint{margin:0 0 8px;color:var(--muted);font-size:12px}.library-empty{margin:8px 0 0;color:var(--muted);font-size:13px}.library-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.library-item.dragging{opacity:.45}.library-main{display:flex;align-items:center;gap:8px;flex:1;min-width:0;width:100%}.library-main.can-drag{cursor:grab;touch-action:none;user-select:none}.library-main.can-drag:active{cursor:grabbing}.drag-handle{width:32px;height:40px;border:0;background:transparent;color:#8b97ab;border-radius:8px;display:grid;place-items:center;flex-shrink:0;padding:0;cursor:grab}.drag-handle:hover{background:#f3f6fb;color:var(--text)}.drag-handle svg{width:16px;height:16px}.library-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.library-copy b{font-weight:750}.library-meta{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}.library-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}.library-actions button{border-radius:999px;min-height:34px;padding:0 12px;font-size:12px;font-weight:750}.library-actions .edit,.library-actions .listen,.library-actions .practice{border:1px solid #d8e1f0;background:#fff;color:#455874}.library-actions .danger{width:34px;min-width:34px;height:34px;padding:0;border:0;background:none;color:#455874;font-size:20px;line-height:1}
 .player-bit{display:block;width:100%;border:0;background:transparent;border-radius:10px;min-height:48px;padding:8px 12px;text-align:left;line-height:1.45;color:var(--muted);font-size:22px;font-weight:400}.player-bit.now{color:var(--text)}.player-roll{will-change:transform}.player-head{display:flex;justify-content:flex-end;padding:0 0 8px}.player-count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}.player-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:16px}.player-controls .icon-btn{width:42px;min-width:42px;height:42px;min-height:42px;padding:0}.player-focus{position:relative;overflow:hidden;height:min(40vh,260px);margin-top:28px}.player-hidden{margin:16px 0;color:var(--muted)}
-.fine{margin:18px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
 @media(max-width:640px){.wrap{padding:22px 14px 40px}.panel{padding:18px 14px}.start-bar{align-items:stretch;flex-direction:column}.start-bar .primary,.start-bar .secondary,.work-actions .secondary{width:100%}.library-item{align-items:flex-start;flex-direction:column}.library-actions{width:100%}.practice-layout{flex-direction:column}.sentence-nav{width:100%;max-height:132px;flex-direction:row}.jump{width:auto;flex:none}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
@@ -109,16 +106,14 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
 <div class="wrap">
  <nav class="pager" aria-label="Pages">
   <a href="index.html">← Home</a>
-  <ol class="steps">
-   <li><button type="button" data-step="upload" aria-current="page">File List</button></li>
-   <li><button type="button" data-step="review" disabled>Editor</button></li>
-   <li><button type="button" data-step="player" disabled>Player</button></li>
-   <li><button type="button" data-step="practice" disabled>Dictation</button></li>
-  </ol>
  </nav>
- <div class="eyebrow">IELTS LISTENING TRAINER</div>
  <h1>Intensive Listening</h1>
- <p class="sub">Upload an MP3. This page transcribes it in the browser and splits it into sentences. Player plays each sentence the number of times you set, then starts again from the first. Dictation repeats one sentence until your typing matches.</p>
+ <ol class="steps" aria-label="Sections">
+  <li><button type="button" data-step="upload" aria-current="page">File List</button></li>
+  <li><button type="button" data-step="review" disabled>Editor</button></li>
+  <li><button type="button" data-step="player" disabled>Player</button></li>
+  <li><button type="button" data-step="practice" disabled>Dictation</button></li>
+ </ol>
  <div id="fileBar" class="filebar" hidden>
   <span id="fileNow" class="file-time">0:00</span>
   <div id="fileScrub" class="scrub" role="slider" tabindex="0" aria-label="Recording position" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
@@ -133,11 +128,9 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <button type="button" id="choose" class="primary">Upload MP3</button>
    <input id="file" type="file" accept=".mp3,audio/mpeg,.wav,audio/wav,.m4a,audio/mp4,audio/x-m4a" hidden>
   </div>
-  <p class="note">Instruction lines, such as “You will hear…” and “Now turn to section 1”, are marked for you. They play once and are not dictated. You can change a mark before starting. Each upload is saved in this browser with its transcription, so the next time you open it by name. The first transcription downloads Whisper Large V3 Turbo when this browser can use the graphics chip. Without that chip, it uses a smaller English model. The download stays in this browser.</p>
   <p id="uploadError" class="note" style="color:var(--red)" role="status"></p>
   <div id="library" class="library" hidden>
    <h2>Saved recordings</h2>
-   <p id="libraryHint" class="library-hint" hidden>Drag anywhere outside the buttons to change the order. Arrow keys move the focused recording.</p>
    <div id="libraryList"></div>
   </div>
  </section>
@@ -149,7 +142,6 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
  </section>
  <section id="stageReview" class="panel" hidden aria-label="Check sentences">
   <div class="review-head"><div><h2>Check the sentences</h2><p id="transcribeTime" class="took" hidden></p><label id="nameField" class="name-field" hidden><span>Name</span><input id="recordName" type="text" maxlength="80" autocomplete="off" aria-label="Recording name"></label><p id="saveNote" class="note"></p></div><p id="reviewCount" class="count"></p></div>
-  <p class="note">Edit anything the transcription got wrong. This text is the answer. Play a line to hear that sentence. Start and End move that edge by 0.1 seconds, and the neighboring sentence moves with it. Transcribe replaces that one stretch. Mark a line as Instruction when it should play without dictation. Split a line at the cursor when two sentences were joined. Right-click a waveform to split at that point. A long silence at the edge of a line becomes a blank. A, B, and C mark who is speaking on a dictated line. Click the letter to change it. A Blank line is a long silence. Dictation skips it. Each waveform line is 20 seconds.</p>
   <div id="sentences" class="list"></div>
   <div class="start-bar">
    <button type="button" id="another" class="secondary">Choose another file</button>
@@ -186,12 +178,8 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <div class="progress-count"><b id="doneCount">0</b> / <span id="dictateTotal">0</span></div>
   </div>
   <div class="activity">
-   <button type="button" id="speaker" class="sound" aria-label="Replay sentence">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
-   </button>
    <h2 id="practiceTitle">Listen and type</h2>
    <div class="practice-actions">
-    <button type="button" id="check" class="primary">Check</button>
     <button type="button" id="prevSentence" class="secondary icon-btn" aria-label="Previous sentence"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h2.2v14H6zM18.5 5 8.2 12l10.3 7z"/></svg></button>
     <button type="button" id="pause" class="secondary icon-btn" aria-pressed="false" aria-label="Play"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></button>
     <button type="button" id="nextSentence" class="secondary icon-btn" aria-label="Next sentence"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.8 5H18v14h-2.2zM5.5 5l10.3 7L5.5 19z"/></svg></button>
@@ -221,7 +209,6 @@ button.who{border:1px solid #dbe4ff;background:var(--blue-soft);color:var(--blue
    <button type="button" id="doneAnother" class="secondary">Choose another file</button>
   </div>
  </section>
- <p class="fine">Audio is transcribed in this browser and is not uploaded. Saved recordings stay in this browser. Speed sets how fast Player plays. Repeat sets how many times Player plays each sentence. Gap waits before the next play. After the last sentence, playback starts again from the first. Space plays or pauses. Shift replays the current sentence. Left and right arrows change the sentence. A correct dictation, ignoring case and punctuation, moves you on. Instruction lines stay on screen while they play. Player reads an instruction once. Repeats sets how many times Dictation plays a sentence before it stops. ∞ keeps going until you move on. The Dictation gap waits before the sentence plays again.</p>
  <div id="toast" class="toast" hidden role="dialog" aria-modal="true" aria-labelledby="toastTitle">
   <div class="toast-card">
    <h2 id="toastTitle">Transcribing</h2>
@@ -1028,8 +1015,6 @@ async function renderLibrary(){
  catch(_){el('library').hidden=true;return}
  el('library').hidden=false;
  host.replaceChildren();
- const hint=el('libraryHint');
- if(hint)hint.hidden=records.length<2;
  if(!records.length){
   const empty=document.createElement('p');
   empty.className='library-empty';
@@ -1364,7 +1349,6 @@ function commitSeek(time){
   clearTimeout(loopTimer);
   previewIndex=-1;
   paintPreview();
-  el('speaker').classList.remove('playing');
   loopFrom=at;
   loopTo=duration||at+0.25;
  }
@@ -2135,7 +2119,7 @@ function loopSentence(sentence,startAt){
  let plays=0;
  const arm=()=>{armed=true};
  if(!paused){playbackLive=true;paintTransport()}
- const play=()=>{if(paused||token!==loopToken)return;const target=opened?from:first;opened=true;seekAndPlay(audio,target,token,ok=>{if(token!==loopToken)return;if(ok)arm();else{playbackLive=false;paintTransport();el('feedback').textContent='Tap the speaker to play.'}})};
+ const play=()=>{if(paused||token!==loopToken)return;const target=opened?from:first;opened=true;seekAndPlay(audio,target,token,ok=>{if(token!==loopToken)return;if(ok)arm();else{playbackLive=false;paintTransport();el('feedback').textContent='Press play to hear this sentence.'}})};
  const watch=()=>{
   if(token!==loopToken)return;
   if(paused||!armed||scrubbing){loopTimer=setTimeout(watch,paused?80:40);return}
@@ -2167,7 +2151,7 @@ function playOnce(sentence,done,startAt){
  if(!paused){playbackLive=true;paintTransport()}
  seekAndPlay(audio,first,token,ok=>{
   if(token!==loopToken)return;
-  if(!ok){playbackLive=false;paintTransport();el('practiceTitle').textContent='Tap the speaker to play this instruction.'}
+  if(!ok){playbackLive=false;paintTransport();el('practiceTitle').textContent='Press play to hear this instruction.'}
   else armed=true;
  });
  const watch=()=>{
@@ -2195,7 +2179,6 @@ function showPracticeChrome(sentence,keepPause){
  el('practiceLabel').textContent='Sentence '+(cursor+1)+' of '+sentences.length;
  el('promptLine').hidden=!sentence.prompt;
  el('dictateBox').hidden=sentence.prompt;
- el('check').hidden=sentence.prompt;
  el('show').hidden=true;
  el('skipPrompt').hidden=!sentence.prompt;
  el('reveal').hidden=true;
@@ -2638,7 +2621,6 @@ function paintTransport(){
  const active=sounding||(phase==='practice'&&!paused&&betweenRepeats);
  setButtonIcon(el('pause'),active?'pause':'play',active?'Pause':'Play');
  el('pause').setAttribute('aria-pressed',paused?'true':'false');
- el('speaker').classList.toggle('playing',sounding);
 }
 function resetPause(){
  paused=false;
@@ -3014,18 +2996,9 @@ el('another').addEventListener('click',resetToUpload);
 el('doneAnother').addEventListener('click',resetToUpload);
 el('begin').addEventListener('click',()=>beginPractice(cursor));
 el('again').addEventListener('click',()=>beginPractice(0));
-el('check').addEventListener('click',checkAnswer);
 el('show').addEventListener('click',reveal);
 el('skipPrompt').addEventListener('click',()=>{if(phase==='practice')enter(cursor+1)});
 el('pause').addEventListener('click',togglePause);
-el('speaker').addEventListener('click',()=>{
- resetPause();
- const sentence=sentences[cursor];
- if(!sentence)return;
- if(sentence.prompt)playOnce(sentence,()=>{if(phase==='practice')enter(cursor+1)});
- else loopSentence(sentence);
- focusAnswer();
-});
 el('answer').addEventListener('input',()=>{
  storeDraft();
  el('diff').hidden=true;
